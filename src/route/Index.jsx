@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Error404Modern from "../pages/error/404-modern";
 import { Suspense } from "react";
-import ForgetPassword from "../pages/auth/ForgetPass/ForgetPass1";
+ import RegistrationRequests from "../pages/registration/RegistrationRequests";
  
 
 
@@ -14,7 +14,7 @@ const AdminPages = ({ loading }) => {
           path={`${import.meta.env.VITE_PUBLIC_URL}/`}
           element={<div>ServerDash</div>}
         />
-        <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route path={`${import.meta.env.VITE_PUBLIC_URL}/registration`}  element={<RegistrationRequests />} />
 
         
 

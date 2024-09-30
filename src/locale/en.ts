@@ -74,6 +74,7 @@ const en = {
     dashboard: "Dashboard",
     profile: "Profile",
     users: "Users",
+    registration: "registration",
     clients: "Clients",
     rooms: "Rooms",
     projectManagement: "Project Management",

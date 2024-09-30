@@ -127,8 +127,8 @@ export default function Sidebar({ isSidebarOpen, closeSidebar, dark }) {
     },
     {
       icon: <UserCircleGear size={25} />,
-      name: "sideBar.rooms",
-      link: `${import.meta.env.VITE_PUBLIC_URL}/rooms`,
+      name: "sideBar.registration",
+      link: `${import.meta.env.VITE_PUBLIC_URL}/registration`,
     },
   ];
 
