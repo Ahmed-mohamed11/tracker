@@ -88,21 +88,22 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
     return (
         <div className="min-h-screen   p-8">
-            <div className="flex justify-between items-center mt-6">
-                <div className="flex space-x-4">
-                    <div className="relative">
-                        <input type="text" placeholder="Search..." className="bg-gray-800 text-white px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        <IoSearch className="absolute right-3 top-2.5 text-gray-400" size={20} />
+            <div className="flex justify-between items-center mt-6 gap-14">
+                <div className="flex w-4/5 gap-5">
+                    <div className="relative flex items-center justify-center">
+                        <input type="text" placeholder="Search..." className=" bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <div className='bg-blue-600 h-full absolute px-2  right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center '>
+                            <IoSearch size={20} />
+                        </div>
                     </div>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">Search</button>
-                    <select className="bg-gray-800 w-full text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200">
+                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md  transition duration-200">
                         <option value="">حاله الطلب</option>
                         <option value="pending">pending</option>
                         <option value="approved">approved</option>
                         <option value="rejected">rejected</option>
                     </select>
 
-                    <select className="bg-gray-800 w-full text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200">
+                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
                         <option value="">حاله الطلب</option>
                         <option value="pending">pending</option>
                         <option value="approved">approved</option>
@@ -110,18 +111,21 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                     </select>
 
 
-                    <button className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200 flex items-center">
+                    <button className="bg-gray-200 text-gray-900 px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200 flex items-center">
                         <FaArrowCircleDown size={20} className="mr-2" />
                         Export
                     </button>
                 </div>
-                <button
-                    onClick={handleOpenCreate}
 
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center">
-                    <FaPlus size={20} className="mr-2" />
-                    Add new task
-                </button>
+                <div className="w-1/5 flex justify-end">
+                    <button
+
+                        onClick={handleOpenCreate}
+                        className="  bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center">
+                        <FaPlus size={20} className="mr-2" />
+                        Add new task
+                    </button>
+                </div>
             </div>
 
 
