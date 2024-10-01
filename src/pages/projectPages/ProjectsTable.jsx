@@ -5,11 +5,11 @@ import AddProjects from './AddProjects'; // Ensure the path is correct
 import PreviewProjects from './PreviewProjects';
 import Table from '../../components/Table';
 import { IoSearch } from "react-icons/io5";
-import { FaFilter } from "react-icons/fa6";
-import { IoMdSettings } from "react-icons/io";
-import { FaArrowCircleDown, FaPlus } from "react-icons/fa";
-
+ import { FaArrowCircleDown, FaPlus } from "react-icons/fa";
+import { useI18nContext } from '../../context/i18n-context';
+ 
 const ProjectTable = ({ openPreview, openCreate }) => {
+    const { t } = useI18nContext(); // Get the translation function
     const [modalType, setModalType] = useState(null);
     const [tableData, setTableData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -23,9 +23,6 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                 console.error('No token found in cookies');
                 return;
             }
-
-
-
 
             // Fetch both projects and clients
             const [projectsResponse, clientsResponse] = await Promise.all([
@@ -87,54 +84,51 @@ const ProjectTable = ({ openPreview, openCreate }) => {
     };
 
     return (
-        <div className="min-h-screen   p-8">
+        <div className="min-h-screen p-8">
             <div className="flex justify-between items-center mt-6 gap-14">
                 <div className="flex w-4/5 gap-5">
                     <div className="relative flex items-center justify-center">
-                        <input type="text" placeholder="Search..." className=" bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        <div className='bg-blue-600 h-full absolute px-2  right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center '>
+                        <input type="text" placeholder={t('registrationForm.searchPlaceholder')} className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <div className='bg-blue-600 h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center '>
                             <IoSearch size={20} />
                         </div>
                     </div>
-                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md  transition duration-200">
-                        <option value="">حاله الطلب</option>
-                        <option value="pending">pending</option>
-                        <option value="approved">approved</option>
-                        <option value="rejected">rejected</option>
+                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
+                        <option value="">{t('registrationForm.requestStatus')}</option>
+                        <option value="pending">{t('registrationForm.pending')}</option>
+                        <option value="approved">{t('registrationForm.approved')}</option>
+                        <option value="rejected">{t('registrationForm.rejected')}</option>
                     </select>
 
                     <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                        <option value="">حاله الطلب</option>
-                        <option value="pending">pending</option>
-                        <option value="approved">approved</option>
-                        <option value="rejected">rejected</option>
+                        <option value="">{t('registrationForm.requestStatus')}</option>
+                        <option value="pending">{t('registrationForm.pending')}</option>
+                        <option value="approved">{t('registrationForm.approved')}</option>
+                        <option value="rejected">{t('registrationForm.rejected')}</option>
                     </select>
-
 
                     <button className="bg-gray-200 text-gray-900 px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200 flex items-center">
                         <FaArrowCircleDown size={20} className="mr-2" />
-                        Export
+                        {t('registrationForm.export')}
                     </button>
                 </div>
 
                 <div className="w-1/5 flex justify-end">
                     <button
-
                         onClick={handleOpenCreate}
-                        className="  bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center">
+                        className="bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center">
                         <FaPlus size={20} className="mr-2" />
-                        Add new task
+                        {t('registrationForm.addNewTask')}
                     </button>
                 </div>
             </div>
-
 
             <Table
                 data={tableData}
                 headers={tableHeaders}
                 openCreate={() => setModalType('project')}
                 openPreview={openPreview}
-                addItemLabel="Project"
+                addItemLabel={t('project')}
                 onDelete={() => console.log('Delete function not implemented')}
             />
             {modalType === 'preview' && (

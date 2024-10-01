@@ -5,14 +5,20 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
 import FormSelect from "../../components/form/FormSelect";
-import FormTextArea from "../../components/form/FormTextArea";
-
+import { useI18nContext } from "../../context/i18n-context";
 
 const AddProjects = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
-        name: "",
-        client: "", // سيتم تخزين id العميل هنا
-        description: "",
+        firstName: "",
+        secondName: "",
+        userName: "",
+        email: "",
+        jobTitle: "",
+        jobNumber: "",
+        phoneNumber: "",
+        gender: "",
+        responsibleParty: "",
+        employeeType: "",
     });
 
     const handleChange = useCallback((e) => {
@@ -23,10 +29,7 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
         }));
     }, []);
 
-
-
-
-
+    const { t } = useI18nContext();
 
     const [clients, setClients] = useState([]);
 
@@ -39,28 +42,19 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                         'Authorization': `Token ${token}`,
                     },
                 });
-
                 setClients(response.data);
             } catch (error) {
                 console.error("Error fetching clients:", error);
             }
         };
-
         fetchClients();
     }, []);
 
-
-
-
-
-
-
-
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent the default form submission behavior
+        e.preventDefault();
 
         try {
-            const token = Cookies.get('token'); // Retrieve token from cookies
+            const token = Cookies.get('token');
             if (!token) {
                 console.error('No token found in cookies');
                 return;
@@ -68,14 +62,14 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
 
             const response = await axios.post('https://dashboard.cowdly.com/api/projects/', formData, {
                 headers: {
-                    'Authorization': `Token ${token}`, // Include token in the request header
+                    'Authorization': `Token ${token}`,
                 },
             });
 
             const newProject = response.data;
-            console.log('Client added successfully:', newProject);
-            onClientAdded(newProject); // Pass the new client data to the parent component
-            closeModal(); // Close the modal on successful submission
+            console.log('Project added successfully:', newProject);
+            onClientAdded(newProject);
+            closeModal();
 
         } catch (error) {
             console.error('Error adding project:', error.response?.data || error.message);
@@ -102,7 +96,7 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                 dir="rtl"
             >
                 <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5">
-                    <div className=" flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10 ">
+                    <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10 ">
                         <button
                             type="button"
                             onClick={closeModal}
@@ -111,83 +105,119 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                             <X size={18} weight="bold" />
                             <span className="sr-only">Close modal</span>
                         </button>
-                        <h2> Add Employee </h2>
+                        <h2>{t('registrationForm.title')}</h2>
                     </div>
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-left" onSubmit={handleSubmit}>
                             {/* Form content */}
                             <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="First Name" type={"text"} name="firstName" placeholder={"Enter First Name"} value={formData.firstName} onChange={handleChange} />
-                                <FormText label="Second Name" type={"text"} name="secondName" placeholder={"Enter Second Name"} value={formData.secondName} onChange={handleChange} />
+                                <FormText
+                                    label={t('registrationForm.fields.firstName')}
+                                    type="text"
+                                    name="firstName"
+                                    placeholder={t('registrationForm.fields.firstName')}
+                                    value={formData.firstName}
+                                    onChange={handleChange}
+                                />
+                                <FormText
+                                    label={t('registrationForm.fields.secondName')}
+                                    type="text"
+                                    name="secondName"
+                                    placeholder={t('registrationForm.fields.secondName')}
+                                    value={formData.secondName}
+                                    onChange={handleChange}
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="User Name" type={"text"} name="userName" placeholder={"Enter User Name"} value={formData.userName} onChange={handleChange} />
-                                <FormText label="Email" type={"email"} name="email" placeholder={"Enter Email"} value={formData.email} onChange={handleChange} />
+                                <FormText
+                                    label={t('registrationForm.fields.userName')}
+                                    type="text"
+                                    name="userName"
+                                    placeholder={t('registrationForm.fields.userName')}
+                                    value={formData.userName}
+                                    onChange={handleChange}
+                                />
+                                <FormText
+                                    label={t('registrationForm.fields.email')}
+                                    type="email"
+                                    name="email"
+                                    placeholder={t('registrationForm.fields.email')}
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="Job Title" type={"text"} name="jobTitle" placeholder={"Enter Job Title"} value={formData.jobTitle} onChange={handleChange} />
-                                <FormText label="Job Number" type={"text"} name="jobNumber" placeholder={"Enter Job Number"} value={formData.jobNumber} onChange={handleChange} />
+                                <FormText
+                                    label={t('registrationForm.fields.jobTitle')}
+                                    type="text"
+                                    name="jobTitle"
+                                    placeholder={t('registrationForm.fields.jobTitle')}
+                                    value={formData.jobTitle}
+                                    onChange={handleChange}
+                                />
+                                <FormText
+                                    label={t('registrationForm.fields.jobNumber')}
+                                    type="text"
+                                    name="jobNumber"
+                                    placeholder={t('registrationForm.fields.jobNumber')}
+                                    value={formData.jobNumber}
+                                    onChange={handleChange}
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="Phone Number" type={"tel"} name="phoneNumber" placeholder={"Enter Phone Number"} value={formData.phoneNumber} onChange={handleChange} />
+                                <FormText
+                                    label={t('registrationForm.fields.phoneNumber')}
+                                    type="tel"
+                                    name="phoneNumber"
+                                    placeholder={t('registrationForm.fields.phoneNumber')}
+                                    value={formData.phoneNumber}
+                                    onChange={handleChange}
+                                />
                                 <FormSelect
-                                    label="Gender"
+                                    label={t('registrationForm.fields.gender')}
                                     value={formData.gender}
-                                    name="gender" // Use a constant string here to match the form field name
+                                    name="gender"
                                     onChange={handleChange}
                                     options={[
-                                        { value: "male", label: "Male" },
-                                        { value: "female", label: "Female" },
+                                        { value: "male", label: t('registrationForm.genderOptions.male') },
+                                        { value: "female", label: t('registrationForm.genderOptions.female') },
                                     ]}
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
                                 <FormSelect
-                                    label="Responsible Party"
+                                    label={t('registrationForm.fields.responsibleParty')}
                                     value={formData.responsibleParty}
-                                    name="responsibleParty" // Use a constant string here to match the form field name
+                                    name="responsibleParty"
                                     onChange={handleChange}
                                     options={clients.map(client => ({
-                                        value: client.id, // ID of the client
-                                        label: client.name // Name of the client
+                                        value: client.id,
+                                        label: client.name
                                     }))}
                                 />
-
                                 <FormSelect
-                                    label="Employee Type"
+                                    label={t('registrationForm.fields.employeeType')}
                                     value={formData.employeeType}
-                                    name="employeeType" // Use a constant string here to match the form field name
+                                    name="employeeType"
                                     onChange={handleChange}
                                     options={[
-                                        { value: "engineer", label: "Engineer" },
-                                        { value: "technician", label: "Technician" },
-                                        { value: "office", label: "Office" },
+                                        { value: "engineer", label: t('registrationForm.employeeTypeOptions.engineer') },
+                                        { value: "technician", label: t('registrationForm.employeeTypeOptions.technician') },
+                                        { value: "office", label: t('registrationForm.employeeTypeOptions.office') },
                                     ]}
                                 />
-
-
                             </div>
-
-                            {/**
-                             <FormSelect
-                                label="Project Client"
-                                value={formData.client}
-                                name="client" // Use a constant string here to match the form field name
-                                onChange={handleChange}
-                                options={clients.map(client => ({
-                                    value: client.id, // ID of the client
-                                    label: client.name // Name of the client
-                                }))}
-                            />
-                             */}
 
                             <button
                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center"
-                                type="submit"><i className="icon-plus"></i>Add New</button>
+                                type="submit"
+                            >
+                                {t('registrationForm.submitButton')}
+                            </button>
                         </form>
                     </div>
                 </div>
