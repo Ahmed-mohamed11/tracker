@@ -92,22 +92,10 @@ const Table = ({ data, headers, openCreate, openPreview, openEdit, onDelete, add
     <div className="overflow-x-auto">
       <div className="flex items-center justify-between p-4">
         <div className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="border p-2 rounded-md"
-          />
+
           <MagnifyingGlass size={20} className="absolute right-3 top-2 text-gray-500" />
         </div>
-        <button
-          onClick={handleOpenCreate}
-          className="bg-green-500 text-white px-4 py-2 rounded-md"
-        >
-          <Plus size={20} className="inline mr-2" />
-          {addItemLabel}
-        </button>
+
 
       </div>
 

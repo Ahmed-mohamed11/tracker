@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
 import FormSelect from "../../components/form/FormSelect";
 import FormTextArea from "../../components/form/FormTextArea";
- 
+
 
 const AddProjects = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
@@ -111,13 +111,69 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                             <X size={18} weight="bold" />
                             <span className="sr-only">Close modal</span>
                         </button>
-                        <h2>Add New Project</h2>
+                        <h2> Add Employee </h2>
                     </div>
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-left" onSubmit={handleSubmit}>
                             {/* Form content */}
-                            <FormText label="Project Name" type={"text"} name="name" placeholder={"Enter Client Name"} value={formData.name} onChange={handleChange} />
-                            <FormSelect
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormText label="First Name" type={"text"} name="firstName" placeholder={"Enter First Name"} value={formData.firstName} onChange={handleChange} />
+                                <FormText label="Second Name" type={"text"} name="secondName" placeholder={"Enter Second Name"} value={formData.secondName} onChange={handleChange} />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormText label="User Name" type={"text"} name="userName" placeholder={"Enter User Name"} value={formData.userName} onChange={handleChange} />
+                                <FormText label="Email" type={"email"} name="email" placeholder={"Enter Email"} value={formData.email} onChange={handleChange} />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormText label="Job Title" type={"text"} name="jobTitle" placeholder={"Enter Job Title"} value={formData.jobTitle} onChange={handleChange} />
+                                <FormText label="Job Number" type={"text"} name="jobNumber" placeholder={"Enter Job Number"} value={formData.jobNumber} onChange={handleChange} />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormText label="Phone Number" type={"tel"} name="phoneNumber" placeholder={"Enter Phone Number"} value={formData.phoneNumber} onChange={handleChange} />
+                                <FormSelect
+                                    label="Gender"
+                                    value={formData.gender}
+                                    name="gender" // Use a constant string here to match the form field name
+                                    onChange={handleChange}
+                                    options={[
+                                        { value: "male", label: "Male" },
+                                        { value: "female", label: "Female" },
+                                    ]}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormSelect
+                                    label="Responsible Party"
+                                    value={formData.responsibleParty}
+                                    name="responsibleParty" // Use a constant string here to match the form field name
+                                    onChange={handleChange}
+                                    options={clients.map(client => ({
+                                        value: client.id, // ID of the client
+                                        label: client.name // Name of the client
+                                    }))}
+                                />
+
+                                <FormSelect
+                                    label="Employee Type"
+                                    value={formData.employeeType}
+                                    name="employeeType" // Use a constant string here to match the form field name
+                                    onChange={handleChange}
+                                    options={[
+                                        { value: "engineer", label: "Engineer" },
+                                        { value: "technician", label: "Technician" },
+                                        { value: "office", label: "Office" },
+                                    ]}
+                                />
+
+
+                            </div>
+
+                            {/**
+                             <FormSelect
                                 label="Project Client"
                                 value={formData.client}
                                 name="client" // Use a constant string here to match the form field name
@@ -127,9 +183,11 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                                     label: client.name // Name of the client
                                 }))}
                             />
-                            <FormTextArea label="Project Description" name="description" placeholder={"Enter Project Description"} value={formData.description} onChange={handleChange} />
+                             */}
 
-                            <button className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded mt-10 style-1 w208" type="submit"><i className="icon-plus"></i>Add New</button>
+                            <button
+                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center"
+                                type="submit"><i className="icon-plus"></i>Add New</button>
                         </form>
                     </div>
                 </div>
