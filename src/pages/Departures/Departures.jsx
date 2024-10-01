@@ -1,12 +1,11 @@
-import Projects from "../projectPages/Projects"
+import Departures from "../DeparturesPages/Departures"
 
 const RegistrationRequests = () => {
   return (
     <div>
-      <Projects />
+      <Departures />
     </div>
   )
 }
 
 export default RegistrationRequests
-  

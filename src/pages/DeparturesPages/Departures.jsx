@@ -8,10 +8,10 @@ import {
     useMemo,
 } from "react";
 import gsap from "gsap";
-import ProjectTable from "./ProjectsTable";
+import DeparturesTable from "./DeparturesTable";
 
 const PreviewProject = lazy(() => import("./PreviewProjects"));
-const AddProject = lazy(() => import("./AddProjects"));
+const AddDepartures = lazy(() => import("./AddDepartures"));
 
 const Projects = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
@@ -49,19 +49,18 @@ const Projects = ({ role }) => {
 
     return (
         <>
-            <h1 className="text-2xl font-bold mb-6 text-right p-6">طلبات تسجيل الموظفين</h1>
             <div className="flex items-center">
                 <main className="-mt-5 flex w-full flex-col lg:flex-row">
                     <section className="flex-1">
 
 
-                        <ProjectTable
+                        <DeparturesTable
                             openPreview={toggleOpenPreviewModal}
                             openCreate={toggleOpenCreateModal}
                         />
                         <Suspense fallback={<div>Loading...</div>}>
                             {openCreate && (
-                                <AddProject
+                                <AddDepartures
                                     closeModal={toggleOpenCreateModal}
                                     modal={openCreate}
                                     role={role}

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import AddProjects from './AddProjects'; // Ensure the path is correct
+import RegisterEmployee from './RegisterEmployee'; // Ensure the path is correct
 import PreviewProjects from './PreviewProjects';
 import Table from '../../components/Table';
 import { IoSearch } from "react-icons/io5";
@@ -141,7 +141,7 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                 <PreviewProjects closeModal={() => setModalType(null)} projectIdId={selectedProjectId} />
             )}
             {modalType === "project" && (
-                <AddProjects
+                <RegisterEmployee
                     closeModal={() => setModalType(null)}
                     modal={modalType === "project"}
                     onClientAdded={addNewProjectToTable}

@@ -130,6 +130,12 @@ export default function Sidebar({ isSidebarOpen, closeSidebar, dark }) {
       name: "sideBar.registration",
       link: `${import.meta.env.VITE_PUBLIC_URL}/registration`,
     },
+
+    {
+      icon: <UserCircleGear size={25} />,
+      name: "departures",
+      link: `${import.meta.env.VITE_PUBLIC_URL}/departures`,
+    },
   ];
 
   const navigationError = [

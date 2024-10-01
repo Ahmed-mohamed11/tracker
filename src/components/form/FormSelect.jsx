@@ -18,7 +18,7 @@ function FormSelect({ label, selectLabel, onChange, options, value, name }) {
         onChange={onChange}
         id={selectLabel}
         name={name}
-        className="w-full p-2.5 dark:bg-gray-700 rounded-md
+        className="bg-gray-50 w-full p-2.5 dark:bg-gray-700 rounded-md
         dark:border-gray-600 dark:placeholder-gray-400
         dark:text-white outline-none border text-gray-700
         focus:border-orange-400 dark:focus:border-orange-400
