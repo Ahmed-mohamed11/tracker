@@ -91,10 +91,7 @@ const Table = ({ data, headers, openCreate, openPreview, openEdit, onDelete, add
   return (
     <div className="overflow-x-auto">
       <div className="flex items-center justify-between p-4">
-        <div className="relative">
 
-          <MagnifyingGlass size={20} className="absolute right-3 top-2 text-gray-500" />
-        </div>
 
 
       </div>

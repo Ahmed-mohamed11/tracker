@@ -8,14 +8,16 @@ import {
     useMemo,
 } from "react";
 import gsap from "gsap";
-import EmployeTable from "./EmployeTable";
+import EntitiesTable from "./EntitiesTable";
 
 const PreviewProject = lazy(() => import("./PreviewProjects"));
-const RegisterEmployee = lazy(() => import("./RegisterEmployee"));
+const AddEntities = lazy(() => import("./AddEntities"));
 
-const Projects = ({ role }) => {
+const Entities = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
+
+
 
     const toggleOpenCreateModal = useCallback(
         () => setOpenCreate((prev) => !prev),
@@ -49,18 +51,17 @@ const Projects = ({ role }) => {
 
     return (
         <>
-            <div className="flex items-center">
+            <div className="flex  items-center">
                 <main className="-mt-5 flex w-full flex-col lg:flex-row">
                     <section className="flex-1">
 
 
-                        <EmployeTable
-                            openPreview={toggleOpenPreviewModal}
-                            openCreate={toggleOpenCreateModal}
-                        />
+                        <EntitiesTable openCreate={toggleOpenCreateModal} />
+                        {openCreate && <AddEntities closeModal={toggleOpenCreateModal} />}
+
                         <Suspense fallback={<div>Loading...</div>}>
                             {openCreate && (
-                                <RegisterEmployee
+                                <AddEntities
                                     closeModal={toggleOpenCreateModal}
                                     modal={openCreate}
                                     role={role}
@@ -77,4 +78,4 @@ const Projects = ({ role }) => {
     );
 };
 
-export default Projects;
+export default Entities;

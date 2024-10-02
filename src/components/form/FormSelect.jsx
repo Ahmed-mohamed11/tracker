@@ -18,11 +18,7 @@ function FormSelect({ label, selectLabel, onChange, options, value, name }) {
         onChange={onChange}
         id={selectLabel}
         name={name}
-        className="bg-gray-50 w-full p-2.5 dark:bg-gray-700 rounded-md
-        dark:border-gray-600 dark:placeholder-gray-400
-        dark:text-white outline-none border text-gray-700
-        focus:border-orange-400 dark:focus:border-orange-400
-        duration-100 ease-linear "
+        className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200 "
         value={value}
       >
         <option value={""}>اختر</option>

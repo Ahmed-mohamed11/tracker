@@ -5,9 +5,10 @@ import RegisterEmployee from './RegisterEmployee'; // Ensure the path is correct
 import PreviewProjects from './PreviewProjects';
 import Table from '../../components/Table';
 import { IoSearch } from "react-icons/io5";
- import { FaArrowCircleDown, FaPlus } from "react-icons/fa";
+import { FaArrowCircleDown, FaPlus } from "react-icons/fa";
 import { useI18nContext } from '../../context/i18n-context';
- 
+
+
 const ProjectTable = ({ openPreview, openCreate }) => {
     const { t } = useI18nContext(); // Get the translation function
     const [modalType, setModalType] = useState(null);
@@ -85,11 +86,25 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
     return (
         <div className="min-h-screen p-8">
-            <div className="flex justify-between items-center mt-6 gap-14">
+
+            <div className="mb-7 w-full flex items-center justify-between ">
+                <h2 className="text-2xl font-bold">طلبات تسجيل الموظفين</h2>
+                <button
+                    className="flex items-center  rounded-full bg-green-500 p-3 gap-2  text-white"
+                    onClick={handleOpenCreate}
+                >
+                    <FaPlus className="h-6 w-6 " />
+
+                </button>
+
+            </div>
+            <div className=" flex justify-between items-center mt-6 gap-14">
+
+
                 <div className="flex w-4/5 gap-5">
                     <div className="relative flex items-center justify-center">
-                        <input type="text" placeholder={t('registrationForm.searchPlaceholder')} className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        <div className='bg-blue-600 h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center '>
+                        <input type="text" placeholder={t('registrationForm.searchPlaceholder')} className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                        <div className=' h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center '>
                             <IoSearch size={20} />
                         </div>
                     </div>
@@ -107,20 +122,13 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                         <option value="rejected">{t('registrationForm.rejected')}</option>
                     </select>
 
-                    <button className="bg-gray-200 text-gray-900 px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200 flex items-center">
-                        <FaArrowCircleDown size={20} className="mr-2" />
+                    <button className="bg-green-500 text-white text-center hover:bg-green-600 px-4 py-2 rounded-md  transition duration-200 flex items-center">
                         {t('registrationForm.export')}
+                        <FaArrowCircleDown size={20} className="mr-2" />
                     </button>
                 </div>
 
-                <div className="w-1/5 flex justify-end">
-                    <button
-                        onClick={handleOpenCreate}
-                        className="bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center">
-                        <FaPlus size={20} className="mr-2" />
-                        {t('registrationForm.addNewTask')}
-                    </button>
-                </div>
+
             </div>
 
             <Table

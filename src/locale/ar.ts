@@ -75,6 +75,9 @@ const ar = {
     profile: "الملف الشخصي",
     users: "  المستخدمين",
     departures: "  المغادرة",
+    Administrative: "  الهيكل الاداري",
+    Entities: " الجهات",
+    Employee: "الموظفين", // Employee
     clients: "العملاء",
     registration: "تسجيل الطلبات",
     projectManagement: "إدارة المشاريع",

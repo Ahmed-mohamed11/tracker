@@ -1,13 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import AddDepartures from './AddDepartures';  
+import AddDepartures from './AddDepartures';
 import PreviewProjects from './PreviewProjects';
 import Table from '../../components/Table';
- 
-import { FaPlus  } from "react-icons/fa";
+
+import { FaPlus } from "react-icons/fa";
 import FormText from "../../components/form/FormText";
 import FormSelect from '../../components/form/FormSelect';
+
 
 
 const ProjectTable = ({ openPreview, openCreate }) => {
@@ -19,17 +20,17 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
     const fetchData = useCallback(async () => {
         try {
-            const token = Cookies.get('token');  
+            const token = Cookies.get('token');
             if (!token) {
                 console.error('No token found in cookies');
                 return;
             }
 
- 
-             const [projectsResponse, clientsResponse] = await Promise.all([
+
+            const [projectsResponse, clientsResponse] = await Promise.all([
                 axios.get('https://dashboard.cowdly.com/api/projects/', {
                     headers: {
-                        'Authorization': `Token ${token}`,  
+                        'Authorization': `Token ${token}`,
                     },
                 }),
                 axios.get('https://dashboard.cowdly.com/api/clients/', {
@@ -68,7 +69,7 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
     const handleOpenCreate = () => {
         console.log('Open Create button clicked');
-        openCreate(); 
+        openCreate();
     };
 
     useEffect(() => {
@@ -85,61 +86,56 @@ const ProjectTable = ({ openPreview, openCreate }) => {
     };
 
     return (
-        <div className="min-h-screen   p-8">
+        <div className="min-h-screen p-8 mt-5">
             <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center space-x-4">
+                <div className="w-full flex items-center justify-between ">
+                    <h2 className="text-2xl font-bold">المغادرات</h2>
                     <button
-                        className="flex items-center space-x-2 rounded-full bg-green-500 p-2 text-white"
+                        className="flex items-center  rounded-full bg-green-500 p-3 gap-2  text-white"
                         onClick={handleOpenCreate}
                     >
-                        <FaPlus className="h-6 w-6 mx-3" />
-                        إضافة موظف
+                        <FaPlus className="h-6 w-6 " />
+
                     </button>
 
                 </div>
-                <h2 className="text-2xl font-bold">المغادرات</h2>
             </div>
 
 
             <div className="mb-6 grid justify-end grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                 <FormSelect
+                <FormText label="الإسم الأول" type={"text"} name="firstName" placeholder={"الإسم الأول"} />
+
+                <FormSelect
                     label="اختر الوظيفه "
-                     name="gender" 
-                     options={[
+                    name="gender"
+                    options={[
                         { value: "male", label: "Male" },
                         { value: "female", label: "Female" },
                     ]}
                 />
                 <FormSelect
                     label="اختر الجهه"
-                     name="gender"  
-                     options={[
+                    name="gender"
+                    options={[
                         { value: "male", label: "Male" },
                         { value: "female", label: "Female" },
                     ]}
                 />
-                <FormText label="الإسم الأول" type={"text"} name="firstName" placeholder={"الإسم الأول"} />
 
             </div>
             <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <div className='flex justify-end items-end '>
-                    <button
-                        
-                        className="  bg-green-600 text-white w-full text-center px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 ">
-                        عرض
-                    </button>
-                </div>
+
                 <FormSelect
                     label="نوع الطلب "
-                     name="gender" 
-                     options={[
+                    name="gender"
+                    options={[
                         { value: "male", label: "Male" },
                         { value: "female", label: "Female" },
                     ]}
                 />
 
-                <div className='flex flex-col justify-end items-end '>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear"> تاريخ المغادرة</label>
+                <div className='flex flex-col justify-end items-start  text-right'>
+                    <label className="block  mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear"> تاريخ المغادرة</label>
                     <input type="date" className=" bg-gray-50 border border-gray-300
                         text-gray-900 text-sm rounded-md
                         block w-full p-2.5 dark:bg-gray-700
@@ -151,12 +147,20 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
                 <FormSelect
                     label=" نوع الطلب"
-                     name="gender" 
-                     options={[
+                    name="gender"
+                    options={[
                         { value: "male", label: "Male" },
                         { value: "female", label: "Female" },
                     ]}
                 />
+
+                <div className='flex justify-end items-end '>
+                    <button
+
+                        className="  bg-green-600 text-white w-full text-center px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 ">
+                        عرض
+                    </button>
+                </div>
 
             </div>
 

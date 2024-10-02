@@ -9,9 +9,16 @@ import FormTextArea from "../../components/form/FormTextArea";
 
 const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
-        name: "",
-        client: "",
-        description: "",
+        firstName: "",
+        secondName: "",
+        userName: "",
+        email: "",
+        jobTitle: "",
+        jobNumber: "",
+        phoneNumber: "",
+        gender: "",
+        responsibleParty: "",
+        employeeType: "",
     });
 
     const handleChange = useCallback((e) => {
@@ -82,7 +89,7 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
         >
             <div
                 style={{ boxShadow: "black 19px 0px 45px -12px" }}
-                className={`rounded-l-[15px] p-4 w-full max-w-[55rem] pb-10 bg-white
+                className={`rounded-l-[15px] p-4 w-full max-w-[40rem] pb-10 bg-white
                 dark:bg-gray-800 rounded-r-lg duration-200 ease-linear
                 ${modal ? "fixed right-0" : "absolute -left-full"}
                 h-screen overflow-auto`}
@@ -99,7 +106,7 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
 
                             <span className="sr-only">Close modal</span>
                         </button>
-                        <h2>إضافة موظف</h2>
+                        <h2>إضافة المغادرات</h2>
                     </div>
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-left" onSubmit={handleSubmit}>
@@ -108,35 +115,6 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
                                 <FormSelect
                                     label="اختيار الجهه"
                                     value={formData.gender}
-                                    name="gender" // Use a constant string here to match the form field name
-                                    onChange={handleChange}
-                                    options={[
-                                        { value: "male", label: "Male" },
-                                        { value: "female", label: "Female" },
-                                    ]}
-                                />
-
-                                <FormSelect
-                                    label="اختار موظف"
-                                <FormText label="الاسم الأول" type={"text"} name="firstName" placeholder={"أدخل الاسم الأول"} value={formData.firstName} onChange={handleChange} />
-                                <FormText label="الاسم الثاني" type={"text"} name="secondName" placeholder={"أدخل الاسم الثاني"} value={formData.secondName} onChange={handleChange} />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="اسم المستخدم" type={"text"} name="userName" placeholder={"أدخل اسم المستخدم"} value={formData.userName} onChange={handleChange} />
-                                <FormText label="البريد الإلكتروني" type={"email"} name="email" placeholder={"أدخل البريد الإلكتروني"} value={formData.email} onChange={handleChange} />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="المسمى الوظيفي" type={"text"} name="jobTitle" placeholder={"أدخل المسمى الوظيفي"} value={formData.jobTitle} onChange={handleChange} />
-                                <FormText label="الرقم الوظيفي" type={"text"} name="jobNumber" placeholder={"أدخل الرقم الوظيفي"} value={formData.jobNumber} onChange={handleChange} />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="رقم الهاتف" type={"tel"} name="phoneNumber" placeholder={"أدخل رقم الهاتف"} value={formData.phoneNumber} onChange={handleChange} />
-                                <FormSelect
-                                    label="الجنس"
-                                    value={formData.gender}
                                     name="gender"
                                     onChange={handleChange}
                                     options={[
@@ -144,6 +122,19 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
                                         { value: "female", label: "أنثى" },
                                     ]}
                                 />
+
+                                <FormSelect
+                                    label="نوع الموظف"
+                                    value={formData.employeeType}
+                                    name="employeeType"
+                                    onChange={handleChange}
+                                    options={[
+                                        { value: "engineer", label: "مهندس" },
+                                        { value: "technician", label: "فني" },
+                                        { value: "office", label: "إداري" },
+                                    ]}
+                                />
+
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
@@ -166,37 +157,18 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
                                     dark:border-gray-600 dark:placeholder-gray-400 
                                     dark:text-white outline-none 
                                     focus:border-orange-400 dark:focus:border-orange-400
-                                    duration-100 ease-linear" value="2024-9-22"></input>
+                                    duration-100 ease-linear" />
                                 </div>
-
-
-                                <FormSelect
-                                    label="الطرف المسؤول"
-                                    value={formData.responsibleParty}
-                                    name="responsibleParty"
-                                    onChange={handleChange}
-                                    options={clients.map(client => ({
-                                        value: client.id,
-                                        label: client.name
-                                    }))}
-                                />
-
-                                <FormSelect
-                                    label="نوع الموظف"
-                                    value={formData.employeeType}
-                                    name="employeeType"
-                                    onChange={handleChange}
-                                    options={[
-                                        { value: "engineer", label: "مهندس" },
-                                        { value: "technician", label: "فني" },
-                                        { value: "office", label: "إداري" },
-                                    ]}
-                                />
                             </div>
 
-                            <button
-                                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 flex items-center"
-                                type="submit"><i className="icon-plus"></i>اضافه المغادره</button>
+                            <div className="w-full flex justify-start mt-5">
+                                <button
+                                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none"
+                                    type="submit"
+                                >
+                                    اضافه المغادره
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

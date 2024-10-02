@@ -1,106 +1,197 @@
-import { useState, useEffect, Fragment } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import { Bell, MagnifyingGlass, UserCheck } from '@phosphor-icons/react';
+import { useState } from "react";
+import {
+  House,
+  UserCircleGear,
+  Warning,
+  Network,
+  CaretDown,
+  List,
+  X,
+} from "@phosphor-icons/react";
+import { Link, useLocation } from "react-router-dom";
+import { useI18nContext } from "../context/i18n-context";
 
-export default function Navbar() {
-  const [profilePic, setProfilePic] = useState('');
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
-   useEffect(() => {
-     setProfilePic('/placeholder.svg?height=32&width=32');
-  }, []);
+const NavbarItem = ({
+  icon,
+  name,
+  link,
+  onClick,
+  subItems,
+  isOpen,
+  toggleSubMenu,
+}) => {
+  const location = useLocation();
+
+  const isActive =
+    location.pathname === link ||
+    (subItems && subItems.some((sub) => location.pathname === sub.link));
+
+  const handleClick = () => {
+    if (subItems) {
+      toggleSubMenu();
+    } else {
+      onClick();
+    }
+  };
 
   return (
-    <nav className="w-full bg-[#1e1e2d] text-white p-4 flex items-center justify-between shadow-md">
-      
-
-      <div className="flex-1 max-w-xl px-4">
-        <div className="relative">
-          <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <input
-            className="w-full bg-[#2d2d3f] border-none pl-10 pr-4 py-2 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
-            placeholder="Search here..."
-            type="search"
-          />
-        </div>
-      </div>
-
-      <div className="flex items-end space-x-4">
-        <Menu as="div" className="relative">
-          <div>
-            <Menu.Button className="rounded-full mx-5 focus:outline-none focus:ring-2 focus:ring-purple-500">
-              <UserCheck size={28} className="text-white" />
-            </Menu.Button>
+    <div className="relative">
+      <Link
+        to={link}
+        onClick={handleClick}
+        className={classNames(
+          isActive
+            ? "text-indigo-500 border-b-2 border-indigo-500"
+            : "text-white hover:text-indigo-300",
+          "px-4 py-2 text-sm font-medium flex items-center gap-2 duration-150 ease-linear"
+        )}
+      >
+        {icon}
+        {name}
+        {subItems && (
+          <div
+            className={`transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
+              }`}
+          >
+            <CaretDown size={20} />
           </div>
+        )}
+      </Link>
 
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
-            <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="/profile"
-                    className={`${active ? 'bg-gray-100' : ''
-                      } block px-4 py-2 text-sm text-gray-700`}
-                  >
-                    Profile
-                  </a>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="/settings"
-                    className={`${active ? 'bg-gray-100' : ''
-                      } block px-4 py-2 text-sm text-gray-700`}
-                  >
-                    Settings
-                  </a>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="/logout"
-                    className={`${active ? 'bg-gray-100' : ''
-                      } block px-4 py-2 text-sm text-gray-700`}
-                  >
-                    Log out
-                  </a>
-                )}
-              </Menu.Item>
-            </Menu.Items>
-          </Transition>
-        </Menu>
+      {subItems && (
+        <div
+          className={classNames(
+            "absolute top-full left-0 mt-5 bg-[#2d2d3f] text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
+            isOpen ? "opacity-100 visible animate-slide-down" : "opacity-0 invisible animate-slide-up"
+          )}
+        >
+          {subItems.map((subItem, index) => (
+            <Link
+              key={index}
+              to={subItem.link}
+              onClick={onClick}
+              className="block px-4 py-2 text-base hover:bg-gradient-to-r hover:from-themeColor-500"
+            >
+              {subItem.name}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
-        <button className="text-white hover:bg-[#2d2d3f] p-2 rounded-full transition duration-300">
-          <Bell className="h-7 w-7" />
-        </button>
+export default function Navbar({ dark }) {
+  const { t } = useI18nContext();
+  const [role, setRole] = useState("admin");
+  const [openMenuIndex, setOpenMenuIndex] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-        <button className="text-white hover:bg-[#2d2d3f] p-2 rounded-full transition duration-300">
-          <svg
-            className="h-7 w-7 text-purple-500"
-            fill="none"
-            height="24"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M19 12c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9 9-4.03 9-9z" />
-            <path d="M15 9.354a4 4 0 1 0 0 5.292" />
-          </svg>
-        </button>
-      </div>
-    </nav>
+  const toggleSubMenu = (index) => {
+    setOpenMenuIndex(openMenuIndex === index ? null : index);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // محتوى Sidebar الذي تم نقله ليصبح ضمن Navbar
+  const navigationAdmin = [
+    {
+      icon: <House size={25} />,
+      name: t("sideBar.dashboard"),
+      link: `${import.meta.env.VITE_PUBLIC_URL}/`,
+    },
+    {
+      icon: <UserCircleGear size={25} />,
+      name: t("sideBar.registration"),
+      link: `${import.meta.env.VITE_PUBLIC_URL}/registration`,
+    },
+    {
+      icon: <UserCircleGear size={25} />,
+      name: t("sideBar.departures"),
+      link: `${import.meta.env.VITE_PUBLIC_URL}/departures`,
+    },
+    {
+      icon: <Network size={32} />,
+      name: t("sideBar.Administrative"),
+      subItems: [
+        { name: t("sideBar.Entities"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
+        { name: t("sideBar.Employee"), link: `${import.meta.env.VITE_PUBLIC_URL}/users` },
+      ],
+    },
+  ];
+
+  const navigationError = [
+    {
+      icon: <Warning size={25} />,
+      name: t("sideBar.error"),
+      link: "/*",
+    },
+  ];
+
+  const selectedNavigation = role === "admin" ? navigationAdmin : navigationError;
+
+  const [activeIndex, setActiveIndex] = useState(
+    selectedNavigation.findIndex((item) => item.link === `${import.meta.env.VITE_PUBLIC_URL}/`)
+  );
+
+  const handleItemClick = (index, link) => {
+    setActiveIndex(index);
+    localStorage.setItem("currentPath", link);
+    setIsMobileMenuOpen(false); // إغلاق القائمة بعد اختيار العنصر
+  };
+
+  return (
+    <div className="w-full bg-[#2d2d3f] text-white shadow-lg sticky top-0 z-50">
+      <nav className="flex items-center justify-between p-4 lg:justify-around">
+        {/* زر القائمة للشاشات الصغيرة */}
+        <div className="lg:hidden">
+          <button onClick={toggleMobileMenu} className="text-white">
+            {isMobileMenuOpen ? <X size={32} /> : <List size={32} />}
+          </button>
+        </div>
+
+        {/* شعار التطبيق */}
+        <div>
+          <h1 className="text-2xl font-semibold">Tracker</h1>
+        </div>
+
+        {/* روابط القائمة */}
+        <div
+          className={classNames(
+            "mt-3 lg:flex items-center space-x-6 transition-all duration-300 ease-in-out",
+            isMobileMenuOpen ? "absolute top-full right-2 w-[40%] rounded-md bg-[#2d2d3f] p-4 lg:static lg:bg-transparent lg:w-auto lg:p-0 block animate-slide-down" : "hidden lg:block "
+          )}
+        >
+          {selectedNavigation.map((item, index) => (
+            <NavbarItem
+              key={index}
+              icon={item.icon}
+              name={item.name}
+              link={item.link}
+              subItems={item.subItems}
+              isOpen={openMenuIndex === index}
+              toggleSubMenu={() => toggleSubMenu(index)}
+              onClick={() => handleItemClick(index, item.link)}
+            />
+          ))}
+        </div>
+
+        {/* معلومات المستخدم */}
+        <div className="flex items-center gap-4">
+          <img
+            src="https://avatars.githubusercontent.com/u/52693893?v=4"
+            alt="profile"
+            className="w-10 h-10 rounded-full"
+          />
+          <p className="font-semibold hidden md:block">Ahmed Al-Masri</p>
+        </div>
+      </nav>
+    </div>
   );
 }

@@ -1,17 +1,18 @@
-import { useState  } from "react";
+import { useState } from "react";
 import {
   House,
-   UserCircleGear,
+  UserCircleGear,
   Warning,
-     CardsThree,
-   CaretDown,
- 
+  CardsThree,
+  CaretDown,
+  Network,
+
 } from "@phosphor-icons/react";
 import { Link, useLocation } from "react-router-dom";
 import LogoWideLight from "../images/logoWide-light.png";
 import LogoWideDark from "../images/gfx/logo22.png";
 import { useI18nContext } from "../context/i18n-context";
- 
+
 
 const SidebarItem = ({
   icon,
@@ -129,6 +130,12 @@ export default function Sidebar({ isSidebarOpen, closeSidebar, dark }) {
       icon: <UserCircleGear size={25} />,
       name: "sideBar.departures",
       link: `${import.meta.env.VITE_PUBLIC_URL}/departures`,
+    },
+
+    {
+      icon: <Network size={32} />,
+      name: "sideBar.Administrative",
+      link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
     },
   ];
 

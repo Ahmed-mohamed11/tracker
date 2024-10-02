@@ -89,7 +89,7 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
         >
             <div
                 style={{ boxShadow: "black 19px 0px 45px -12px" }}
-                className={`rounded-l-[15px] p-4 w-full max-w-[55rem] pb-10 bg-white
+                className={`rounded-l-[15px] p-4 w-full max-w-[45rem] pb-10 bg-white
                 dark:bg-gray-800 rounded-r-lg duration-200 ease-linear
                 ${modal ? "fixed right-0" : "absolute -left-full"}
                 h-screen overflow-auto`}
@@ -213,7 +213,7 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                             </div>
 
                             <button
-                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center"
+                                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 flex items-center"
                                 type="submit"
                             >
                                 {t('registrationForm.submitButton')}
