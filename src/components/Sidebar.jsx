@@ -1,23 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState  } from "react";
 import {
   House,
-  SketchLogo,
-  UserCircleGear,
+   UserCircleGear,
   Warning,
-  CaretRight,
-  Users,
-  Kanban,
-  CardsThree,
-  Airplay,
-  CaretDown,
-  ProjectorScreenChart,
+     CardsThree,
+   CaretDown,
+ 
 } from "@phosphor-icons/react";
 import { Link, useLocation } from "react-router-dom";
 import LogoWideLight from "../images/logoWide-light.png";
-import LogoWideDark from "../images/logoWide-dark.png";
+import LogoWideDark from "../images/gfx/logo22.png";
 import { useI18nContext } from "../context/i18n-context";
-import api from "../ApiUrl";
-import CryptoJS from "crypto-js";
+ 
 
 const SidebarItem = ({
   icon,
@@ -50,8 +44,8 @@ const SidebarItem = ({
         onClick={handleClick}
         className={classNames(
           isActive
-            ? "bg-gradient-to-r from-themeColor-500 to-gray-900"
-            : "text-sky-950 dark:text-white hover:bg-gradient-to-r hover:from-themeColor-500",
+            ? "bg-gradient-to-r from-indigo-500"
+            : " text-white hover:bg-gradient-to-r hover:from-themeColor-500",
           "py-1.5 px-4 text-sm font-medium rounded-md flex items-center justify-between gap-2 duration-150 ease-linear cursor-pointer"
         )}
       >
@@ -84,7 +78,7 @@ const SidebarItem = ({
                   onClick={subItemsClick}
                   className={classNames(
                     isSubItemActive
-                      ? "bg-gradient-to-r from-gray-900 to-themeColor-500 "
+                      ? "bg-gradient-to-r from-indigo-500 "
                       : "text-sky-950 dark:text-white hover:bg-gradient-to-r hover:from-themeColor-500",
                     "py-1.5 px-4 text-base font-medium rounded-md flex gap-3"
                   )}
@@ -133,7 +127,7 @@ export default function Sidebar({ isSidebarOpen, closeSidebar, dark }) {
 
     {
       icon: <UserCircleGear size={25} />,
-      name: "departures",
+      name: "sideBar.departures",
       link: `${import.meta.env.VITE_PUBLIC_URL}/departures`,
     },
   ];
@@ -162,20 +156,35 @@ export default function Sidebar({ isSidebarOpen, closeSidebar, dark }) {
   };
 
   return (
-    <div className="flex h-screen dark:bg-gray-900 bg-gray-50 border-r border-gray-200 dark:border-gray-800 dark:shadow-xl overflow-y-auto">
+    <div className="flex h-screen bg-[#2d2d3f] border-r  border-gray-200 dark:border-gray-800 dark:shadow-xl overflow-y-auto">
       <nav
-        className={`flex flex-col w-full dark:bg-gray-900 bg-gray-50 ${isSidebarOpen ? "block" : "hidden"
+        className={`flex flex-col w-full bg-[#2d2d3f] text-white ${isSidebarOpen ? "block" : "hidden"
           }`}
       >
         <div className="flex py-2 pt-4 items-center justify-center h-16 z-20">
-          <img
-            className="h-8 w-auto"
-            src={dark ? LogoWideLight : LogoWideDark}
-            alt="Logo"
-          />
+          <div className="flex items-center space-x-4">
+            <button className="text-white hover:bg-[#2d2d3f] p-2 rounded-lg transition duration-300">
+              <svg
+                className="w-8 h-8 text-purple-500"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </button>
+            <h1 className="text-xl font-semibold">Tracker</h1>
+          </div>
         </div>
-        <div className="flex-grow p-4">
-          <div className="flex flex-col space-y-4">
+        <div className="flex-grow  p-4">
+          <div className="flex flex-col space-y-4 ">
             {selectedNavigation.map((item, index) => (
               <SidebarItem
                 key={index}

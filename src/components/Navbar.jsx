@@ -1,261 +1,106 @@
-import { Fragment, useEffect, useState } from "react";
-import { Menu, Transition } from "@headlessui/react";
-import { List, Bell, X, Moon, Sun, Translate } from "@phosphor-icons/react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import UserL from "../assets/userLight.svg";
-import UserD from "../assets/userDark.svg";
-import { useI18nContext } from "../context/i18n-context";
-import CryptoJS from "crypto-js";
+import { useState, useEffect, Fragment } from 'react';
+import { Menu, Transition } from '@headlessui/react';
+import { Bell, MagnifyingGlass, UserCheck } from '@phosphor-icons/react';
 
-import api from "../ApiUrl";
+export default function Navbar() {
+  const [profilePic, setProfilePic] = useState('');
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
-export default function Navbar({
-  onLogOut,
-  toggleDark,
-  dark,
-  returnPath,
-  onToggle,
-  toggleSidebar,
-  isSidebarOpen,
-  themeDark,
-  LogoWide,
-}) {
-  const [role, setRole] = useState("Guest");
-  const encryptedRole = sessionStorage.getItem("role");
-
-  useEffect(() => {
-    if (encryptedRole) {
-      const secretKey = "s3cr3t$Key@123!";
-      const decryptedRole = CryptoJS.AES.decrypt(
-        encryptedRole,
-        secretKey
-      ).toString(CryptoJS.enc.Utf8);
-      setRole(decryptedRole);
-    }
+   useEffect(() => {
+     setProfilePic('/placeholder.svg?height=32&width=32');
   }, []);
 
-
-
-  const [profilePic, setProfilePic] = useState("");
-  const { language, changeLanguage, t } = useI18nContext();
-
-  const handleGetProfile = () => {
-    api
-      .get(`/Profile`)
-      .then((response) => {
-         setProfilePic(response.data.profileImage);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  };
- 
-
   return (
-    <div className={`w-full z-10 relative`} dir="rtl">
-      <div
-        className={`${
-          themeDark ? "bg-gray-900 w-full" : "dark:bg-gray-900 bg-white w-full"
-        } shadow-md 
-      dark:shadow-xl `}
-      >
-        <div className="mx-auto">
-          <div
-            className={`relative flex h-16 items-center ${
-              language === "en" ? "justify-start" : "justify-end"
-            }`}
-          >
-            <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
-              <button
-                className="relative inline-flex items-center justify-center rounded-md p-2
-                md:hidden text-gray-400 hover:bg-gray-700 hover:text-white
-                focus:outline-none"
-                onClick={toggleSidebar}
-              >
-                {isSidebarOpen ? (
-                  <X className="h-6 w-6" aria-hidden="true" />
-                ) : (
-                  <List className="h-6 w-6" aria-hidden="true" />
-                )}
-              </button>
-            </div>
-            <div
-              className={`absolute inset-y-0 right-0 flex items-center
-              md:static md:inset-auto ${
-                language === "en" ? "md:mr-6 md:pr-0 pr-2" : "md:ml-6 md:pl-0 pl-2"
-              }`}
-            >
-              <button
-                type="button"
-                className="relative rounded-full dark:bg-gray-900 p-1 ml-1
-                dark:text-gray-400 dark:hover:text-white focus:outline-none
-                hover:text-slate-500"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
-                {role && <Bell className="h-6 w-6" aria-hidden="true" />}
-              </button>
+    <nav className="w-full bg-[#1e1e2d] text-white p-4 flex items-center justify-between shadow-md">
+      
 
-              <button
-                type="button"
-                className={`relative rounded-full dark:bg-gray-900 p-1 ml-1
-                dark:text-gray-400 dark:hover:text-white focus:outline-none
-                hover:text-slate-500 ${themeDark ? "hidden" : ""}`}
-                onClick={() => {
-                  toggleDark();
-                }}
-              >
-                {dark ? (
-                  <>
-                    <Sun className="h-6 w-6" aria-hidden="true" />
-                  </>
-                ) : (
-                  <>
-                    <Moon className="h-6 w-6" aria-hidden="true" />
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                className="relative rounded-full dark:bg-gray-900 p-1 ml-2
-                    dark:text-gray-400 dark:hover:text-white focus:outline-none
-                    hover:text-slate-500"
-                onClick={() => {
-                  changeLanguage(language === "en" ? "ar" : "en");
-                }}
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
-                <Translate className="h-6 w-6" aria-hidden="true" />
-              </button>
-
-              {/* Profile dropdown */}
-              <Menu as="div" className="relative mr-3">
-                <div>
-                  <Menu.Button className="relative flex rounded-full  text-sm border-none">
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">Open user menu</span>
-                    {role ? (
-                      <img
-                        className="h-8 w-8 rounded-full "
-                        src={
-                          profilePic
-                            ? `https://${profilePic}`
-                            : dark
-                            ? UserL
-                            : UserD
-                        }
-                        alt=""
-                      />
-                    ) : (
-                      <img
-                        className="h-8 w-8 rounded-full "
-                        src={`${dark ? UserL : UserD}`}
-                        alt=""
-                      />
-                    )}
-                  </Menu.Button>
-                </div>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  {role ? (
-                    <Menu.Items
-                      className="absolute -right-20 top-10 z-10 mt-2 w-32
-                  origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                    >
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                          >
-                            Your Profile
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                          >
-                            Settings
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
-                            )}
-                            onClick={onLogOut}
-                          >
-                            Sign out
-                          </a>
-                        )}
-                      </Menu.Item>
-                    </Menu.Items>
-                  ) : (
-                    <Menu.Items
-                      className="absolute -right-20 top-10 z-10 mt-2 w-32
-                  origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                    >
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="/login"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                            onClick={() => returnPath("login")}
-                          >
-                            Login
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="/register"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                            onClick={() => returnPath("register")}
-                          >
-                            Register
-                          </a>
-                        )}
-                      </Menu.Item>
-                    </Menu.Items>
-                  )}
-                </Transition>
-              </Menu>
-            </div>
-          </div>
+      <div className="flex-1 max-w-xl px-4">
+        <div className="relative">
+          <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input
+            className="w-full bg-[#2d2d3f] border-none pl-10 pr-4 py-2 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
+            placeholder="Search here..."
+            type="search"
+          />
         </div>
       </div>
-    </div>
+
+      <div className="flex items-end space-x-4">
+        <Menu as="div" className="relative">
+          <div>
+            <Menu.Button className="rounded-full mx-5 focus:outline-none focus:ring-2 focus:ring-purple-500">
+              <UserCheck size={28} className="text-white" />
+            </Menu.Button>
+          </div>
+
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <Menu.Item>
+                {({ active }) => (
+                  <a
+                    href="/profile"
+                    className={`${active ? 'bg-gray-100' : ''
+                      } block px-4 py-2 text-sm text-gray-700`}
+                  >
+                    Profile
+                  </a>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <a
+                    href="/settings"
+                    className={`${active ? 'bg-gray-100' : ''
+                      } block px-4 py-2 text-sm text-gray-700`}
+                  >
+                    Settings
+                  </a>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <a
+                    href="/logout"
+                    className={`${active ? 'bg-gray-100' : ''
+                      } block px-4 py-2 text-sm text-gray-700`}
+                  >
+                    Log out
+                  </a>
+                )}
+              </Menu.Item>
+            </Menu.Items>
+          </Transition>
+        </Menu>
+
+        <button className="text-white hover:bg-[#2d2d3f] p-2 rounded-full transition duration-300">
+          <Bell className="h-7 w-7" />
+        </button>
+
+        <button className="text-white hover:bg-[#2d2d3f] p-2 rounded-full transition duration-300">
+          <svg
+            className="h-7 w-7 text-purple-500"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M19 12c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9 9-4.03 9-9z" />
+            <path d="M15 9.354a4 4 0 1 0 0 5.292" />
+          </svg>
+        </button>
+      </div>
+    </nav>
   );
 }

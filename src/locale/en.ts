@@ -74,6 +74,7 @@ const en = {
   sideBar: {
     dashboard: "Dashboard",
     profile: "Profile",
+    departures: "departures",
     users: "Users",
     registration: "Registration",
     clients: "Clients",

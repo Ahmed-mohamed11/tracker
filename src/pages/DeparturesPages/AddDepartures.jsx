@@ -7,11 +7,10 @@ import FormText from "../../components/form/FormText";
 import FormSelect from "../../components/form/FormSelect";
 import FormTextArea from "../../components/form/FormTextArea";
 
-
 const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
         name: "",
-        client: "", // سيتم تخزين id العميل هنا
+        client: "",
         description: "",
     });
 
@@ -22,11 +21,6 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
             [name]: type === 'checkbox' ? checked : value,
         }));
     }, []);
-
-
-
-
-
 
     const [clients, setClients] = useState([]);
 
@@ -48,13 +42,6 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
 
         fetchClients();
     }, []);
-
-
-
-
-
-
-
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent the default form submission behavior
@@ -109,9 +96,10 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
                             className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         >
                             <X size={18} weight="bold" />
+
                             <span className="sr-only">Close modal</span>
                         </button>
-                        <h2> Add Employee </h2>
+                        <h2>إضافة موظف</h2>
                     </div>
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-left" onSubmit={handleSubmit}>
@@ -130,12 +118,30 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
 
                                 <FormSelect
                                     label="اختار موظف"
+                                <FormText label="الاسم الأول" type={"text"} name="firstName" placeholder={"أدخل الاسم الأول"} value={formData.firstName} onChange={handleChange} />
+                                <FormText label="الاسم الثاني" type={"text"} name="secondName" placeholder={"أدخل الاسم الثاني"} value={formData.secondName} onChange={handleChange} />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormText label="اسم المستخدم" type={"text"} name="userName" placeholder={"أدخل اسم المستخدم"} value={formData.userName} onChange={handleChange} />
+                                <FormText label="البريد الإلكتروني" type={"email"} name="email" placeholder={"أدخل البريد الإلكتروني"} value={formData.email} onChange={handleChange} />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormText label="المسمى الوظيفي" type={"text"} name="jobTitle" placeholder={"أدخل المسمى الوظيفي"} value={formData.jobTitle} onChange={handleChange} />
+                                <FormText label="الرقم الوظيفي" type={"text"} name="jobNumber" placeholder={"أدخل الرقم الوظيفي"} value={formData.jobNumber} onChange={handleChange} />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormText label="رقم الهاتف" type={"tel"} name="phoneNumber" placeholder={"أدخل رقم الهاتف"} value={formData.phoneNumber} onChange={handleChange} />
+                                <FormSelect
+                                    label="الجنس"
                                     value={formData.gender}
-                                    name="gender" // Use a constant string here to match the form field name
+                                    name="gender"
                                     onChange={handleChange}
                                     options={[
-                                        { value: "male", label: "Male" },
-                                        { value: "female", label: "Female" },
+                                        { value: "male", label: "ذكر" },
+                                        { value: "female", label: "أنثى" },
                                     ]}
                                 />
                             </div>
@@ -164,20 +170,29 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
                                 </div>
 
 
-                            </div>
+                                <FormSelect
+                                    label="الطرف المسؤول"
+                                    value={formData.responsibleParty}
+                                    name="responsibleParty"
+                                    onChange={handleChange}
+                                    options={clients.map(client => ({
+                                        value: client.id,
+                                        label: client.name
+                                    }))}
+                                />
 
-                            {/**
-                             <FormSelect
-                                label="Project Client"
-                                value={formData.client}
-                                name="client" // Use a constant string here to match the form field name
-                                onChange={handleChange}
-                                options={clients.map(client => ({
-                                    value: client.id, // ID of the client
-                                    label: client.name // Name of the client
-                                }))}
-                            />
-                             */}
+                                <FormSelect
+                                    label="نوع الموظف"
+                                    value={formData.employeeType}
+                                    name="employeeType"
+                                    onChange={handleChange}
+                                    options={[
+                                        { value: "engineer", label: "مهندس" },
+                                        { value: "technician", label: "فني" },
+                                        { value: "office", label: "إداري" },
+                                    ]}
+                                />
+                            </div>
 
                             <button
                                 className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 flex items-center"
