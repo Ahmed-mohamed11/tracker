@@ -1,13 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import AddDepartures from './AddDepartures'; // Ensure the path is correct
+import AddDepartures from './AddDepartures';  
 import PreviewProjects from './PreviewProjects';
 import Table from '../../components/Table';
-import { IoSearch } from "react-icons/io5";
-import { FaFilter } from "react-icons/fa6";
-import { IoMdSettings } from "react-icons/io";
-import { FaArrowCircleDown, FaPlus, FaPlusCircle } from "react-icons/fa";
+ 
+import { FaPlus  } from "react-icons/fa";
 import FormText from "../../components/form/FormText";
 import FormSelect from '../../components/form/FormSelect';
 
@@ -21,20 +19,17 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
     const fetchData = useCallback(async () => {
         try {
-            const token = Cookies.get('token'); // Retrieve token from cookies
+            const token = Cookies.get('token');  
             if (!token) {
                 console.error('No token found in cookies');
                 return;
             }
 
-
-
-
-            // Fetch both projects and clients
-            const [projectsResponse, clientsResponse] = await Promise.all([
+ 
+             const [projectsResponse, clientsResponse] = await Promise.all([
                 axios.get('https://dashboard.cowdly.com/api/projects/', {
                     headers: {
-                        'Authorization': `Token ${token}`, // Include token in the request header
+                        'Authorization': `Token ${token}`,  
                     },
                 }),
                 axios.get('https://dashboard.cowdly.com/api/clients/', {
@@ -73,7 +68,7 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
     const handleOpenCreate = () => {
         console.log('Open Create button clicked');
-        openCreate(); // Ensure this triggers the correct function
+        openCreate(); 
     };
 
     useEffect(() => {
@@ -97,8 +92,8 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                         className="flex items-center space-x-2 rounded-full bg-green-500 p-2 text-white"
                         onClick={handleOpenCreate}
                     >
-                        <FaPlus className="h-6 w-6" />
-
+                        <FaPlus className="h-6 w-6 mx-3" />
+                        إضافة موظف
                     </button>
 
                 </div>
@@ -107,44 +102,37 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
 
             <div className="mb-6 grid justify-end grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <div></div>
-                <FormSelect
+                 <FormSelect
                     label="اختر الوظيفه "
-                    // value={formData.gender}
-                    name="gender" // Use a constant string here to match the form field name
-                    // onChange={handleChange}
-                    options={[
+                     name="gender" 
+                     options={[
                         { value: "male", label: "Male" },
                         { value: "female", label: "Female" },
                     ]}
                 />
                 <FormSelect
                     label="اختر الجهه"
-                    // value={formData.gender}
-                    name="gender" // Use a constant string here to match the form field name
-                    // onChange={handleChange}
-                    options={[
+                     name="gender"  
+                     options={[
                         { value: "male", label: "Male" },
                         { value: "female", label: "Female" },
                     ]}
                 />
-                <FormText label="First Name" type={"text"} name="firstName" placeholder={"Enter First Name"} />
+                <FormText label="الإسم الأول" type={"text"} name="firstName" placeholder={"الإسم الأول"} />
 
             </div>
             <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <div className='flex justify-end items-end '>
                     <button
-                        // onClick={handleOpenCreate}
+                        
                         className="  bg-green-600 text-white w-full text-center px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 ">
                         عرض
                     </button>
                 </div>
                 <FormSelect
                     label="نوع الطلب "
-                    // value={formData.gender}
-                    name="gender" // Use a constant string here to match the form field name
-                    // onChange={handleChange}
-                    options={[
+                     name="gender" 
+                     options={[
                         { value: "male", label: "Male" },
                         { value: "female", label: "Female" },
                     ]}
@@ -163,10 +151,8 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
                 <FormSelect
                     label=" نوع الطلب"
-                    // value={formData.gender}
-                    name="gender" // Use a constant string here to match the form field name
-                    // onChange={handleChange}
-                    options={[
+                     name="gender" 
+                     options={[
                         { value: "male", label: "Male" },
                         { value: "female", label: "Female" },
                     ]}
