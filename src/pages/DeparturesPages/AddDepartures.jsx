@@ -117,24 +117,19 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
                         <form className="form-add-product text-left" onSubmit={handleSubmit}>
                             {/* Form content */}
                             <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="First Name" type={"text"} name="firstName" placeholder={"Enter First Name"} value={formData.firstName} onChange={handleChange} />
-                                <FormText label="Second Name" type={"text"} name="secondName" placeholder={"Enter Second Name"} value={formData.secondName} onChange={handleChange} />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="User Name" type={"text"} name="userName" placeholder={"Enter User Name"} value={formData.userName} onChange={handleChange} />
-                                <FormText label="Email" type={"email"} name="email" placeholder={"Enter Email"} value={formData.email} onChange={handleChange} />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="Job Title" type={"text"} name="jobTitle" placeholder={"Enter Job Title"} value={formData.jobTitle} onChange={handleChange} />
-                                <FormText label="Job Number" type={"text"} name="jobNumber" placeholder={"Enter Job Number"} value={formData.jobNumber} onChange={handleChange} />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText label="Phone Number" type={"tel"} name="phoneNumber" placeholder={"Enter Phone Number"} value={formData.phoneNumber} onChange={handleChange} />
                                 <FormSelect
-                                    label="Gender"
+                                    label="اختيار الجهه"
+                                    value={formData.gender}
+                                    name="gender" // Use a constant string here to match the form field name
+                                    onChange={handleChange}
+                                    options={[
+                                        { value: "male", label: "Male" },
+                                        { value: "female", label: "Female" },
+                                    ]}
+                                />
+
+                                <FormSelect
+                                    label="اختار موظف"
                                     value={formData.gender}
                                     name="gender" // Use a constant string here to match the form field name
                                     onChange={handleChange}
@@ -146,28 +141,27 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormSelect
-                                    label="Responsible Party"
-                                    value={formData.responsibleParty}
-                                    name="responsibleParty" // Use a constant string here to match the form field name
-                                    onChange={handleChange}
-                                    options={clients.map(client => ({
-                                        value: client.id, // ID of the client
-                                        label: client.name // Name of the client
-                                    }))}
-                                />
+                                <div className='flex flex-col justify-end items-end '>
+                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear"> تاريخ المغادرة</label>
+                                    <input type="date" className=" bg-gray-50 border border-gray-300
+                                text-gray-900 text-sm rounded-md
+                                block w-full p-2.5 dark:bg-gray-700
+                                dark:border-gray-600 dark:placeholder-gray-400 
+                                dark:text-white outline-none 
+                                focus:border-orange-400 dark:focus:border-orange-400
+                                duration-100 ease-linear" value="2024-9-22" />
+                                </div>
 
-                                <FormSelect
-                                    label="Employee Type"
-                                    value={formData.employeeType}
-                                    name="employeeType" // Use a constant string here to match the form field name
-                                    onChange={handleChange}
-                                    options={[
-                                        { value: "engineer", label: "Engineer" },
-                                        { value: "technician", label: "Technician" },
-                                        { value: "office", label: "Office" },
-                                    ]}
-                                />
+                                <div>
+                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear" htmlFor="timeInput">وقت المغادره</label>
+                                    <input type="time" id="timeInput" name="timeInput" className=" bg-gray-50 border border-gray-300
+                                    text-gray-900 text-sm rounded-md
+                                    block w-full p-2.5 dark:bg-gray-700
+                                    dark:border-gray-600 dark:placeholder-gray-400 
+                                    dark:text-white outline-none 
+                                    focus:border-orange-400 dark:focus:border-orange-400
+                                    duration-100 ease-linear" value="2024-9-22"></input>
+                                </div>
 
 
                             </div>
@@ -186,8 +180,8 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
                              */}
 
                             <button
-                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center"
-                                type="submit"><i className="icon-plus"></i>Add New</button>
+                                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 flex items-center"
+                                type="submit"><i className="icon-plus"></i>اضافه المغادره</button>
                         </form>
                     </div>
                 </div>
