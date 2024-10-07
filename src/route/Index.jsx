@@ -8,6 +8,8 @@ import EmployeeStructure from "../pages/EmployeeStructure/EmployeeStructure";
 import Shifts from "../pages/Shifts/calendar/calendar";
 import Sites from "../pages/Sites/Sites";
 import Records from "../pages/Records/Records";
+import RejectedMovements from "../pages/RejectedMovements/RejectedMovements";
+import AccountSetting from "../pages/AccountSetting/accountSetting";
 import Login from "../pages/auth/login/Login";
 
 
@@ -30,6 +32,8 @@ const AdminPages = ({ loading }) => {
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/shifts`} element={<Shifts />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/sites`} element={<Sites />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/records`} element={<Records />} />
+        <Route path={`${import.meta.env.VITE_PUBLIC_URL}/rejected`} element={<RejectedMovements />} />
+        <Route path={`${import.meta.env.VITE_PUBLIC_URL}/account`} element={<AccountSetting />} />
 
 
 

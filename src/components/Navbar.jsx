@@ -166,8 +166,8 @@ export default function Navbar({ dark }) {
       subItems: [
         { name: t("sideBar.site"), link: `${import.meta.env.VITE_PUBLIC_URL}/sites` },
         { name: t("sideBar.audio"), link: `${import.meta.env.VITE_PUBLIC_URL}/records` },
-        { name: t("sideBar.reject"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
-        { name: t("sideBar.changeSetting"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
+        { name: t("sideBar.reject"), link: `${import.meta.env.VITE_PUBLIC_URL}/rejected` },
+        { name: t("sideBar.changeSetting"), link: `${import.meta.env.VITE_PUBLIC_URL}/account` },
         { name: t("sideBar.ComeSetting"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
       ],
     },
