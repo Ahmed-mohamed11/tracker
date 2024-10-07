@@ -1,108 +1,125 @@
 import { useEffect, useState } from "react";
 import FormLogin from "./form/FormLogin";
-import api from "../../../ApiUrl";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
- import { ErrorAlert } from "../../../components/Alert";
-
+import { ErrorAlert } from "../../../components/Alert";
 import CryptoJS from "crypto-js";
+import Cookies from "js-cookie"; // Import the js-cookie package
 
-export default function Login(props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function Login() {
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errorMsg, setErrorMsg] = useState("");
+  const [errors, setErrors] = useState({ email: "", password: "" });
+  const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleEmailInput = (event) => {
-    setEmail(event.target.value);
+  const handleEmailInput = (e) => {
+    setFormData({ ...formData, email: e.target.value });
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+  const handlePasswordChange = (e) => {
+    setFormData({ ...formData, password: e.target.value });
+  };
+
+  const handleShowPass = () => {
+    setShowPass(!showPass);
   };
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    props.loading(true);
-    const requestData = {
-      email: email,
-      password: password,
-    };
+    const newErrors = {};
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const response = await api.post("/login", requestData);
+      const response = await axios.post(
+        "https://bio.skyrsys.com/api/company/login/",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
 
-       props.loading(true);
-      const data = response.data.data;
+      console.log("Response Data:", response.data); // Check response structure
+
+      const data = response.data?.data || response.data;
+
+      if (!data || !data.token) {
+        throw new Error("Invalid response structure");
+      }
+
       const token = data.token;
- 
-       
 
-      const id = data.id;
+      // Set the token in cookies for easy access
+      Cookies.set('token', token, { expires: 7 }); // Store the token with a 7-day expiration
 
-      const secretKey = "s3cr3t$Key@123!";
-       const encryptedToken = CryptoJS.AES.encrypt(token, secretKey).toString();
-       sessionStorage.setItem("token", encryptedToken);
+      localStorage.setItem("id", data.id);
+      setLoading(false);
 
-      localStorage.setItem("id", id);
-      props.loading(false);
-      props.onLogIn();
+      // Redirect to dashboard
+      navigate(`${import.meta.env.VITE_PUBLIC_URL}/`);
+
     } catch (error) {
-      setErrorMsg("An error occurred:", error);
-      props.loading(false);
+      console.error("Login Error:", error);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Error in login details, check email and password";
+      setErrorMsg(message);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const encryptedToken = sessionStorage.getItem("token");
-    let decryptedToken = null;
-
-    if (encryptedToken) {
-      const secretKey = "s3cr3t$Key@123!";
-      decryptedToken = CryptoJS.AES.decrypt(encryptedToken, secretKey).toString(
-        CryptoJS.enc.Utf8
-      );
-    }
-
-    if (decryptedToken) {
-      navigate(`${import.meta.env.VITE_PUBLIC_URL}/`);
+    const token = Cookies.get('token'); // Retrieve token from cookies
+    if (token) {
+      navigate(`${import.meta.env.VITE_PUBLIC_URL}/`); // Redirect if the user is already logged in
     }
   }, [navigate]);
 
   return (
-    <div
-      className={`min-h-screen flex items-center justify-center
-      lg:justify-between w-full mx-auto gap-x-10`}
-    >
+    <div className="col-span-1 min-h-screen flex items-center justify-center lg:justify-between w-full mx-auto gap-x-10">
+      {loading && (
+        <div className="flex justify-center items-center gap-14 h-screen w-full fixed z-50 dark:bg-gray-900 bg-white">
+          <div className="dot-spin"></div>
+          <p className="text-lg font-medium dark:text-white">
+            جاري التحميل ... كن صبورًا
+          </p>
+        </div>
+      )}
       {errorMsg && (
         <ErrorAlert
           title={"Error"}
-          text={"Error in login details check email and password"}
+          text={errorMsg}
           closeClick={() => setErrorMsg("")}
         />
       )}
-      <div
-        className="  bg-gray-100 shadow-xl border-2 mx-auto rounded-xl lg:border-none
-         w-96 md:w-1/2 xl:w-1/3  "
-        dir="rtl"
-      >
-         <div className="flex flex-col gap-2 p-3 justify-center items-center w-full  ">
-          <h1 className="font-medium text-base ">{errorMsg}</h1>
-          <h1 className="font-semibold text-2xl">سجل دخول</h1>
-          <p className="text-center font-medium text-base">
-            الوصول إلى لوحة معلومات باستخدام بريدك الإلكتروني او اسم المستخدم
-            وكلمة المرور
-          </p>
-        </div>
-        <FormLogin
-          buttonText="تسجيل الدخول"
-          handlePasswordChange={handlePasswordChange}
-          handleEmailInput={handleEmailInput}
-          handleSubmitLogin={handleLogin}
-        />
-      </div>
-    
+      <FormLogin
+        buttonText="تسجيل الدخول"
+        handlePasswordChange={handlePasswordChange}
+        handleEmailInput={handleEmailInput}
+        handleSubmitLogin={handleLogin}
+        formData={formData}
+        setFormData={setFormData}
+        errors={errors}
+        showPass={showPass}
+        handleShowPass={handleShowPass}
+      />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import RegisterEmployee from './RegisterEmployee'; // Ensure the path is correct
+import AddSites from './AddSites'; // Ensure the path is correct
 import PreviewProjects from './PreviewProjects';
 import Table from '../../components/Table';
 import { IoSearch } from "react-icons/io5";
@@ -9,7 +9,7 @@ import { FaArrowCircleDown, FaPlus } from "react-icons/fa";
 import { useI18nContext } from '../../context/i18n-context';
 
 
-const ProjectTable = ({ openPreview, openCreate }) => {
+const MainGatesTable = ({ openPreview, openCreate }) => {
     const { t } = useI18nContext(); // Get the translation function
     const [modalType, setModalType] = useState(null);
     const [tableData, setTableData] = useState([]);
@@ -85,9 +85,9 @@ const ProjectTable = ({ openPreview, openCreate }) => {
     };
 
     return (
-        <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
+        <div className="col-span-2 min-h-screen mt-10  w-full mx-auto">
             <div className="mb-10 w-full flex items-center justify-between p-4 bg-green-100 border-b ">
-                <h2 className="text-2xl font-bold">طلبات تسجيل الموظفين</h2>
+                <h2 className="text-2xl font-bold">مجموعه البوابات الرئيسيه</h2>
                 <button
                     className="flex items-center justify-center p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition duration-200"
                     onClick={handleOpenCreate}
@@ -100,7 +100,7 @@ const ProjectTable = ({ openPreview, openCreate }) => {
             <div className=" flex justify-between items-center mt-6 gap-14">
 
 
-                <div className="flex w-4/5 gap-5">
+                <div className="flex w-full gap-5">
                     <div className="relative flex items-center justify-center">
                         <input type="text" placeholder={t('registrationForm.searchPlaceholder')} className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                         <div className=' h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center '>
@@ -142,7 +142,7 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                 <PreviewProjects closeModal={() => setModalType(null)} projectIdId={selectedProjectId} />
             )}
             {modalType === "project" && (
-                <RegisterEmployee
+                <AddSites
                     closeModal={() => setModalType(null)}
                     modal={modalType === "project"}
                     onClientAdded={addNewProjectToTable}
@@ -152,4 +152,4 @@ const ProjectTable = ({ openPreview, openCreate }) => {
     );
 };
 
-export default ProjectTable;
+export default MainGatesTable;

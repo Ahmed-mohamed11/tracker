@@ -4,7 +4,8 @@ import { X } from "@phosphor-icons/react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
-import FormSelect from "../../components/form/FormSelect";
+// import FormSelect from "../../components/form/FormSelect";
+import FormTextArea from "../../components/form/FormTextArea";
 import { useI18nContext } from "../../context/i18n-context";
 
 const AddProjects = ({ closeModal, modal, onClientAdded }) => {
@@ -89,7 +90,7 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
         >
             <div
                 style={{ boxShadow: "black 19px 0px 45px -12px" }}
-                className={`rounded-l-[15px] p-4 w-full max-w-[45rem] pb-10 bg-white
+                className={`rounded-l-[15px] p-4 w-full max-w-[35rem] pb-10 bg-white
                 dark:bg-gray-800 rounded-r-lg duration-200 ease-linear
                 ${modal ? "fixed left-0" : "absolute -left-full"}
                 h-screen overflow-auto`}
@@ -97,7 +98,7 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
             >
                 <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5">
                     <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10 ">
-                        <h2>{t('registrationForm.title')}</h2>
+                        <h2>اضافه مجموعه مواقع جديده</h2>
                         <button
                             type="button"
                             onClick={closeModal}
@@ -108,38 +109,52 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                         </button>
                     </div>
                     <div className="main-content-wrap mt-5">
-                        <form className="form-add-product text-left" onSubmit={handleSubmit}>
+                        <form className="form-add-product text-right" onSubmit={handleSubmit}>
                             {/* Form content */}
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+
+                            <div className="mb-5">
                                 <FormText
-                                    label={t('registrationForm.fields.firstName')}
+                                    label="الاسم بالعربي"
                                     type="text"
                                     name="firstName"
-                                    placeholder={t('registrationForm.fields.firstName')}
+                                    placeholder="الاسم بالعربي"
                                     value={formData.firstName}
                                     onChange={handleChange}
-                                />
-                                <FormText
-                                    label={t('registrationForm.fields.secondName')}
-                                    type="text"
-                                    name="secondName"
-                                    placeholder={t('registrationForm.fields.secondName')}
-                                    value={formData.secondName}
-                                    onChange={handleChange}
+                                    className="mb-4"
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="mb-5">
                                 <FormText
-                                    label={t('registrationForm.fields.userName')}
+                                    label="الاسم بالانجليزي"
+                                    placeholder="الاسم بالانجليزي"
                                     type="text"
-                                    name="userName"
-                                    placeholder={t('registrationForm.fields.userName')}
-                                    value={formData.userName}
+                                    name="secondName"
+                                    value={formData.secondName}
+                                    onChange={handleChange}
+                                    className="mt-10"
+                                />
+                            </div>
+
+                            <div className="mb-5">
+
+                                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="attendance-time">
+                                    وقت الحضور والانصراف
+                                </label>
+                                <input
+                                    type="time"
+                                    name="attendanceTime"
+                                    id="attendance-time"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    value={formData.attendanceTime}
                                     onChange={handleChange}
                                 />
-                                <FormText
-                                    label={t('registrationForm.fields.email')}
+
+                            </div>
+
+                            <div className="mb-5">
+                                <FormTextArea
+                                    label="الوصف"
                                     type="email"
                                     name="email"
                                     placeholder={t('registrationForm.fields.email')}
@@ -148,68 +163,15 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText
-                                    label={t('registrationForm.fields.jobTitle')}
-                                    type="text"
-                                    name="jobTitle"
-                                    placeholder={t('registrationForm.fields.jobTitle')}
-                                    value={formData.jobTitle}
-                                    onChange={handleChange}
-                                />
-                                <FormText
-                                    label={t('registrationForm.fields.jobNumber')}
-                                    type="text"
-                                    name="jobNumber"
-                                    placeholder={t('registrationForm.fields.jobNumber')}
-                                    value={formData.jobNumber}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText
-                                    label={t('registrationForm.fields.phoneNumber')}
-                                    type="tel"
-                                    name="phoneNumber"
-                                    placeholder={t('registrationForm.fields.phoneNumber')}
-                                    value={formData.phoneNumber}
-                                    onChange={handleChange}
-                                />
-                                <FormSelect
-                                    label={t('registrationForm.fields.gender')}
-                                    value={formData.gender}
-                                    name="gender"
-                                    onChange={handleChange}
-                                    options={[
-                                        { value: "male", label: t('registrationForm.genderOptions.male') },
-                                        { value: "female", label: t('registrationForm.genderOptions.female') },
-                                    ]}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormSelect
-                                    label={t('registrationForm.fields.responsibleParty')}
-                                    value={formData.responsibleParty}
-                                    name="responsibleParty"
-                                    onChange={handleChange}
-                                    options={clients.map(client => ({
-                                        value: client.id,
-                                        label: client.name
-                                    }))}
-                                />
-                                <FormSelect
-                                    label={t('registrationForm.fields.employeeType')}
-                                    value={formData.employeeType}
-                                    name="employeeType"
-                                    onChange={handleChange}
-                                    options={[
-                                        { value: "engineer", label: t('registrationForm.employeeTypeOptions.engineer') },
-                                        { value: "technician", label: t('registrationForm.employeeTypeOptions.technician') },
-                                        { value: "office", label: t('registrationForm.employeeTypeOptions.office') },
-                                    ]}
-                                />
+                            <div className="grid grid-cols-3 gap-4 mb-5">
+                                <div className=" col-span-2">
+                                    <p className="text-lg font-medium text-gray-900 dark:text-gray-300">الحاله</p>
+                                </div>
+                                <label className=" col-span-1 px-4 py-2 rounded-full bg-green-300 inline-flex items-center cursor-pointer" >
+                                    <input type="checkbox" value="" className="sr-only peer" />
+                                    <span className="me-3 text-sm font-medium text-gray-900 dark:text-gray-300">Toggle me</span>
+                                    <div className="relative w-11 h-6 bg-gray-200  dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                </label>
                             </div>
 
                             <button

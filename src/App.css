@@ -12,6 +12,10 @@ html {
   scroll-behavior: smooth;
 }
 
+h2 {
+  color: #22c55e;
+}
+
 ::-webkit-scrollbar {
   background: rgb(148, 171, 201);
   border-left: 1px solid rgb(148, 171, 201);

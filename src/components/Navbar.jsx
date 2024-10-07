@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   House,
   UserCircleGear,
@@ -7,6 +7,8 @@ import {
   CaretDown,
   List,
   X,
+  Clock,
+  Gear,
 } from "@phosphor-icons/react";
 import { Link, useLocation } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
@@ -23,8 +25,27 @@ const NavbarItem = ({
   subItems,
   isOpen,
   toggleSubMenu,
+  closeSubMenu,
 }) => {
   const location = useLocation();
+  const ref = useRef();
+
+  useEffect(() => {
+    // دالة للتحقق مما إذا كان النقر خارج القائمة الفرعية
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        closeSubMenu(); // إغلاق القائمة الفرعية إذا كان النقر خارجها
+      }
+    };
+
+    // إضافة مستمع للنقرات
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // إزالة المستمع عند إلغاء المكون
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [closeSubMenu]);
 
   const isActive =
     location.pathname === link ||
@@ -39,15 +60,15 @@ const NavbarItem = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={ref}>
       <Link
         to={link}
         onClick={handleClick}
         className={classNames(
           isActive
-            ? "text-indigo-500 border-b-2 border-indigo-500"
-            : "text-white hover:text-indigo-300",
-          "px-4 py-2 text-sm font-medium flex items-center gap-2 duration-150 ease-linear"
+            ? "text-gray-200 border-b-2 border-gray-300 rounded-md"
+            : "text-white rounded-md hover:bg-gradient-to-r hover:from-themeColor-600 hover:b ",
+          "px-3  py-2 text-sm font-medium flex items-center gap-2 duration-150 ease-linear"
         )}
       >
         {icon}
@@ -65,15 +86,20 @@ const NavbarItem = ({
       {subItems && (
         <div
           className={classNames(
-            "absolute top-full left-0 mt-5 bg-[#2d2d3f] text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
-            isOpen ? "opacity-100 visible animate-slide-down" : "opacity-0 invisible animate-slide-up"
+            "absolute top-full left-0 mt-5 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
+            isOpen
+              ? "opacity-100 visible animate-slide-down"
+              : "opacity-0 invisible animate-slide-up"
           )}
         >
           {subItems.map((subItem, index) => (
             <Link
               key={index}
               to={subItem.link}
-              onClick={onClick}
+              onClick={() => {
+                onClick(); // تحديث الحالة المطلوبة (مثل تغيير العنصر النشط)
+                closeSubMenu(); // إغلاق القائمة الفرعية بعد النقر
+              }}
               className="block px-4 py-2 text-base hover:bg-gradient-to-r hover:from-themeColor-500"
             >
               {subItem.name}
@@ -93,6 +119,10 @@ export default function Navbar({ dark }) {
 
   const toggleSubMenu = (index) => {
     setOpenMenuIndex(openMenuIndex === index ? null : index);
+  };
+
+  const closeSubMenu = () => {
+    setOpenMenuIndex(null);
   };
 
   const toggleMobileMenu = () => {
@@ -121,9 +151,37 @@ export default function Navbar({ dark }) {
       name: t("sideBar.Administrative"),
       subItems: [
         { name: t("sideBar.Entities"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
-        { name: t("sideBar.Employee"), link: `${import.meta.env.VITE_PUBLIC_URL}/users` },
+        { name: t("sideBar.Employee"), link: `${import.meta.env.VITE_PUBLIC_URL}/employee` },
       ],
     },
+    {
+      icon: <Clock size={32} />,
+      name: t("sideBar.Shifts"),
+      link: `${import.meta.env.VITE_PUBLIC_URL}/shifts`,
+    },
+
+    {
+      icon: <Gear size={32} />,
+      name: t("sideBar.setting"),
+      subItems: [
+        { name: t("sideBar.site"), link: `${import.meta.env.VITE_PUBLIC_URL}/sites` },
+        { name: t("sideBar.audio"), link: `${import.meta.env.VITE_PUBLIC_URL}/records` },
+        { name: t("sideBar.reject"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
+        { name: t("sideBar.changeSetting"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
+        { name: t("sideBar.ComeSetting"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
+      ],
+    },
+
+    {
+      icon: <Gear size={32} />,
+      name: t("sideBar.reports"),
+      subItems: [
+        { name: t("sideBar.site"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
+        { name: t("sideBar.audio"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
+
+      ],
+    },
+
   ];
 
   const navigationError = [
@@ -144,10 +202,13 @@ export default function Navbar({ dark }) {
     setActiveIndex(index);
     localStorage.setItem("currentPath", link);
     setIsMobileMenuOpen(false); // إغلاق القائمة بعد اختيار العنصر
+
+    // تمرير الصفحة إلى الأعلى بعد الانتقال إلى الرابط
+    window.scrollTo(0, 0);
   };
 
   return (
-    <div className="w-full bg-[#2d2d3f] text-white shadow-lg sticky top-0 z-50">
+    <div className="w-full text-white shadow-lg sticky top-0 z-50 bg-gradient-to-r from-themeColor-900 via-themeColor-800 to-themeColor-600">
       <nav className="flex items-center justify-between p-4 lg:justify-around">
         {/* زر القائمة للشاشات الصغيرة */}
         <div className="lg:hidden">
@@ -161,11 +222,13 @@ export default function Navbar({ dark }) {
           <h1 className="text-2xl font-semibold">Tracker</h1>
         </div>
 
-        {/* روابط القائمة */}
+        {/* روابط القائمة الكبيرة */}
         <div
           className={classNames(
             "mt-3 lg:flex items-center space-x-6 transition-all duration-300 ease-in-out",
-            isMobileMenuOpen ? "absolute top-full right-2 w-[40%] rounded-md bg-[#2d2d3f] p-4 lg:static lg:bg-transparent lg:w-auto lg:p-0 block animate-slide-down" : "hidden lg:block "
+            isMobileMenuOpen
+              ? "absolute top-full right-2 w-[40%] rounded-md p-4 lg:static lg:bg-transparent lg:w-auto lg:p-0 block animate-slide-down"
+              : "hidden lg:block"
           )}
         >
           {selectedNavigation.map((item, index) => (
@@ -177,6 +240,7 @@ export default function Navbar({ dark }) {
               subItems={item.subItems}
               isOpen={openMenuIndex === index}
               toggleSubMenu={() => toggleSubMenu(index)}
+              closeSubMenu={closeSubMenu}
               onClick={() => handleItemClick(index, item.link)}
             />
           ))}

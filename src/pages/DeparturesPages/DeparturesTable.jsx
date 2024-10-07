@@ -86,12 +86,13 @@ const ProjectTable = ({ openPreview, openCreate }) => {
     };
 
     return (
-        <div className="min-h-screen p-8 mt-5">
+        <div className="min-h-screen mt-6 font-sans lg:max-w-7xl w-full mx-auto">
             <div className="mb-6 flex items-center justify-between">
-                <div className="w-full flex items-center justify-between ">
-                    <h2 className="text-2xl font-bold">المغادرات</h2>
+                <div className="w-full flex items-center justify-between p-4 bg-green-100 border-b ">
+
+                    <h2 className="text-xl font-bold">المغادرات</h2>
                     <button
-                        className="flex items-center  rounded-full bg-green-500 p-3 gap-2  text-white"
+                        className="fflex items-center justify-center p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition duration-200"
                         onClick={handleOpenCreate}
                     >
                         <FaPlus className="h-6 w-6 " />

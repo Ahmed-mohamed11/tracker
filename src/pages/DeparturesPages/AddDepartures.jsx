@@ -91,22 +91,22 @@ const AddDepartures = ({ closeModal, modal, onClientAdded }) => {
                 style={{ boxShadow: "black 19px 0px 45px -12px" }}
                 className={`rounded-l-[15px] p-4 w-full max-w-[40rem] pb-10 bg-white
                 dark:bg-gray-800 rounded-r-lg duration-200 ease-linear
-                ${modal ? "fixed right-0" : "absolute -left-full"}
+                ${modal ? "fixed left-0" : "absolute -left-full"}
                 h-screen overflow-auto`}
                 dir="rtl"
             >
                 <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5">
                     <div className=" flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10 ">
+                        <h2>إضافة المغادرات</h2>
                         <button
                             type="button"
                             onClick={closeModal}
-                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         >
                             <X size={18} weight="bold" />
 
                             <span className="sr-only">Close modal</span>
                         </button>
-                        <h2>إضافة المغادرات</h2>
                     </div>
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-left" onSubmit={handleSubmit}>

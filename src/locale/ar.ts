@@ -79,6 +79,7 @@ const ar = {
     Entities: " الجهات",
     Employee: "الموظفين", // Employee
     clients: "العملاء",
+    Shifts: "مواعيد العمل",
     registration: "تسجيل الطلبات",
     projectManagement: "إدارة المشاريع",
     projects: "المشاريع",
@@ -89,7 +90,13 @@ const ar = {
     stages: "المراحل",
     kanban: "كانبان",
     error: "خطأ",
-    setting: "الإعدادات",
+    site: "المواقع",
+    audio: "الجمل الصوتيه",
+    reject: "المراحل المرفوضه",
+    changeSetting: "تغير معلومات الحساب",
+    ComeSetting: "اعدادات الحضور",
+    reports: "التقارير",
+    setting: "اعدادات الحساب",
     signOut: "تسجيل الخروج",
   },
   updateClient: {

@@ -1,59 +1,31 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 import { X } from "@phosphor-icons/react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
-import FormTextArea from "../../components/form/FormTextArea";
+import { useI18nContext } from "../../context/i18n-context";
 import Select from 'react-select';
 
 const AddEntities = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
         firstName: "",
         secondName: "",
-        userName: "",
-        email: "",
-        jobTitle: "",
-        jobNumber: "",
-        phoneNumber: "",
-        gender: [],
+        shifts: ["All"],
         employeeType: [],
     });
 
-    const handleChange = useCallback((e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: type === 'checkbox' ? checked : value,
-        }));
-    }, []);
+    const { t } = useI18nContext();
 
-    const handleMultiSelectChange = (name, selectedOptions) => {
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: selectedOptions ? selectedOptions.map(option => option.value) : [],
-        }));
+    const [selectedShifts, setSelectedShifts] = useState([]);
+    const [selectedEmployeeTypes, setSelectedEmployeeTypes] = useState([]);
+
+    const handleSelectShiftsChange = (selectedOptions) => {
+        setSelectedShifts(selectedOptions);
     };
 
-    const [clients, setClients] = useState([]);
-
-    useEffect(() => {
-        const fetchClients = async () => {
-            try {
-                const token = Cookies.get('token');
-                const response = await axios.get('https://dashboard.cowdly.com/api/clients/', {
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                    },
-                });
-
-                setClients(response.data);
-            } catch (error) {
-                console.error("Error fetching clients:", error);
-            }
-        };
-
-        fetchClients();
-    }, []);
+    const handleSelectEmployeeTypesChange = (selectedOptions) => {
+        setSelectedEmployeeTypes(selectedOptions);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -81,38 +53,6 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
         }
     };
 
-    const customStyles = {
-        control: (base, state) => ({
-            ...base,
-            padding: '0.5rem',
-            minHeight: '1rem',
-            borderRadius: '0.375rem',
-            borderColor: state.isFocused ? '#4caf50' : '#e5e7eb',
-            boxShadow: state.isFocused ? '0 0 0 2px rgba(72, 187, 120, 0.6)' : 'none',
-            '&:hover': {
-                borderColor: '#4caf50',
-            },
-        }),
-        multiValue: (base) => ({
-            ...base,
-            backgroundColor: '#d1fae5',
-            borderRadius: '0.25rem',
-            padding: '0.25rem',
-        }),
-        multiValueLabel: (base) => ({
-            ...base,
-            color: '#065f46',
-        }),
-        multiValueRemove: (base) => ({
-            ...base,
-            color: '#065f46',
-            '&:hover': {
-                backgroundColor: '#065f46',
-                color: 'white',
-            },
-        }),
-    };
-
     return (
         <div
             onClick={(e) => e.target === e.currentTarget && closeModal()}
@@ -121,44 +61,43 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
                 ${modal ? "visible" : "invisible"}`}
         >
             <div
-                className={`relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800 overflow-auto h-screen
-                ${modal ? "left-0" : "-left-full"} transition-all duration-500 ease-in-out`}
+                className={`absolute top-0 left-0 w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800 overflow-auto h-screen
+                ${modal ? "translate-x-0" : "-translate-x-full"} transition-transform duration-500 ease-in-out`}
                 style={{ transition: 'left 0.5s ease-in-out' }}
                 dir="rtl"
             >
-                <div className="relative  p-4 sm:p-5">
-                    <div className="flex  justify-between items-center pb-4 mb-4 rounded-t border-b dark:border-gray-600 shadow-md shadow-gray-300/10">
+                <div className="relative p-4 sm:p-5">
+                    <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b dark:border-gray-600 shadow-md shadow-gray-300/10">
+                        <h2 className="text-xl font-semibold">إضافة جهة</h2>
                         <button
                             type="button"
                             onClick={closeModal}
-                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         >
                             <X size={18} weight="bold" />
                             <span className="sr-only">Close modal</span>
                         </button>
-                        <h2 className="text-xl font-semibold">إضافة جهه</h2>
                     </div>
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-right" onSubmit={handleSubmit}>
-                            {/* Form content */}
                             <div className="grid grid-cols-2 gap-5 mb-3">
                                 <FormText
-                                    label="اسم الجهه بالعربي"
+                                    label="اسم الجهة بالعربي"
                                     type="text"
                                     name="firstName"
                                     placeholder=" الاسم بالعربي"
                                     value={formData.firstName}
-                                    onChange={handleChange}
+                                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                                     className="border rounded-lg"
                                 />
 
                                 <FormText
-                                    label="اسم الجهه بالانجليزيه"
+                                    label="اسم الجهة بالإنجليزية"
                                     type="text"
                                     name="secondName"
-                                    placeholder=" الاسم بالانجليزيه"
+                                    placeholder=" الاسم بالإنجليزية"
                                     value={formData.secondName}
-                                    onChange={handleChange}
+                                    onChange={(e) => setFormData({ ...formData, secondName: e.target.value })}
                                     className="border rounded-lg"
                                 />
                             </div>
@@ -166,63 +105,81 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
                             <div className="grid grid-cols-2 gap-5 mb-3">
                                 <div>
                                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        اختيار الجهه
+                                        المناوبات
                                     </label>
                                     <Select
                                         isMulti
-                                        name="gender"
-                                        value={formData.gender.map(g => ({
-                                            value: g,
-                                            label: g === 'male' ? 'ذكر' : 'أنثى',
-                                        }))}
+                                        name="shifts"
                                         options={[
-                                            { value: "male", label: "ذكر" },
-                                            { value: "female", label: "أنثى" },
+                                            { value: "male", label: t('registrationForm.shiftsOptions.male') },
+                                            { value: "female", label: t('registrationForm.shiftsOptions.female') },
                                         ]}
-                                        onChange={(selectedOptions) =>
-                                            handleMultiSelectChange("gender", selectedOptions)
-                                        }
+                                        className="basic-multi-select"
                                         classNamePrefix="select"
-                                        styles={customStyles}
+                                        value={selectedShifts}
+                                        onChange={handleSelectShiftsChange}
                                     />
                                 </div>
 
                                 <div>
                                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        نوع الموظف
+                                        الموظفين
                                     </label>
                                     <Select
                                         isMulti
-                                        name="employeeType"
-                                        value={formData.employeeType.map(e => ({
-                                            value: e,
-                                            label: e,
-                                        }))}
+                                        name="Shifts"
                                         options={[
-                                            { value: "engineer", label: "مهندس" },
-                                            { value: "technician", label: "فني" },
-                                            { value: "office", label: "إداري" },
+                                            { value: "male", label: t('registrationForm.shiftsOptions.male') },
+                                            { value: "female", label: t('registrationForm.shiftsOptions.female') },
                                         ]}
-                                        onChange={(selectedOptions) =>
-                                            handleMultiSelectChange("employeeType", selectedOptions)
-                                        }
+                                        className="basic-multi-select"
                                         classNamePrefix="select"
-                                        styles={customStyles}
+                                        value={selectedEmployeeTypes}
+                                        onChange={handleSelectEmployeeTypesChange}
                                     />
                                 </div>
                             </div>
 
+                            <div className="grid grid-cols-2 gap-5">
+                                <div className="mt-3">
+                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">المناوبات</label>
+                                    <div className="flex gap-2">
+                                        {selectedShifts.map((shifts, index) => (
+                                            <span key={index} className="px-2 py-1 text-gray-50 bg-green-500 rounded-lg">
+                                                {shifts.label}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="mt-3">
+                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">الموظفين</label>
+                                    <div className="flex gap-2">
+                                        {selectedEmployeeTypes.map((employeeType, index) => (
+                                            <span key={index} className="px-2 py-1 text-gray-50 bg-green-500 rounded-lg">
+                                                {employeeType.label}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
 
-
-
-
+                            <div className="grid grid-cols-2 gap-5 mt-5">
+                                <div className="mt-3">
+                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">رابط GPS</label>
+                                    <input
+                                        type="text"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                        placeholder="https://www.example.com"
+                                    />
+                                </div>
+                            </div>
 
                             <div className="w-full flex justify-start mt-5">
                                 <button
                                     className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none"
                                     type="submit"
                                 >
-                                    اضافه الجهه
+                                    إضافة الجهة
                                 </button>
                             </div>
                         </form>
