@@ -43,13 +43,14 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
 
             const newRegistration = response.data;
             console.log('تمت إضافة طلب التسجيل بنجاح:', newRegistration);
-            onClientAdded(newRegistration);
+            onClientAdded(newRegistration);  // Call the callback to add the new client
             closeModal();
 
         } catch (error) {
             console.error('خطأ في إضافة طلب التسجيل:', error.response?.data || error.message);
         }
     };
+
 
     return (
         <div 
