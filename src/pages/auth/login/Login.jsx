@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ErrorAlert } from "../../../components/Alert";
 import CryptoJS from "crypto-js";
-import Cookies from "js-cookie"; // Import the js-cookie package
+import Cookies from "js-cookie"; // استيراد مكتبة js-cookie
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -66,14 +66,13 @@ export default function Login() {
       const token = data.token;
 
       // Set the token in cookies for easy access
-      Cookies.set('token', token, { expires: 7 }); // Store the token with a 7-day expiration
+      Cookies.set("token", token, { expires: 7, path: "/" }); // Store the token with a 7-day expiration
 
       localStorage.setItem("id", data.id);
       setLoading(false);
 
       // Redirect to dashboard
       navigate(`${import.meta.env.VITE_PUBLIC_URL}/`);
-
     } catch (error) {
       console.error("Login Error:", error);
       const message =
@@ -86,7 +85,7 @@ export default function Login() {
   };
 
   useEffect(() => {
-    const token = Cookies.get('token'); // Retrieve token from cookies
+    const token = Cookies.get("token"); // Retrieve token from cookies
     if (token) {
       navigate(`${import.meta.env.VITE_PUBLIC_URL}/`); // Redirect if the user is already logged in
     }

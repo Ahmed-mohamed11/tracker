@@ -9,9 +9,12 @@ import {
   X,
   Clock,
   Gear,
+  SignOut,
+  User,
 } from "@phosphor-icons/react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
+import Cookies from "js-cookie"; // استيراد مكتبة js-cookie
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -31,17 +34,14 @@ const NavbarItem = ({
   const ref = useRef();
 
   useEffect(() => {
-    // دالة للتحقق مما إذا كان النقر خارج القائمة الفرعية
     const handleClickOutside = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
-        closeSubMenu(); // إغلاق القائمة الفرعية إذا كان النقر خارجها
+        closeSubMenu();
       }
     };
 
-    // إضافة مستمع للنقرات
     document.addEventListener("mousedown", handleClickOutside);
 
-    // إزالة المستمع عند إلغاء المكون
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -67,8 +67,8 @@ const NavbarItem = ({
         className={classNames(
           isActive
             ? "text-gray-200 border-b-2 border-gray-300 rounded-md"
-            : "text-white rounded-md hover:bg-gradient-to-r hover:from-themeColor-600 hover:b ",
-          "px-3  py-2 text-sm font-medium flex items-center gap-2 duration-150 ease-linear"
+            : "text-white rounded-md hover:bg-gradient-to-r hover:from-themeColor-600",
+          "px-3 py-2 text-sm font-medium flex items-center gap-2 duration-150 ease-linear"
         )}
       >
         {icon}
@@ -86,7 +86,7 @@ const NavbarItem = ({
       {subItems && (
         <div
           className={classNames(
-            "absolute top-full left-0 mt-5 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
+            "absolute z-50 top-full left-0 mt-5 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
             isOpen
               ? "opacity-100 visible animate-slide-down"
               : "opacity-0 invisible animate-slide-up"
@@ -97,8 +97,8 @@ const NavbarItem = ({
               key={index}
               to={subItem.link}
               onClick={() => {
-                onClick(); // تحديث الحالة المطلوبة (مثل تغيير العنصر النشط)
-                closeSubMenu(); // إغلاق القائمة الفرعية بعد النقر
+                onClick();
+                closeSubMenu();
               }}
               className="block px-4 py-2 text-base hover:bg-gradient-to-r hover:from-themeColor-500"
             >
@@ -116,6 +116,23 @@ export default function Navbar({ dark }) {
   const [role, setRole] = useState("admin");
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef();
+  const navigate = useNavigate(); // لإعادة التوجيه
+
+  useEffect(() => {
+    // إغلاق القائمة المنسدلة للمستخدم عند النقر خارجها
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const toggleSubMenu = (index) => {
     setOpenMenuIndex(openMenuIndex === index ? null : index);
@@ -129,7 +146,18 @@ export default function Navbar({ dark }) {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // محتوى Sidebar الذي تم نقله ليصبح ضمن Navbar
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
+
+  const handleLogout = () => {
+    // إزالة التوكن من الكوكيز
+    Cookies.remove("token", { path: "/" }); // حذف التوكن مع تحديد نفس المسار
+
+    // إعادة التوجيه إلى صفحة تسجيل الدخول بعد تسجيل الخروج
+    navigate("/login");
+  };
+
   const navigationAdmin = [
     {
       icon: <House size={25} />,
@@ -150,8 +178,14 @@ export default function Navbar({ dark }) {
       icon: <Network size={32} />,
       name: t("sideBar.Administrative"),
       subItems: [
-        { name: t("sideBar.Entities"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
-        { name: t("sideBar.Employee"), link: `${import.meta.env.VITE_PUBLIC_URL}/employee` },
+        {
+          name: t("sideBar.Entities"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
+        },
+        {
+          name: t("sideBar.Employee"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/employee`,
+        },
       ],
     },
     {
@@ -159,7 +193,6 @@ export default function Navbar({ dark }) {
       name: t("sideBar.Shifts"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/shifts`,
     },
-
     {
       icon: <Gear size={32} />,
       name: t("sideBar.setting"),
@@ -171,17 +204,14 @@ export default function Navbar({ dark }) {
         { name: t("sideBar.ComeSetting"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
       ],
     },
-
     {
       icon: <Gear size={32} />,
       name: t("sideBar.reports"),
       subItems: [
         { name: t("sideBar.site"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
         { name: t("sideBar.audio"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
-
       ],
     },
-
   ];
 
   const navigationError = [
@@ -201,9 +231,7 @@ export default function Navbar({ dark }) {
   const handleItemClick = (index, link) => {
     setActiveIndex(index);
     localStorage.setItem("currentPath", link);
-    setIsMobileMenuOpen(false); // إغلاق القائمة بعد اختيار العنصر
-
-    // تمرير الصفحة إلى الأعلى بعد الانتقال إلى الرابط
+    setIsMobileMenuOpen(false);
     window.scrollTo(0, 0);
   };
 
@@ -225,10 +253,7 @@ export default function Navbar({ dark }) {
         {/* روابط القائمة الكبيرة */}
         <div
           className={classNames(
-            "mt-3 lg:flex items-center space-x-6 transition-all duration-300 ease-in-out",
-            isMobileMenuOpen
-              ? "absolute top-full right-2 w-[40%] rounded-md p-4 lg:static lg:bg-transparent lg:w-auto lg:p-0 block animate-slide-down"
-              : "hidden lg:block"
+            "mt-3  lg:flex items-center space-x-6 transition-all duration-300 ease-in-out hidden lg:block"
           )}
         >
           {selectedNavigation.map((item, index) => (
@@ -247,15 +272,66 @@ export default function Navbar({ dark }) {
         </div>
 
         {/* معلومات المستخدم */}
-        <div className="flex items-center gap-4">
-          <img
-            src="https://avatars.githubusercontent.com/u/52693893?v=4"
-            alt="profile"
-            className="w-10 h-10 rounded-full"
-          />
-          <p className="font-semibold hidden md:block">Ahmed Al-Masri</p>
+        <div className="relative" ref={userMenuRef}>
+          <div
+            className="flex items-center gap-4 cursor-pointer"
+            onClick={toggleUserMenu}
+          >
+            <img
+              src="https://avatars.githubusercontent.com/u/52693893?v=4"
+              alt="profile"
+              className="w-10 h-10 rounded-full"
+            />
+            <p className="font-semibold hidden md:block">Ahmed Al-Masri</p>
+            <CaretDown size={20} className={`transition-transform ${isUserMenuOpen ? "rotate-180" : "rotate-0"}`} />
+          </div>
+
+          {isUserMenuOpen && (
+            <div
+              className={classNames(
+                "absolute z-50 right-0 mt-2 w-48 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
+                isUserMenuOpen
+                  ? "opacity-100 visible animate-slide-down"
+                  : "opacity-0 invisible animate-slide-up"
+              )}
+            >
+              <Link
+                to="/settings"
+                className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
+              >
+                <User size={20} className="mr-2" />
+                إعدادات
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500 text-left"
+              >
+                <SignOut size={20} className="mr-2" />
+                تسجيل خروج
+              </button>
+            </div>
+          )}
         </div>
       </nav>
+
+      {/* القائمة المنسدلة للشاشات الصغيرة */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden bg-themeColor-900 text-white shadow-lg rounded-md p-4 absolute w-[70%] ">
+          {selectedNavigation.map((item, index) => (
+            <NavbarItem
+              key={index}
+              icon={item.icon}
+              name={item.name}
+              link={item.link}
+              subItems={item.subItems}
+              isOpen={openMenuIndex === index}
+              toggleSubMenu={() => toggleSubMenu(index)}
+              closeSubMenu={closeSubMenu}
+              onClick={() => handleItemClick(index, item.link)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
