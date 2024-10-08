@@ -2,22 +2,17 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import AddEntities from './AddEntities'; // استيراد مكون AddEntities
-import { FaPlus, FaBars } from "react-icons/fa"; // إضافة أيقونة القائمة
-import FormText from "../../components/form/FormText";
-import FormSelect from '../../components/form/FormSelect';
-import { DotsThreeVertical, MagnifyingGlass, Network, Plus, Trash, User } from '@phosphor-icons/react';
+import { FaPlus } from "react-icons/fa"; // أيقونة إضافة
+import { DotsThreeVertical, MagnifyingGlass, Network, Plus, Trash } from '@phosphor-icons/react';
 import { BiEdit } from 'react-icons/bi';
 
-const EntitiesTable = ({ openPreview, openCreate }) => {
-    const [modalType, setModalType] = useState(null);
+const EntitiesTable = ({ openCreate }) => {
     const [tableData, setTableData] = useState([]);
-    const [tableHeaders, setTableHeaders] = useState([]);
-    const [clients, setClients] = useState([]);
-    const [selectedProjectId, setSelectedProjectId] = useState(null);
     const [isFormOpen, setIsFormOpen] = useState(false); // حالة إدارة إظهار الفورم
     const [isMenuOpen, setIsMenuOpen] = useState(null); // لتتبع الزر الذي تم النقر عليه لفتح القائمة
     const menuRef = useRef(null);
 
+    // جلب بيانات الجهات من الـ API
     const fetchData = useCallback(async () => {
         try {
             const token = Cookies.get('token');
@@ -26,41 +21,14 @@ const EntitiesTable = ({ openPreview, openCreate }) => {
                 return;
             }
 
-            const [projectsResponse, clientsResponse] = await Promise.all([
-                axios.get('https://dashboard.cowdly.com/api/projects/', {
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                    },
-                }),
-                axios.get('https://dashboard.cowdly.com/api/clients/', {
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                    },
-                })
-            ]);
+            const entitiesResponse = await axios.get('https://bio.skyrsys.com/api/entity/', {
+                headers: {
+                    'Authorization': `Token ${token}`,
+                },
+            });
 
-            const projects = projectsResponse.data;
-            const clientsData = clientsResponse.data;
-
-            setClients(clientsData);
-
-            if (projects.length > 0) {
-                const headers = Object.keys(projects[0]);
-                setTableHeaders(headers.map(header => ({ key: header, label: header })));
-
-                const formattedProjects = projects.map(project => {
-                    const client = clientsData.find(c => c.id === project.client);
-                    return {
-                        ...project,
-                        client: client ? client.name : 'Unknown Client'
-                    };
-                });
-
-                setTableData(formattedProjects);
-            } else {
-                setTableHeaders([]);
-                setTableData([]);
-            }
+            const entities = entitiesResponse.data;
+            setTableData(entities); // تخزين البيانات المستلمة في حالة الجدول
         } catch (error) {
             console.error('Error fetching data:', error.response?.data || error.message);
         }
@@ -88,13 +56,8 @@ const EntitiesTable = ({ openPreview, openCreate }) => {
         };
     }, []);
 
-    const addNewProjectToTable = (newProject) => {
-        const client = clients.find(c => c.id === newProject.client);
-        const formattedProject = {
-            ...newProject,
-            client: client ? client.name : 'Unknown Client'
-        };
-        setTableData((prevData) => [...prevData, formattedProject]);
+    const addNewProjectToTable = (newEntity) => {
+        setTableData((prevData) => [...prevData, newEntity]); // إضافة كيان جديد إلى الجدول
     };
 
     const toggleMenu = (index) => {
@@ -116,30 +79,32 @@ const EntitiesTable = ({ openPreview, openCreate }) => {
                     </div>
                 </div>
 
-                <div className="w-full flex items-center justify-between  p-4 border-b">
+                <div className="w-full flex items-center justify-between p-4 border-b">
                     <div className="w-2/3 my-5 relative">
                         <input
                             type="text"
                             placeholder="بحث"
-                            className="w-full pl-10 pr-4 py-2 border-2 border-gray-300  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full pl-10 pr-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                     </div>
-
                 </div>
+
                 <div className="divide-y flex flex-col justify-between">
-                    {['مؤسسة', 'الإدارة الرئيسية', 'قسم', 'فرع'].map((item, index) => (
+                    {tableData.map((entity, index) => (
                         <div key={index} className={`flex items-center justify-between p-4 ${index % 2 === 1 ? 'bg-blue-50' : ''}`}>
                             <div className="w-2/3 flex items-center justify-between space-x-4 space-x-reverse">
                                 <div className="w-1/3 ">
-                                    <span className="font-medium">{item}</span>
+                                    <span className="font-medium">{entity.name}</span> {/* عرض اسم الجهة */}
                                 </div>
                                 <div className="w-1/3 flex items-center gap-2">
-                                    <span className="text-red-400">0</span>
+                                    <span className="text-red-400">{entity.id}</span> {/* عرض معرف الجهة */}
                                     <Network size={32} className="text-gray-400" />
                                 </div>
                                 <div className="w-1/3">
-                                    <span className="text-green-500">مفعل</span>
+                                    <span className={`text-${entity.is_active ? 'green' : 'red'}-500`}>
+                                        {entity.is_active ? 'مفعل' : 'غير مفعل'}
+                                    </span> {/* حالة الجهة */}
                                 </div>
                             </div>
 

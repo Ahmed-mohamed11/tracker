@@ -4,7 +4,8 @@ import { X } from "@phosphor-icons/react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
- 
+import FormSelect from "../../components/form/FormSelect";
+
 const AddProjects = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
         first_name: "",
@@ -53,7 +54,7 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
 
 
     return (
-        <div 
+        <div
             onClick={(e) => e.target === e.currentTarget && closeModal()}
             id="createStudent"
             className={`createStudent overflow-y-auto overflow-x-hidden duration-200 ease-linear
@@ -143,13 +144,16 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText
-                                    label="الجنسية"
-                                    type="text"
+                                <FormSelect
+                                    label="الجنس"
+                                    selectLabel="nationality"
                                     name="nationality"
-                                    placeholder="الجنسية"
-                                    value={formData.nationality}
                                     onChange={handleChange}
+                                    options={[
+                                        { value: "ذكر", label: "ذكر" },
+                                        { value: "انثى", label: "انثى" },
+                                    ]}
+                                    value={formData.nationality}
                                 />
                             </div>
 

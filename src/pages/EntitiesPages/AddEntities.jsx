@@ -8,10 +8,10 @@ import Select from 'react-select';
 
 const AddEntities = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
-        firstName: "",
-        secondName: "",
-        shifts: ["All"],
-        employeeType: [],
+        firstName: "",   // الاسم بالعربي
+        secondName: "",  // الاسم بالإنجليزي
+        shifts: ["All"], // المناوبات
+        employeeType: [], // نوع الموظفين
     });
 
     const { t } = useI18nContext();
@@ -31,25 +31,36 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
         e.preventDefault();
 
         try {
+            // استرجاع التوكن من الكوكيز
             const token = Cookies.get('token');
             if (!token) {
                 console.error('No token found in cookies');
                 return;
             }
 
-            const response = await axios.post('https://dashboard.cowdly.com/api/projects/', formData, {
+            // البيانات التي سيتم إرسالها للـ API
+            const requestData = {
+                ar_name: formData.firstName,  // اسم الجهة بالعربية
+                en_name: formData.secondName, // اسم الجهة بالإنجليزية
+                shifts: selectedShifts.map(shift => shift.value), // المناوبات المحددة
+                employeeType: selectedEmployeeTypes.map(type => type.value), // نوع الموظفين
+            };
+
+            // استدعاء الـ API باستخدام Axios
+            const response = await axios.post('https://bio.skyrsys.com/api/entity/', requestData, {
                 headers: {
-                    'Authorization': `Token ${token}`,
+                    'Authorization': `Token ${token}`,  // إرسال التوكن في الهيدر
                 },
             });
 
-            const newProject = response.data;
-            console.log('Client added successfully:', newProject);
-            onClientAdded(newProject);
-            closeModal();
+            // عرض النتيجة أو تحديث الجداول
+            const newEntity = response.data;
+            console.log('Entity added successfully:', newEntity);
+            onClientAdded(newEntity);
+            closeModal();  // إغلاق النموذج بعد الإرسال
 
         } catch (error) {
-            console.error('Error adding project:', error.response?.data || error.message);
+            console.error('Error adding entity:', error.response?.data || error.message);
         }
     };
 

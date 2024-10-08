@@ -4,11 +4,12 @@ import Cookies from 'js-cookie';
 import RegisterEmployee from './RegisterEmployee';
 import PreviewProjects from './PreviewProjects';
 import Table from '../../components/Table';
+import { TableActions, TableUser } from '../../components/TableOptions';
 import { IoSearch } from "react-icons/io5";
 import { FaArrowCircleDown, FaPlus } from "react-icons/fa";
 import * as XLSX from 'xlsx';
- 
-const ProjectTable = ({ openPreview, openCreate }) => {
+
+const EmployeeTable = ({ openPreview, openCreate }) => {
     const [modalType, setModalType] = useState(null);
     const [tableData, setTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
@@ -16,9 +17,8 @@ const ProjectTable = ({ openPreview, openCreate }) => {
     const [selectedProjectId, setSelectedProjectId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);  // Set items per page
+    const [itemsPerPage] = useState(10);
 
-    // Fetch data from the registration requests API
     const fetchData = useCallback(async () => {
         try {
             const token = Cookies.get('token');
@@ -43,7 +43,6 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                 { key: 'nationality', label: 'الجنسية' }
             ]);
 
-            // Format the data for the table
             const formattedData = registrationRequests.map(request => ({
                 first_name: request.first_name || 'مجهول',
                 last_name: request.last_name || 'مجهول',
@@ -55,14 +54,13 @@ const ProjectTable = ({ openPreview, openCreate }) => {
             }));
 
             setTableData(formattedData);
-            setFilteredData(formattedData); // Initialize filtered data
+            setFilteredData(formattedData);
 
         } catch (error) {
             console.error('Error fetching registration requests:', error.response?.data || error.message);
         }
     }, []);
 
-    // Function to filter data based on the search query
     const handleSearch = (event) => {
         const query = event.target.value.toLowerCase();
         setSearchQuery(query);
@@ -75,7 +73,6 @@ const ProjectTable = ({ openPreview, openCreate }) => {
         setFilteredData(filtered);
     };
 
-    // Function to export table data to Excel
     const exportToExcel = () => {
         const ws = XLSX.utils.json_to_sheet(filteredData);
         const wb = XLSX.utils.book_new();
@@ -83,20 +80,15 @@ const ProjectTable = ({ openPreview, openCreate }) => {
         XLSX.writeFile(wb, 'Project_Table.xlsx');
     };
 
-    // Function to handle adding a new client to the table
     const handleClientAdded = (newClient) => {
         setTableData(prevData => [newClient, ...prevData]);
         setFilteredData(prevData => [newClient, ...prevData]);
     };
 
-    // Pagination function
-   
-    // Get the current page's data
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentData = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
- 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
@@ -113,7 +105,7 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                 </button>
             </div>
 
-            <div className="flex justify-between items-center mt-6 gap-14">
+            <div className="flex justify-between items-center mb-6 gap-14">
                 <div className="flex w-4/5 gap-5">
                     <div className="relative flex items-center justify-center">
                         <input
@@ -144,15 +136,21 @@ const ProjectTable = ({ openPreview, openCreate }) => {
             </div>
 
             <Table
-                data={currentData} // Use paginated data here
+                data={currentData}
                 headers={tableHeaders}
-                openCreate={() => setModalType('project')}
-                openPreview={openPreview}
-                addItemLabel="إضافة مشروع"
-                onDelete={() => console.log('Delete function not implemented')}
-            />
+                userImage={() => (
+                    <TableUser />
+                )}
 
-            
+                actions={() => (
+                    <TableActions
+                        openPreview={() => setModalType('preview')}
+                    />
+                )}
+                currentPage={currentPage}
+                totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+                paginate={setCurrentPage}
+            />
 
             {modalType === 'preview' && (
                 <PreviewProjects closeModal={() => setModalType(null)} projectId={selectedProjectId} />
@@ -168,4 +166,7 @@ const ProjectTable = ({ openPreview, openCreate }) => {
     );
 };
 
-export default ProjectTable;
+export default EmployeeTable;
+
+
+

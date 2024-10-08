@@ -1,9 +1,8 @@
 'use client';
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { CaretLeft, CaretRight, Eye, Plus, MagnifyingGlass, Trash } from '@phosphor-icons/react';
+import React, { useState, useMemo, useCallback } from 'react';
+import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { BiEdit } from 'react-icons/bi';
 
 const MySwal = withReactContent(Swal);
 
@@ -14,57 +13,43 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
       disabled={currentPage === 1}
       className="flex items-center gap-2 text-gray-500"
     >
-      <CaretLeft size={18} weight="bold" />
+      <CaretRight size={18} weight="bold" />
+
     </button>
     <div className="space-x-2 hidden md:block">
-      {Array.from({ length: Math.min(6, totalPages) }, (_, i) => {
-        const page = Math.floor((currentPage - 1) / 6) * 6 + i + 1;
-        return (
-          page <= totalPages && (
-            <button
-              key={page}
-              onClick={() => paginate(page)}
-              className={`px-4 py-2 text-sm rounded-md ${page === currentPage ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-500'}`}
-            >
-              {page}
-            </button>
-          )
-        );
-      })}
+      {Array.from({ length: totalPages }, (_, i) => (
+        <button
+          key={i + 1}
+          onClick={() => paginate(i + 1)}
+          className={`px-4 py-2 text-sm rounded-md ${i + 1 === currentPage ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-500'}`}
+        >
+          {i + 1}
+        </button>
+      ))}
     </div>
     <button
       onClick={() => paginate(currentPage + 1)}
       disabled={currentPage === totalPages}
       className="flex items-center gap-2 text-gray-500"
     >
-      <CaretRight size={18} weight="bold" />
+      <CaretLeft size={18} weight="bold" />
+
     </button>
   </div>
 );
 
-const Table = ({ data, headers, openCreate, openPreview, openEdit, onDelete, addItemLabel }) => {
-  const [selectedId, setSelectedId] = useState(null);
+const Table = ({ data, headers, actions, userImage }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
   const itemsPerPage = 10;
 
-  const filteredData = useMemo(() => {
-    if (!searchTerm) return data;
-    return data.filter(item =>
-      headers.some(header =>
-        String(item[header.key])
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [searchTerm, data, headers]);
+  // حساب إجمالي عدد الصفحات
+  const totalPages = Math.ceil(data.length / itemsPerPage);
 
+  // تقطيع البيانات بناءً على الصفحة الحالية
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredData.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredData, currentPage]);
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    return data.slice(startIndex, startIndex + itemsPerPage);
+  }, [data, currentPage, itemsPerPage]);
 
   const confirmDelete = useCallback((rowId) => {
     MySwal.fire({
@@ -78,31 +63,34 @@ const Table = ({ data, headers, openCreate, openPreview, openEdit, onDelete, add
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        onDelete(rowId);
+        console.log('Deleted:', rowId); // حذف الصف
         MySwal.fire('Deleted!', 'Your item has been deleted.', 'success');
       }
     });
-  }, [onDelete]);
-  const handleOpenCreate = () => {
-    console.log('Open Create button clicked');
-    openCreate(); // Ensure this triggers the correct function
-  };
+  }, []);
 
   return (
     <div className="overflow-x-auto">
-      <div className="flex items-center justify-between p-4">
-
-
-
-      </div>
-
-      <table className="w-full border-collapse">
+      <table className="w-full text-right border-collapse table-auto">
         <thead>
           <tr className="bg-gray-200">
             {headers.map(header => (
-              <th key={header.key} className="p-4 border-b">{header.label}</th>
+              <th
+                key={header.key}
+                className="p-4 border-b text-center px-6" // إضافة px-6 لضبط المسافات الثابتة
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                {header.label}
+              </th>
             ))}
-            <th className="p-4 border-b">Actions</th>
+            {userImage &&
+              <>
+                <th className="p-4 border-b text-center px-6">الحاله</th>
+                <th className="p-4 border-b text-center px-6">الصوره</th>
+                <th className="p-4 border-b text-center px-6">الصوت</th>
+              </>
+            }
+            {actions && <th className="p-4 border-b text-center px-6">Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -110,29 +98,35 @@ const Table = ({ data, headers, openCreate, openPreview, openEdit, onDelete, add
             paginatedData.map((row, rowIndex) => (
               <tr key={rowIndex} className="border-b">
                 {headers.map(header => (
-                  <td key={header.key} className="p-4">{row[header.key]}</td>
+                  <td
+                    key={header.key}
+                    className="p-4 text-center px-6" // توسيط النصوص وإضافة التباعد الثابت
+                    style={{ whiteSpace: 'nowrap' }}
+                  >
+                    {row[header.key]}
+                  </td>
                 ))}
-                <td className="p-4 flex items-center justify-center gap-2">
-                  <button onClick={() => openPreview(row.id)} className="text-blue-500">
-                    <Eye size={20} />
-                  </button>
-                  <button onClick={() => confirmDelete(row.id)} className="text-gray-500">
-                    <Trash size={20} />
-                  </button>
-                  <button onClick={() => openEdit(row.id)} className="text-gray-500">
-                    <BiEdit size={20} />
-                  </button>
-                </td>
+                {userImage && (
+                  <>
+                    {userImage(row)}
+                  </>
+                )}
+                {actions && (
+                  <td className="p-4 text-center px-6">
+                    {actions(row)}
+                  </td>
+                )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={headers.length + 1} className="p-4 text-center">No data available</td>
+              <td colSpan={headers.length + (actions ? 1 : 0)} className="p-4 text-center">No data available</td>
             </tr>
           )}
         </tbody>
       </table>
 
+      {/* تفعيل عناصر التحكم في الترقيم */}
       <PaginationControls
         currentPage={currentPage}
         totalPages={totalPages}
