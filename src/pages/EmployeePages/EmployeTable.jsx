@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import RegisterEmployee from './RegisterEmployee'; // Ensure the path is correct
+import RegisterEmployee from './RegisterEmployee';
 import PreviewProjects from './PreviewProjects';
 import Table from '../../components/Table';
 import { IoSearch } from "react-icons/io5";
 import { FaArrowCircleDown, FaPlus } from "react-icons/fa";
+import * as XLSX from 'xlsx';  // Import xlsx
 
 const ProjectTable = ({ openPreview, openCreate }) => {
     const [modalType, setModalType] = useState(null);
@@ -30,7 +31,6 @@ const ProjectTable = ({ openPreview, openCreate }) => {
 
             const registrationRequests = response.data;
 
-            console.log('object', registrationRequests)
             setTableHeaders([
                 { key: 'first_name', label: 'الاسم الأول' },
                 { key: 'last_name', label: 'الاسم الأخير' },
@@ -58,8 +58,19 @@ const ProjectTable = ({ openPreview, openCreate }) => {
         }
     }, []);
 
+    // Handle opening the modal for project creation
     const handleOpenCreate = () => {
-        openCreate(); // Ensure this triggers the correct function
+        openCreate();
+    };
+
+    // Function to export table data to Excel
+    const exportToExcel = () => {
+        const ws = XLSX.utils.json_to_sheet(tableData);  // Convert the table data to a worksheet
+        const wb = XLSX.utils.book_new();  // Create a new workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Project Table');  // Append the worksheet to the workbook
+
+        // Write the workbook to a file and trigger download
+        XLSX.writeFile(wb, 'Project_Table.xlsx');
     };
 
     useEffect(() => {
@@ -91,7 +102,10 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                         <option value="approved">موافقة</option>
                         <option value="rejected">مرفوض</option>
                     </select>
-                    <button className="bg-green-500 text-white text-center hover:bg-green-600 px-4 py-2 rounded-md transition duration-200 flex items-center">
+                    <button
+                        onClick={exportToExcel}  // Trigger the export function
+                        className="bg-green-500 text-white text-center hover:bg-green-600 px-4 py-2 rounded-md transition duration-200 flex items-center"
+                    >
                         تصدير
                         <FaArrowCircleDown size={20} className="mr-2" />
                     </button>
