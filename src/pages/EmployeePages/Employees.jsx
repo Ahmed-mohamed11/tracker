@@ -10,6 +10,8 @@ import {
 import gsap from "gsap";
 import EmployeTable from "./EmployeTable";
 
+// const PreviewProjects = lazy(() => import("./PreviewProjects"));
+
 const PreviewProject = lazy(() => import("./PreviewProjects"));
 const RegisterEmployee = lazy(() => import("./RegisterEmployee"));
 
