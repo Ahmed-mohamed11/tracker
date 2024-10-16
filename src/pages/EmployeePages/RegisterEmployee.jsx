@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X } from "@phosphor-icons/react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -15,15 +15,38 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
         job_title: "",
         phone_number: "",
         nationality: "",
+        entity: 1,
     });
+
+    const [entities, setEntities] = useState([]); // الحالة لتخزين الجهات
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
             ...prevData,
-            [name]: value,
+            [name]: name === 'entity' ? parseInt(value, 10) : value, // تحويل القيمة إلى integer إذا كان الاسم هو 'entity'
         }));
     }, []);
+
+    // get entity type
+    const getEntities = useCallback(async () => {
+        try {
+            const response = await axios.get('https://bio.skyrsys.com/api/entity/', {
+                headers: {
+                    'Authorization': `Token ${Cookies.get('token')}`,
+                },
+            });
+            setEntities(response.data); // تخزين البيانات المسترجعة
+        } catch (error) {
+            console.error('Error getting entities:', error.response?.data || error.message);
+            setEntities([]); // إذا حدث خطأ، قم بتخزين مصفوفة فارغة
+        }
+    }, []);
+
+    // استدعاء getEntities عند تحميل المكون
+    useEffect(() => {
+        getEntities();
+    }, [getEntities]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -52,7 +75,6 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
         }
     };
 
-
     return (
         <div
             onClick={(e) => e.target === e.currentTarget && closeModal()}
@@ -78,7 +100,7 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                         <button
                             type="button"
                             onClick={closeModal}
-                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5  inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         >
                             <X size={18} weight="bold" />
                             <span className="sr-only">إغلاق النافذة</span>
@@ -154,6 +176,18 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                                         { value: "انثى", label: "انثى" },
                                     ]}
                                     value={formData.nationality}
+                                />
+
+                                <FormSelect
+                                    label="الجهات"
+                                    selectLabel="entity"
+                                    name="entity"
+                                    onChange={handleChange}
+                                    options={entities.map(entity => ({
+                                        value: entity.id,
+                                        label: entity.ar_name                                        // تأكد من استخدام الاسم الصحيح
+                                    }))}
+                                    value={formData.entity}
                                 />
                             </div>
 

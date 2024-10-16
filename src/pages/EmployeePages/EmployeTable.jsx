@@ -3,6 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import RegisterEmployee from './RegisterEmployee';
 import PreviewProjects from './PreviewProjects';
+import ReviewRequest from './ReviewRequest'; // استيراد ReviewRequest
 import Table from '../../components/Table';
 import { TableActions, TableUser } from '../../components/TableOptions';
 import { IoSearch } from "react-icons/io5";
@@ -11,6 +12,7 @@ import * as XLSX from 'xlsx';
 
 const EmployeeTable = ({ openPreview, openCreate }) => {
     const [modalType, setModalType] = useState(null);
+    const [showReviewRequest, setShowReviewRequest] = useState(false); // حالة جديدة
     const [tableData, setTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -18,6 +20,12 @@ const EmployeeTable = ({ openPreview, openCreate }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
+
+
+    const toggleReviewRequest = () => {
+        setShowReviewRequest(!showReviewRequest)
+        console.log(showReviewRequest)
+    };
 
     const fetchData = useCallback(async () => {
         try {
@@ -135,13 +143,13 @@ const EmployeeTable = ({ openPreview, openCreate }) => {
                 </div>
             </div>
 
+            {/* Table */}
             <Table
                 data={currentData}
                 headers={tableHeaders}
                 userImage={() => (
-                    <TableUser />
+                    <TableUser onClick={() => setShowReviewRequest(true)} /> // فتح ReviewRequest عند الضغط على الصورة أو الصوت
                 )}
-
                 actions={() => (
                     <TableActions
                         openPreview={() => setModalType('preview')}
@@ -151,6 +159,7 @@ const EmployeeTable = ({ openPreview, openCreate }) => {
                 totalPages={Math.ceil(filteredData.length / itemsPerPage)}
                 paginate={setCurrentPage}
             />
+
 
             {modalType === 'preview' && (
                 <PreviewProjects closeModal={() => setModalType(null)} projectId={selectedProjectId} />
@@ -162,11 +171,18 @@ const EmployeeTable = ({ openPreview, openCreate }) => {
                     onClientAdded={handleClientAdded}
                 />
             )}
+
+
+            {showReviewRequest && ( // عرض ReviewRequest كـ modal
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-gray-200 rounded-lg overflow-hidden shadow-lg p-2 w-full max-w-5xl  ">
+                        <ReviewRequest />
+                        <button onClick={toggleReviewRequest} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">إغلاق</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 export default EmployeeTable;
-
-
-
