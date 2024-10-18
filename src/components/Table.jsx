@@ -18,10 +18,11 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
     </button>
     <div className="space-x-2 hidden md:block">
       {Array.from({ length: totalPages }, (_, i) => (
+
         <button
           key={i + 1}
           onClick={() => paginate(i + 1)}
-          className={`px-4 py-2 text-sm rounded-md ${i + 1 === currentPage ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-500'}`}
+          className={`px-4 py-2 gap-3 text-sm rounded-md ${i + 1 === currentPage ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-500'}`}
         >
           {i + 1}
         </button>

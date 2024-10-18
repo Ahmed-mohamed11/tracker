@@ -8,7 +8,7 @@ import FormText from "../../components/form/FormText";
 import FormTextArea from "../../components/form/FormTextArea";
 import { useI18nContext } from "../../context/i18n-context";
 
-const AddProjects = ({ closeModal, modal, onClientAdded }) => {
+const AddSites = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
         firstName: "",
         secondName: "",
@@ -188,4 +188,4 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
     );
 };
 
-export default AddProjects;
+export default AddSites;

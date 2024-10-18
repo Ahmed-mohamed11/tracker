@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
 import FormSelect from "../../components/form/FormSelect";
 
-const AddProjects = ({ closeModal, modal, onClientAdded }) => {
+const AddEmployee = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -36,14 +36,14 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
                     'Authorization': `Token ${Cookies.get('token')}`,
                 },
             });
-            setEntities(response.data); // تخزين البيانات المسترجعة
+            setEntities(response.data);
         } catch (error) {
             console.error('Error getting entities:', error.response?.data || error.message);
-            setEntities([]); // إذا حدث خطأ، قم بتخزين مصفوفة فارغة
+            setEntities([]);
         }
     }, []);
 
-    // استدعاء getEntities عند تحميل المكون
+
     useEffect(() => {
         getEntities();
     }, [getEntities]);
@@ -205,4 +205,4 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
     );
 };
 
-export default AddProjects;
+export default AddEmployee;

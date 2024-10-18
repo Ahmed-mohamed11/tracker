@@ -7,7 +7,7 @@ import FormText from "../../components/form/FormText";
 import FormSelect from "../../components/form/FormSelect";
 import { useI18nContext } from "../../context/i18n-context";
 
-const AddProjects = ({ closeModal, modal, onClientAdded }) => {
+const AddEmployeeStructure = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
         firstName: "",
         secondName: "",
@@ -226,4 +226,4 @@ const AddProjects = ({ closeModal, modal, onClientAdded }) => {
     );
 };
 
-export default AddProjects;
+export default AddEmployeeStructure;

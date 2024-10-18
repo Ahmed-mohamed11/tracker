@@ -1,178 +1,207 @@
-import { useEffect, useState, useCallback } from 'react';
+import { Check, Eye, Play, Trash, X } from 'lucide-react';
+import { Fragment, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import AddEmployeeStructure from './AddEmployeeStructure'; // Ensure the path is correct
-import PreviewProjects from './PreviewProjects';
+import { IoSearch } from 'react-icons/io5';
+import { FaArrowCircleDown, FaPlus } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import Table from '../../components/Table';
-import { IoSearch } from "react-icons/io5";
-import { FaArrowCircleDown, FaPlus } from "react-icons/fa";
-import { useI18nContext } from '../../context/i18n-context';
 
+const MySwal = withReactContent(Swal);
 
-const EmployeeStructureTable = ({ openPreview, openCreate }) => {
-    const { t } = useI18nContext(); // Get the translation function
-    const [modalType, setModalType] = useState(null);
+const TableUser = ({ row, openReviewRequest }) => {
+    return (
+        <Fragment>
+            <td className="py-4">
+                <div className="flex items-center bg-themeColor-200 px-2.5 py-0.5 rounded">
+                    <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                    مستكمل
+                </div>
+            </td>
+            <td
+                onClick={() => openReviewRequest(row)}
+                className="py-4 flex w-full items-center justify-center cursor-pointer"
+            >
+                <img
+                    className="w-10 h-10 rounded-full text-center"
+                    src={row.image || './default-image.jpg'}
+                    alt={`${row.first_name} image`}
+                />
+            </td>
+
+            <td className="py-4">
+                <Play className="mr-[30px] bg-blue-200 w-8 h-8 rounded-full p-2 text-blue-600 text-center" />
+            </td>
+        </Fragment>
+    );
+};
+
+const EmployeeStructureTable = ({ openCreate }) => {
+    const [showReviewRequest, setShowReviewRequest] = useState(false);
+    const [requestData, setRequestData] = useState(null); // بيانات الطلب
     const [tableData, setTableData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
-    const [clients, setClients] = useState([]);
-    const [selectedProjectId, setSelectedProjectId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(10);
 
     const fetchData = useCallback(async () => {
         try {
-            const token = Cookies.get('token'); // Retrieve token from cookies
+            const token = Cookies.get('token');
             if (!token) {
                 console.error('No token found in cookies');
                 return;
             }
 
-            // Fetch both projects and clients
-            const [projectsResponse, clientsResponse] = await Promise.all([
-                axios.get('https://dashboard.cowdly.com/api/projects/', {
-                    headers: {
-                        'Authorization': `Token ${token}`, // Include token in the request header
-                    },
-                }),
-                axios.get('https://dashboard.cowdly.com/api/clients/', {
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                    },
-                })
+            // Change the API endpoint to fetch employees
+            const response = await axios.get('https://bio.skyrsys.com/api/employee/', {
+                headers: { 'Authorization': `Token ${token}` },
+            });
+
+            const employees = response.data;
+
+            // Update headers to reflect employee data fields
+            setTableHeaders([
+                { key: 'first_name', label: 'الاسم الأول' },
+                { key: 'last_name', label: 'الاسم الأخير' },
+                { key: 'email', label: 'البريد الإلكتروني' },
+                { key: 'job_number', label: 'رقم الوظيفة' },
+                { key: 'job_title', label: 'عنوان الوظيفة' },
+                { key: 'phone_number', label: 'رقم الهاتف' },
+                { key: 'nationality', label: 'الجنسية' },
+                { key: 'status', label: 'الحالة' }, // Add status if needed
             ]);
 
-            const projects = projectsResponse.data;
-            const clientsData = clientsResponse.data;
+            const formattedData = employees.map(employee => ({
+                first_name: employee.first_name || 'مجهول',
+                last_name: employee.last_name || 'مجهول',
+                email: employee.email || 'مجهول',
+                job_number: employee.job_number || 'مجهول',
+                job_title: employee.job_title || 'مجهول',
+                phone_number: employee.phone_number || 'مجهول',
+                nationality: employee.nationality || 'مجهول',
+                image: employee.image || './default-image.jpg',
+                id: employee.id,
+                voices: employee.voices || [],
+                status: employee.status || 'غير محدد', // Adjust according to the response
+            }));
 
-            setClients(clientsData);
+            setTableData(formattedData);
+            setFilteredData(formattedData);
 
-            if (projects.length > 0) {
-                const headers = Object.keys(projects[0]);
-                setTableHeaders(headers.map(header => ({ key: header, label: header })));
-
-                const formattedProjects = projects.map(project => {
-                    const client = clientsData.find(c => c.id === project.client);
-                    return {
-                        ...project,
-                        client: client ? client.name : 'Unknown Client'
-                    };
-                });
-
-                setTableData(formattedProjects);
-            } else {
-                setTableHeaders([]);
-                setTableData([]);
-            }
         } catch (error) {
-            console.error('Error fetching data:', error.response?.data || error.message);
+            console.error('Error fetching employee data:', error.response?.data || error.message);
         }
     }, []);
 
-    const handleOpenCreate = () => {
-        console.log('Open Create button clicked');
-        openCreate(); // Ensure this triggers the correct function
+    const handleSearch = (event) => {
+        const query = event.target.value.toLowerCase();
+        setSearchQuery(query);
+
+        const filtered = tableData.filter(item =>
+            item.first_name.toLowerCase().includes(query) ||
+            item.last_name.toLowerCase().includes(query) ||
+            item.phone_number.includes(query)
+        );
+        setFilteredData(filtered);
+    };
+
+    const openReviewRequest = async (row) => {
+        try {
+            setRequestData(row);
+            setShowReviewRequest(true);
+        } catch (error) {
+            console.error('Error fetching request details:', error);
+        }
+    };
+
+    const approveRequest = async (id) => {
+        try {
+            const token = Cookies.get('token');
+            if (!token) {
+                console.error('No token found in cookies');
+                return;
+            }
+
+            const response = await axios.post(`https://bio.skyrsys.com/api/registration-requests/${id}/approve/`, {}, {
+                headers: { 'Authorization': `Token ${token}` },
+            });
+
+            MySwal.fire({
+                icon: 'success',
+                title: 'تمت الموافقة على الطلب بنجاح',
+                text: response.data.message || 'تمت الموافقة على الطلب.',
+            });
+
+            fetchData(); // إعادة تحميل البيانات بعد الموافقة
+
+        } catch (error) {
+            console.error('Error approving the request:', error.response?.data || error.message);
+            MySwal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: error.response?.data?.detail || 'فشل في الموافقة على الطلب.',
+            });
+        }
     };
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    const addNewProjectToTable = (newProject) => {
-        const client = clients.find(c => c.id === newProject.client);
-        const formattedProject = {
-            ...newProject,
-            client: client ? client.name : 'Unknown Client'
-        };
-        setTableData((prevData) => [...prevData, formattedProject]);
-    };
-
     return (
-        <div className="min-h-screen p-8 lg:max-w-7xl mx-auto">
-
-            <div className="mb-10 w-full flex items-center justify-between p-4 bg-green-100 border-b  ">
-                <h2 className="text-2xl font-bold">  الموظفين</h2>
+        <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
+            <div className="mb-10 w-full flex items-center justify-between p-4 bg-green-100 border-b">
+                <h2 className="text-2xl font-bold">طلبات تسجيل الموظفين</h2>
+                <button
+                    className="flex items-center justify-center p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition duration-200"
+                    onClick={() => openCreate()}
+                >
+                    <FaPlus className="h-6 w-6" />
+                </button>
             </div>
-            <div className=" flex justify-between items-center mt-6 gap-14">
 
-
-                <div className="grid w-[100%] gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-                    <div className=" relative ">
-                        <input type="text" placeholder={t('registrationForm.searchPlaceholder')} className="w-full bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
-                        <div className=' h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center '>
+            <div className="flex justify-between items-center mb-6 gap-14">
+                <div className="flex w-4/5 gap-5">
+                    <div className="relative flex items-center justify-center">
+                        <input
+                            type="text"
+                            placeholder="بحث"
+                            value={searchQuery}
+                            onChange={handleSearch}
+                            className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                        <div className="h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center">
                             <IoSearch size={20} />
                         </div>
                     </div>
                     <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                        <option value="">{t('registrationForm.requestStatus')}</option>
-                        <option value="pending">{t('registrationForm.pending')}</option>
-                        <option value="approved">{t('registrationForm.approved')}</option>
-                        <option value="rejected">{t('registrationForm.rejected')}</option>
+                        <option value="">حالة الطلب</option>
+                        <option value="pending">قيد الانتظار</option>
+                        <option value="approved">موافقة</option>
+                        <option value="rejected">مرفوض</option>
                     </select>
-
-                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                        <option value="">{t('registrationForm.requestStatus')}</option>
-                        <option value="pending">{t('registrationForm.pending')}</option>
-                        <option value="approved">{t('registrationForm.approved')}</option>
-                        <option value="rejected">{t('registrationForm.rejected')}</option>
-                    </select>
-
-
-                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                        <option value="">{t('registrationForm.requestStatus')}</option>
-                        <option value="pending">{t('registrationForm.pending')}</option>
-                        <option value="approved">{t('registrationForm.approved')}</option>
-                        <option value="rejected">{t('registrationForm.rejected')}</option>
-                    </select>
-
-                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                        <option value="">{t('registrationForm.requestStatus')}</option>
-                        <option value="pending">{t('registrationForm.pending')}</option>
-                        <option value="approved">{t('registrationForm.approved')}</option>
-                        <option value="rejected">{t('registrationForm.rejected')}</option>
-                    </select>
-
-                    <div className='w-[100%] flex justify-end items-end gap-5 '>
-                        <button className="w-[50%]  bg-green-500 text-white text-center hover:bg-green-600 px-4 py-2 rounded-md  transition duration-200 flex items-center justify-center">
-                            {t('registrationForm.export')}
-                            <FaArrowCircleDown size={20} className="mr-2" />
-                        </button>
-
-                        <button
-
-                            className="w-[50%]  bg-green-600 text-white text-center px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 ">
-                            عرض
-                        </button>
-
-
-                    </div>
-
-                    <div className='w-[50%] flex justify-end items-end '>
-
-                    </div>
-
-
-
+                    <button
+                        onClick={() => console.log('Export function')}
+                        className="bg-green-500 text-white text-center hover:bg-green-600 px-4 py-2 rounded-md transition duration-200 flex items-center"
+                    >
+                        تصدير
+                        <FaArrowCircleDown size={20} className="mr-2" />
+                    </button>
                 </div>
-
-
             </div>
 
+            {/* Table */}
             <Table
-                data={tableData}
+                data={filteredData}
                 headers={tableHeaders}
-                openCreate={() => setModalType('project')}
-                openPreview={openPreview}
-                addItemLabel={t('project')}
-                onDelete={() => console.log('Delete function not implemented')}
+                userImage={(row) => <TableUser row={row} openReviewRequest={openReviewRequest} />}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
             />
-            {modalType === 'preview' && (
-                <PreviewProjects closeModal={() => setModalType(null)} projectIdId={selectedProjectId} />
-            )}
-            {modalType === "project" && (
-                <AddEmployeeStructure
-                    closeModal={() => setModalType(null)}
-                    modal={modalType === "project"}
-                    onClientAdded={addNewProjectToTable}
-                />
-            )}
         </div>
     );
 };
