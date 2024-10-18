@@ -94,7 +94,7 @@ export default function TaskManagement() {
                             <td className="py-4 px-4">
                                 <span
                                     className={`px-2 py-1 rounded-full text-xs ${task.status === 'Completed'
-                                        ? 'bg-green-500 text-green-900'
+                                        ? 'bg-themeColor-500 text-themeColor-900'
                                         : task.status === 'In progress'
                                             ? 'bg-blue-500 text-blue-900'
                                             : 'bg-yellow-500 text-yellow-900'

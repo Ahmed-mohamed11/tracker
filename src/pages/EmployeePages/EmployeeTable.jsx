@@ -1,6 +1,6 @@
- import { ChevronLeft, ChevronRight, Filter, MoreVertical, Pause, Play, Plus, Search, Settings } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Filter, MoreVertical, Pause, Play, Plus, Search, Settings } from 'lucide-react';
 import { useI18nContext } from '../../context/i18n-context';
- 
+
 const tasks = [
     { id: 1, name: 'Upload feed and Reels in Instagram', status: 'In progress', users: 5, progress: 75, website: true, timeTracking: '6:47/8:00', dueDate: '23 Nov 2022' },
     { id: 2, name: 'Crossplatform analysis', status: 'Completed', users: 2, progress: 100, website: true, timeTracking: '7:00', dueDate: '03 Nov 2022' },
@@ -90,7 +90,7 @@ export default function TaskManagement() {
                             <td className="py-4 px-4">
                                 <span
                                     className={`px-2 py-1 rounded-full text-xs ${task.status === 'Completed'
-                                        ? 'bg-green-500 text-green-900'
+                                        ? 'bg-themeColor-500 text-themeColor-900'
                                         : task.status === 'In progress'
                                             ? 'bg-blue-500 text-blue-900'
                                             : 'bg-yellow-500 text-yellow-900'

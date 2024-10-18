@@ -4,7 +4,7 @@ import { X } from "@phosphor-icons/react";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import FormText from "../../components/form/FormText";
-  
+
 const PreviewProjects = ({ closeModal, projectId, modal }) => {
     const [projectData, setProjectData] = useState({});
 
@@ -53,7 +53,7 @@ const PreviewProjects = ({ closeModal, projectId, modal }) => {
                 style={{ width: '40vw', zIndex: 50 }}
             >
                 <div className="relative text-gray-900">
-                    <div className="bg-green-700 w-full flex justify-between items-center text-white p-3 mb-4 rounded-t-lg border-b">
+                    <div className="bg-themeColor-700 w-full flex justify-between items-center text-white p-3 mb-4 rounded-t-lg border-b">
                         <h3 className="text-lg font-semibold">View Car</h3>
                         <button
                             type="button"
@@ -65,7 +65,7 @@ const PreviewProjects = ({ closeModal, projectId, modal }) => {
                         </button>
                     </div>
                     <div className="flex justify-center my-8">
-                        
+
                     </div>
                     <form>
                         <div className="gap-4 mb-4 px-4">

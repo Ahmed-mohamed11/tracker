@@ -96,7 +96,7 @@ const AddEmployee = ({ closeModal, modal, onClientAdded }) => {
             >
                 <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5" >
                     <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10 ">
-                        <h2>نموذج التسجيل</h2>
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">نموذج التسجيل</h2>
                         <button
                             type="button"
                             onClick={closeModal}
@@ -192,7 +192,7 @@ const AddEmployee = ({ closeModal, modal, onClientAdded }) => {
                             </div>
 
                             <button
-                                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 flex items-center"
+                                className="bg-themeColor-600 text-white px-4 py-2 rounded-md hover:bg-themeColor-700 transition duration-200 flex items-center"
                                 type="submit"
                             >
                                 إرسال الطلب

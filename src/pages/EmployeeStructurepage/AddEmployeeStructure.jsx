@@ -213,7 +213,7 @@ const AddEmployeeStructure = ({ closeModal, modal, onClientAdded }) => {
                             </div>
 
                             <button
-                                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 flex items-center"
+                                className="bg-themeColor-600 text-white px-4 py-2 rounded-md hover:bg-themeColor-700 transition duration-200 flex items-center"
                                 type="submit"
                             >
                                 {t('registrationForm.submitButton')}

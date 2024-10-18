@@ -24,7 +24,7 @@ export default function accountInfo() {
                     <div className="bg-gray-100 rounded-lg p-4 text-center">
                         <div className="w-32 h-32 bg-gray-300 rounded-full mx-auto mb-4"></div>
                         <div className="flex justify-center gap-5">
-                            <button className="bg-green-500 text-white px-4 py-2 rounded-lg mr-2">تحميل</button>
+                            <button className="bg-themeColor-500 text-white px-4 py-2 rounded-lg mr-2">تحميل</button>
                             <button className="bg-red-500 text-white px-4 py-2 rounded-lg">حذف</button>
                         </div>
                     </div>

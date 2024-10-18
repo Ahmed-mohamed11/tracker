@@ -5,7 +5,7 @@ export default function LeaveManagement() {
         <div className="bg-gray-100 p-6 font-sans" dir="rtl">
             <div className="mb-6 flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-gray-800">المغادرات</h1>
-                <button className="rounded-full bg-green-500 p-2 text-white">
+                <button className="rounded-full bg-themeColor-500 p-2 text-white">
                     <Plus className="h-6 w-6" />
                 </button>
             </div>
@@ -32,7 +32,7 @@ export default function LeaveManagement() {
                     <option>اختر الموظف</option>
                 </select>
                 <div className="col-span-2"></div>
-                <button className="rounded-md bg-green-500 p-2 text-white">عرض</button>
+                <button className="rounded-md bg-themeColor-500 p-2 text-white">عرض</button>
             </div>
 
             <div className="overflow-x-auto rounded-lg bg-white shadow">

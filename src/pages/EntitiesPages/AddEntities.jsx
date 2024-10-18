@@ -156,7 +156,7 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
                                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">المناوبات</label>
                                     <div className="flex gap-2">
                                         {selectedShifts.map((shifts, index) => (
-                                            <span key={index} className="px-2 py-1 text-gray-50 bg-green-500 rounded-lg">
+                                            <span key={index} className="px-2 py-1 text-gray-50 bg-themeColor-500 rounded-lg">
                                                 {shifts.label}
                                             </span>
                                         ))}
@@ -166,7 +166,7 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
                                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">الموظفين</label>
                                     <div className="flex gap-2">
                                         {selectedEmployeeTypes.map((employeeType, index) => (
-                                            <span key={index} className="px-2 py-1 text-gray-50 bg-green-500 rounded-lg">
+                                            <span key={index} className="px-2 py-1 text-gray-50 bg-themeColor-500 rounded-lg">
                                                 {employeeType.label}
                                             </span>
                                         ))}
@@ -187,7 +187,7 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
 
                             <div className="w-full flex justify-start mt-5">
                                 <button
-                                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none"
+                                    className="bg-themeColor-600 text-white px-4 py-2 rounded-md hover:bg-themeColor-700 focus:outline-none"
                                     type="submit"
                                 >
                                     إضافة الجهة

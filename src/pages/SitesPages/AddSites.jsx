@@ -167,7 +167,7 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
                                 <div className=" col-span-2">
                                     <p className="text-lg font-medium text-gray-900 dark:text-gray-300">الحاله</p>
                                 </div>
-                                <label className=" col-span-1 px-4 py-2 rounded-full bg-green-300 inline-flex items-center cursor-pointer" >
+                                <label className=" col-span-1 px-4 py-2 rounded-full bg-themeColor-300 inline-flex items-center cursor-pointer" >
                                     <input type="checkbox" value="" className="sr-only peer" />
                                     <span className="me-3 text-sm font-medium text-gray-900 dark:text-gray-300">Toggle me</span>
                                     <div className="relative w-11 h-6 bg-gray-200  dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
@@ -175,7 +175,7 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
                             </div>
 
                             <button
-                                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 flex items-center"
+                                className="bg-themeColor-600 text-white px-4 py-2 rounded-md hover:bg-themeColor-700 transition duration-200 flex items-center"
                                 type="submit"
                             >
                                 {t('registrationForm.submitButton')}

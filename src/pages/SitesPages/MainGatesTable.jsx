@@ -86,10 +86,10 @@ const MainGatesTable = ({ openPreview, openCreate }) => {
 
     return (
         <div className="col-span-2 min-h-screen mt-10  w-full mx-auto">
-            <div className="mb-10 w-full flex items-center justify-between p-4 bg-green-100 border-b ">
+            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b ">
                 <h2 className="text-2xl font-bold">مجموعه البوابات الرئيسيه</h2>
                 <button
-                    className="flex items-center justify-center p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition duration-200"
+                    className="flex items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
                     onClick={handleOpenCreate}
                 >
                     <FaPlus className="h-6 w-6 " />
@@ -102,7 +102,7 @@ const MainGatesTable = ({ openPreview, openCreate }) => {
 
                 <div className="flex w-full gap-5">
                     <div className="relative flex items-center justify-center">
-                        <input type="text" placeholder={t('registrationForm.searchPlaceholder')} className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                        <input type="text" placeholder={t('registrationForm.searchPlaceholder')} className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500" />
                         <div className=' h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center '>
                             <IoSearch size={20} />
                         </div>
@@ -121,7 +121,7 @@ const MainGatesTable = ({ openPreview, openCreate }) => {
                         <option value="rejected">{t('registrationForm.rejected')}</option>
                     </select>
 
-                    <button className="bg-green-500 text-white text-center hover:bg-green-600 px-4 py-2 rounded-md  transition duration-200 flex items-center">
+                    <button className="bg-themeColor-500 text-white text-center hover:bg-themeColor-600 px-4 py-2 rounded-md  transition duration-200 flex items-center">
                         {t('registrationForm.export')}
                         <FaArrowCircleDown size={20} className="mr-2" />
                     </button>

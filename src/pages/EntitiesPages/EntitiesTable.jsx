@@ -67,12 +67,12 @@ const EntitiesTable = ({ openCreate }) => {
     return (
         <div className="min-h-screen mt-5 font-sans" dir="rtl">
             <div className="lg:max-w-7xl w-full mx-auto">
-                <div className="flex items-center justify-between p-4 bg-green-100 border-b">
-                    <h2 className="text-2xl font-semibold text-green-500">الجهات</h2>
+                <div className="flex items-center justify-between p-4 bg-themeColor-500  border-b">
+                    <h2 className="text-2xl font-semibold text-themeColor-500">الجهات</h2>
                     <div className="flex items-center space-x-4">
                         <button
                             onClick={openCreate} // استدعاء الدالة عند الضغط
-                            className="flex items-center justify-center p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition duration-200"
+                            className="flex items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
                         >
                             <FaPlus size={18} />
                         </button>
@@ -102,7 +102,7 @@ const EntitiesTable = ({ openCreate }) => {
                                     <Network size={32} className="text-gray-400" />
                                 </div>
                                 <div className="w-1/3">
-                                    <span className={`text-${entity.is_active ? 'green' : 'red'}-500`}>
+                                    <span className={`text-${entity.is_active ? 'themeColor' : 'red'}-500`}>
                                         {entity.is_active ? 'مفعل' : 'غير مفعل'}
                                     </span> {/* حالة الجهة */}
                                 </div>
@@ -145,7 +145,7 @@ const EntitiesTable = ({ openCreate }) => {
                                 <button className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200">
                                     <Trash size={18} />
                                 </button>
-                                <button className="p-1 rounded-full bg-green-100 text-green-600 hover:bg-green-200">
+                                <button className="p-1 rounded-full bg-themeColor-500  text-themeColor-600 hover:bg-themeColor-200">
                                     <Plus size={18} />
                                 </button>
                             </div>

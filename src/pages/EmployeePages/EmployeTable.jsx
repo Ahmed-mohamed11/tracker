@@ -32,7 +32,7 @@ const TableUser = ({ row, openReviewRequest }) => {
         <Fragment>
             <td className="py-4">
                 <div className="flex items-center bg-themeColor-200 px-2.5 py-0.5 rounded">
-                    <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                    <div className="h-2.5 w-2.5 rounded-full bg-themeColor-200 me-2"></div>
                     {row.status || 'مستكمل'}
                 </div>
             </td>
@@ -165,6 +165,27 @@ const EmployeeTable = ({ openCreate }) => {
 
 
 
+    const exportTableToExcel = () => {
+        const table = document.getElementById('table');
+        const rows = table.rows;
+        const csv = [];
+        for (let i = 0; i < rows.length; i++) {
+            const row = [];
+            for (let j = 0; j < rows[i].cells.length; j++) {
+                row.push(rows[i].cells[j].innerHTML);
+            }
+            csv.push(row.join(','));
+        }
+        const csvString = csv.join('\n');
+        const a = document.createElement('a');
+        a.href = 'data:attachment/csv,' + encodeURIComponent(csvString);
+        a.target = '_blank';
+        a.download = 'employees.csv';
+        document.body.appendChild(a);
+        a.click();
+    }
+
+
 
     const refuseRequest = async (id) => {
         try {
@@ -202,10 +223,10 @@ const EmployeeTable = ({ openCreate }) => {
 
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
-            <div className="mb-10 w-full flex items-center justify-between p-4 bg-green-100 border-b">
+            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
                 <h2 className="text-2xl font-bold">طلبات تسجيل الموظفين</h2>
                 <button
-                    className="flex items-center justify-center p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition duration-200"
+                    className="flex items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
                     onClick={() => openCreate()}
                 >
                     <FaPlus className="h-6 w-6" />
@@ -213,14 +234,14 @@ const EmployeeTable = ({ openCreate }) => {
             </div>
 
             <div className="flex justify-between items-center mb-6 gap-14">
-                <div className="flex w-4/5 gap-5">
+                <div className="grid grid-cols-3 gap-4">
                     <div className="relative flex items-center justify-center">
                         <input
                             type="text"
                             placeholder="بحث"
                             value={searchQuery}
                             onChange={handleSearch}
-                            className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                            className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
                         />
                         <div className="h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center">
                             <IoSearch size={20} />
@@ -233,8 +254,8 @@ const EmployeeTable = ({ openCreate }) => {
                         <option value="rejected">مرفوض</option>
                     </select>
                     <button
-                        onClick={() => console.log('Export function')}
-                        className="bg-green-500 text-white text-center hover:bg-green-600 px-4 py-2 rounded-md transition duration-200 flex items-center"
+                        onClick={() => exportTableToExcel()}
+                        className="w-1/2  bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
                     >
                         تصدير
                         <FaArrowCircleDown size={20} className="mr-2" />

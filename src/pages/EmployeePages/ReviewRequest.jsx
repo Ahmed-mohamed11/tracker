@@ -69,7 +69,7 @@ export default function ReviewRequest({ requestData, onClose }) {
                         <div className="p-2">
                             <div className="bg-blue-100 p-2 mb-2 flex justify-between items-center">
                                 <span>{requestDetails.entity.title} </span>
-                                <Check className="text-green-500" />
+                                <Check className="text-themeColor-500" />
                             </div>
 
                         </div>

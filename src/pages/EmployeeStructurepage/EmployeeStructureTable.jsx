@@ -1,4 +1,4 @@
-import { Check, Eye, Play, Trash, X } from 'lucide-react';
+import { Check, Edit, Eye, Play, Trash, X } from 'lucide-react';
 import { Fragment, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -10,12 +10,27 @@ import Table from '../../components/Table';
 
 const MySwal = withReactContent(Swal);
 
+const TableActions = ({ row, deleteEmployee, openEditForm, openReviewRequest }) => {
+    return (
+        <div className="flex gap-2">
+
+            <button onClick={() => openEditForm(row.id)} className="text-gray-500">
+                <Edit size={22} />
+            </button>
+            <button onClick={() => deleteEmployee(row.id)} className="text-gray-500">
+                <Trash size={22} />
+            </button>
+        </div>
+    );
+};
+
 const TableUser = ({ row, openReviewRequest }) => {
     return (
         <Fragment>
             <td className="py-4">
+
                 <div className="flex items-center bg-themeColor-200 px-2.5 py-0.5 rounded">
-                    <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                    <div className={`h-2.5 w-2.5 rounded-full me-2  bg-themeColor-500`}></div>
                     مستكمل
                 </div>
             </td>
@@ -117,7 +132,8 @@ const EmployeeStructureTable = ({ openCreate }) => {
         }
     };
 
-    const approveRequest = async (id) => {
+
+    const deleteEmployee = async (id) => {
         try {
             const token = Cookies.get('token');
             if (!token) {
@@ -125,27 +141,32 @@ const EmployeeStructureTable = ({ openCreate }) => {
                 return;
             }
 
-            const response = await axios.post(`https://bio.skyrsys.com/api/registration-requests/${id}/approve/`, {}, {
+            const response = await axios.delete(`https://bio.skyrsys.com/api/registration-requests/${id}/`, {
                 headers: { 'Authorization': `Token ${token}` },
             });
 
-            MySwal.fire({
-                icon: 'success',
-                title: 'تمت الموافقة على الطلب بنجاح',
-                text: response.data.message || 'تمت الموافقة على الطلب.',
-            });
-
-            fetchData(); // إعادة تحميل البيانات بعد الموافقة
-
+            if (response.status === 204) {
+                const newTableData = tableData.filter(item => item.id !== id);
+                setTableData(newTableData);
+                setFilteredData(newTableData);
+            }
         } catch (error) {
-            console.error('Error approving the request:', error.response?.data || error.message);
-            MySwal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: error.response?.data?.detail || 'فشل في الموافقة على الطلب.',
-            });
+            console.error('Error deleting employee:', error.response?.data || error.message);
         }
     };
+
+
+    const [editData, setEditData] = useState(null);
+
+    const openEditForm = (row) => {
+        setEditData(row);
+    };
+
+    // const closeEditForm = () => {
+    //     setEditData(null);
+    // };
+
+
 
     useEffect(() => {
         fetchData();
@@ -153,51 +174,83 @@ const EmployeeStructureTable = ({ openCreate }) => {
 
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
-            <div className="mb-10 w-full flex items-center justify-between p-4 bg-green-100 border-b">
-                <h2 className="text-2xl font-bold">طلبات تسجيل الموظفين</h2>
-                <button
-                    className="flex items-center justify-center p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition duration-200"
-                    onClick={() => openCreate()}
-                >
-                    <FaPlus className="h-6 w-6" />
-                </button>
+            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
+                <h2 className="text-2xl font-bold"> الموظفين المسجلين</h2>
+
             </div>
 
-            <div className="flex justify-between items-center mb-6 gap-14">
-                <div className="flex w-4/5 gap-5">
-                    <div className="relative flex items-center justify-center">
+            <div className="mb-6 gap-14">
+                <div className="grid grid-cols-4 gap-4">
+                    <div className="relative w-full">
                         <input
                             type="text"
                             placeholder="بحث"
                             value={searchQuery}
                             onChange={handleSearch}
-                            className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                            className="w-full bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
                         />
                         <div className="h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center">
                             <IoSearch size={20} />
                         </div>
                     </div>
-                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                        <option value="">حالة الطلب</option>
-                        <option value="pending">قيد الانتظار</option>
-                        <option value="approved">موافقة</option>
-                        <option value="rejected">مرفوض</option>
-                    </select>
+                    <div className="relative flex items-center justify-center">
+                        <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
+                            <option value="">حالة الطلب</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="approved">موافقة</option>
+                            <option value="rejected">مرفوض</option>
+                        </select>
+                    </div>
+
+                    <div className="relative flex items-center justify-center">
+                        <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
+                            <option value="">حالة الطلب</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="approved">موافقة</option>
+                            <option value="rejected">مرفوض</option>
+                        </select>
+                    </div>
+
+                    <div className="relative flex items-center justify-center">
+                        <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
+                            <option value="">حالة الطلب</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="approved">موافقة</option>
+                            <option value="rejected">مرفوض</option>
+                        </select>
+                    </div>
+
+                    <div className="relative flex items-center justify-center">
+                        <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
+                            <option value="">حالة الطلب</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="approved">موافقة</option>
+                            <option value="rejected">مرفوض</option>
+                        </select>
+                    </div>
+
                     <button
                         onClick={() => console.log('Export function')}
-                        className="bg-green-500 text-white text-center hover:bg-green-600 px-4 py-2 rounded-md transition duration-200 flex items-center"
+                        className="w-1/3 bg-themeColor-500 text-white text-center hover:bg-themeColor-600 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
                     >
                         تصدير
                         <FaArrowCircleDown size={20} className="mr-2" />
                     </button>
                 </div>
             </div>
-
             {/* Table */}
             <Table
                 data={filteredData}
                 headers={tableHeaders}
                 userImage={(row) => <TableUser row={row} openReviewRequest={openReviewRequest} />}
+                actions={(row) => (
+                    <TableActions
+                        row={row}
+                        deleteEmployee={deleteEmployee}
+                        openEditForm={openEditForm}
+                        openReviewRequest={openReviewRequest}
+                    />
+                )}
                 itemsPerPage={itemsPerPage}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}

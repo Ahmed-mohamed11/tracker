@@ -86,7 +86,7 @@ const NavbarItem = ({
       {subItems && (
         <div
           className={classNames(
-            "absolute z-50 top-full left-0 mt-5 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
+            "absolute z-50 top-full left-0 mt-5 bg-themeColor-700 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
             isOpen
               ? "opacity-100 visible animate-slide-down"
               : "opacity-0 invisible animate-slide-up"
@@ -100,7 +100,7 @@ const NavbarItem = ({
                 onClick();
                 closeSubMenu();
               }}
-              className="block px-4 py-2 text-base hover:bg-gradient-to-r hover:from-themeColor-500"
+              className="block px-4 py-2 text-base hover:bg-gradient-to-r hover:from-themeColor-400"
             >
               {subItem.name}
             </Link>
@@ -236,8 +236,8 @@ export default function Navbar({ dark }) {
   };
 
   return (
-    <div className="w-full text-white shadow-lg sticky top-0 z-50 bg-gradient-to-r from-themeColor-900 via-themeColor-800 to-themeColor-600">
-      <nav className="flex items-center justify-between p-4 lg:justify-around">
+    <div className="w-full  text-white shadow-lg sticky top-0 z-50 bg-gradient-to-r from-themeColor-700 via-themeColor-600 to-themeColor-500">
+      <nav className="flex items-center justify-between p-4 ">
         {/* زر القائمة للشاشات الصغيرة */}
         <div className="lg:hidden">
           <button onClick={toggleMobileMenu} className="text-white">
@@ -247,13 +247,15 @@ export default function Navbar({ dark }) {
 
         {/* شعار التطبيق */}
         <div>
-          <h1 className="text-2xl font-semibold">Tracker</h1>
+          <img
+            className="w-14 h-14 border-2 border-orange-500 rounded-tl-lg rounded-br-lg"
+            src="/src/images/BIO2.jpeg" alt="" />
         </div>
 
         {/* روابط القائمة الكبيرة */}
         <div
           className={classNames(
-            "mt-3  lg:flex items-center space-x-6 transition-all duration-300 ease-in-out hidden lg:block"
+            "mt-3 lg:flex items-center space-x-6 transition-all duration-300 ease-in-out hidden "
           )}
         >
           {selectedNavigation.map((item, index) => (

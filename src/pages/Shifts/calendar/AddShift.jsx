@@ -71,7 +71,7 @@ function AddEmployeeForm({ handleClose, handleAddEmployee }) {
                         <button
                             type="button"
                             onClick={handleSave}
-                            className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none"
+                            className="px-6 py-2 bg-themeColor-600 text-white rounded-md hover:bg-themeColor-700 focus:outline-none"
                         >
                             حفظ
                         </button>
@@ -121,7 +121,7 @@ export default function ShiftForm({ handleSave, handleCancel }) {
             <div className="fixed z-50 left-0 top-[90px] h-[calc(100%-90px)] w-[40%] p-6 bg-white shadow-lg transform translate-x-0 transition-transform ease-in-out duration-300 rounded-l-lg overflow-y-auto">
                 {/* عنوان النموذج */}
                 <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-300">
-                    <h2 className="text-2xl font-semibold text-green-600">
+                    <h2 className="text-2xl font-semibold text-themeColor-600">
                         {showAddHoliday ? "اضافة عطله" : "اضافة مناوبة"}
                     </h2>
                     <button onClick={handleCancel} className="text-gray-500 hover:text-gray-700 focus:outline-none">
@@ -132,13 +132,13 @@ export default function ShiftForm({ handleSave, handleCancel }) {
                 <nav className="flex justify-between mb-6">
                     <button
                         onClick={() => setShowAddHoliday(false)}
-                        className={`px-24 py-2 border-spacing-2 border-b-4 border-gray-300 rounded-md text-gray-700 ${showAddHoliday ? "bg-gray-50 " : "bg-green-300 rounded-md"}`}
+                        className={`px-24 py-2 border-spacing-2 border-b-4 border-gray-300 rounded-md text-gray-700 ${showAddHoliday ? "bg-gray-50 " : "bg-themeColor-300 rounded-md"}`}
                     >
                         مناوبة
                     </button>
                     <button
                         onClick={() => setShowAddHoliday(true)}
-                        className={`px-24  py-2 border-spacing-2 border-b-4 border-gray-300 rounded-md text-gray-700 ${showAddHoliday ? "bg-green-300" : "bg-gray-50 rounded-md"}`}
+                        className={`px-24  py-2 border-spacing-2 border-b-4 border-gray-300 rounded-md text-gray-700 ${showAddHoliday ? "bg-themeColor-300" : "bg-gray-50 rounded-md"}`}
                     >
                         عطله
                     </button>
@@ -147,7 +147,7 @@ export default function ShiftForm({ handleSave, handleCancel }) {
 
                 {showAddHoliday ? (
                     <AddHolidayForm
-                        
+
                         handleSave={handleAddEmployee}
                         handleCancel={() => setShowAddHoliday(false)}
                     />
@@ -296,7 +296,7 @@ export default function ShiftForm({ handleSave, handleCancel }) {
                             <button
                                 type="button"
                                 onClick={handleSubmit}
-                                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none"
+                                className="px-6 py-2 bg-themeColor-600 text-white rounded-md hover:bg-themeColor-700 focus:outline-none"
                             >
                                 حفظ
                             </button>

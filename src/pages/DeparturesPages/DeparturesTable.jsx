@@ -88,11 +88,11 @@ const ProjectTable = ({ openPreview, openCreate }) => {
     return (
         <div className="min-h-screen mt-6 font-sans lg:max-w-7xl w-full mx-auto">
             <div className="mb-6 flex items-center justify-between">
-                <div className="w-full flex items-center justify-between p-4 bg-green-100 border-b ">
+                <div className="w-full flex items-center justify-between p-4 bg-themeColor-500  border-b ">
 
                     <h2 className="text-xl font-bold">المغادرات</h2>
                     <button
-                        className="fflex items-center justify-center p-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition duration-200"
+                        className="fflex items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
                         onClick={handleOpenCreate}
                     >
                         <FaPlus className="h-6 w-6 " />
@@ -158,7 +158,7 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                 <div className='flex justify-end items-end '>
                     <button
 
-                        className="  bg-green-600 text-white w-full text-center px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 ">
+                        className="  bg-themeColor-600 text-white w-full text-center px-4 py-2 rounded-md hover:bg-themeColor-700 transition duration-200 ">
                         عرض
                     </button>
                 </div>

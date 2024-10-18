@@ -6,7 +6,7 @@ const TableUser = ({ row, onUserClick }) => {
         <Fragment>
             <td className="py-4">
                 <div className="flex items-center bg-themeColor-200 px-2.5 py-0.5 rounded">
-                    <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                    <div className="h-2.5 w-2.5 rounded-full bg-themeColor-500 me-2"></div>
                     مستكمل
                 </div>
             </td>

@@ -63,7 +63,7 @@ export function AddHolidayForm({ handleClose, handleSave }) {
                 <button
                     type="button"
                     onClick={handleDecrement}
-                    className="w-10 h-10 px-3  py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none"
+                    className="w-10 h-10 px-3  py-2 bg-themeColor-500 text-white rounded-md hover:bg-themeColor-600 focus:outline-none"
                 >
                     -
                 </button>
@@ -71,7 +71,7 @@ export function AddHolidayForm({ handleClose, handleSave }) {
                 <button
                     type="button"
                     onClick={handleIncrement}
-                    className="w-10 h-10  px-3 py-2 flex items-center justify-center bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none"
+                    className="w-10 h-10  px-3 py-2 flex items-center justify-center bg-themeColor-500 text-white rounded-md hover:bg-themeColor-600 focus:outline-none"
                 >
                     <Plus className="w-5 h-5" />
                 </button>
@@ -123,7 +123,7 @@ export function AddHolidayForm({ handleClose, handleSave }) {
                 <button
                     type="button"
                     onClick={handleSubmit}
-                    className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none"
+                    className="px-6 py-2 bg-themeColor-500 text-white rounded-md hover:bg-themeColor-600 focus:outline-none"
                 >
                     حفظ
                 </button>

@@ -20,7 +20,7 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
                         <button
                             key={page}
                             onClick={() => paginate(page)}
-                            className={`px-4 py-2 text-sm rounded-md ${page === currentPage ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                            className={`px-4 py-2 text-sm rounded-md ${page === currentPage ? 'bg-themeColor-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                         >
                             {page}
                         </button>
