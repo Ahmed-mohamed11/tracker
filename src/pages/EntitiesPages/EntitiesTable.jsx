@@ -26,7 +26,6 @@ const EntitiesTable = ({ openCreate }) => {
                     'Authorization': `Token ${token}`,
                 },
             });
-
             const entities = entitiesResponse.data;
             setTableData(entities); // تخزين البيانات المستلمة في حالة الجدول
         } catch (error) {
@@ -65,14 +64,14 @@ const EntitiesTable = ({ openCreate }) => {
     };
 
     return (
-        <div className="min-h-screen mt-5 font-sans" dir="rtl">
+        <div className="min-h-screen mt-10 font-sans" dir="rtl">
             <div className="lg:max-w-7xl w-full mx-auto">
-                <div className="flex items-center justify-between p-4 bg-themeColor-500  border-b">
-                    <h2 className="text-2xl font-semibold text-themeColor-500">الجهات</h2>
+                <div className=" flex items-center justify-between p-4 bg-themeColor-500  border-b">
+                    <h2 className="text-2xl font-semibold text-white">الجهات</h2>
                     <div className="flex items-center space-x-4">
                         <button
                             onClick={openCreate} // استدعاء الدالة عند الضغط
-                            className="flex items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
+                            className="border-2 flex items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
                         >
                             <FaPlus size={18} />
                         </button>
@@ -95,15 +94,15 @@ const EntitiesTable = ({ openCreate }) => {
                         <div key={index} className={`flex items-center justify-between p-4 ${index % 2 === 1 ? 'bg-blue-50' : ''}`}>
                             <div className="w-2/3 flex items-center justify-between space-x-4 space-x-reverse">
                                 <div className="w-1/3 ">
-                                    <span className="font-medium">{entity.name}</span> {/* عرض اسم الجهة */}
+                                    <span className="font-medium">{entity.ar_name}</span>
                                 </div>
                                 <div className="w-1/3 flex items-center gap-2">
-                                    <span className="text-red-400">{entity.id}</span> {/* عرض معرف الجهة */}
+                                    <span className="text-red-400">{entity.id}</span>
                                     <Network size={32} className="text-gray-400" />
                                 </div>
                                 <div className="w-1/3">
                                     <span className={`text-${entity.is_active ? 'themeColor' : 'red'}-500`}>
-                                        {entity.is_active ? 'مفعل' : 'غير مفعل'}
+                                        {entity.active ? 'مفعل' : 'غير مفعل'}
                                     </span> {/* حالة الجهة */}
                                 </div>
                             </div>
@@ -145,7 +144,7 @@ const EntitiesTable = ({ openCreate }) => {
                                 <button className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200">
                                     <Trash size={18} />
                                 </button>
-                                <button className="p-1 rounded-full bg-themeColor-500  text-themeColor-600 hover:bg-themeColor-200">
+                                <button className="p-1 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200">
                                     <Plus size={18} />
                                 </button>
                             </div>

@@ -83,13 +83,14 @@ const NavbarItem = ({
         )}
       </Link>
 
+
       {subItems && (
         <div
           className={classNames(
             "absolute z-50 top-full left-0 mt-5 bg-themeColor-700 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
             isOpen
-              ? "opacity-100 visible animate-slide-down"
-              : "opacity-0 invisible animate-slide-up"
+              ? "opacity-100 visible w-full animate-slide-down"  // إضافة w-full لجعل القائمة بحجم الزر
+              : "opacity-0 invisible w-full animate-slide-up"      // إضافة w-full هنا أيضاً
           )}
         >
           {subItems.map((subItem, index) => (
@@ -107,6 +108,9 @@ const NavbarItem = ({
           ))}
         </div>
       )}
+
+
+
     </div>
   );
 };
@@ -175,7 +179,7 @@ export default function Navbar({ dark }) {
       link: `${import.meta.env.VITE_PUBLIC_URL}/departures`,
     },
     {
-      icon: <Network size={32} />,
+      icon: <Network size={25} />,
       name: t("sideBar.Administrative"),
       subItems: [
         {
@@ -189,12 +193,12 @@ export default function Navbar({ dark }) {
       ],
     },
     {
-      icon: <Clock size={32} />,
+      icon: <Clock size={25} />,
       name: t("sideBar.Shifts"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/shifts`,
     },
     {
-      icon: <Gear size={32} />,
+      icon: <Gear size={25} />,
       name: t("sideBar.setting"),
       subItems: [
         { name: t("sideBar.site"), link: `${import.meta.env.VITE_PUBLIC_URL}/sites` },
@@ -205,7 +209,7 @@ export default function Navbar({ dark }) {
       ],
     },
     {
-      icon: <Gear size={32} />,
+      icon: <Gear size={25} />,
       name: t("sideBar.reports"),
       subItems: [
         { name: t("sideBar.site"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
@@ -291,7 +295,7 @@ export default function Navbar({ dark }) {
           {isUserMenuOpen && (
             <div
               className={classNames(
-                "absolute z-50 right-0 mt-2 w-48 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
+                "absolute z-50 right-0 mt-7 w-48 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
                 isUserMenuOpen
                   ? "opacity-100 visible animate-slide-down"
                   : "opacity-0 invisible animate-slide-up"

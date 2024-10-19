@@ -2,10 +2,10 @@ import { ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pl
 
 export default function LeaveManagement() {
     return (
-        <div className="bg-gray-100 p-6 font-sans" dir="rtl">
+        <div className="bg-gray-100 mt-10 p-6 font-sans" dir="rtl">
             <div className="mb-6 flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-gray-800">المغادرات</h1>
-                <button className="rounded-full bg-themeColor-500 p-2 text-white">
+                <button className="border-2 rounded-full bg-themeColor-500 p-2 text-white">
                     <Plus className="h-6 w-6" />
                 </button>
             </div>

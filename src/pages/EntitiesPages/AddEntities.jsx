@@ -79,7 +79,7 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
             >
                 <div className="relative p-4 sm:p-5">
                     <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b dark:border-gray-600 shadow-md shadow-gray-300/10">
-                        <h2 className="text-xl font-semibold">إضافة جهة</h2>
+                        <h2 className="text-xl text-gray-900 font-semibold">إضافة جهة</h2>
                         <button
                             type="button"
                             onClick={closeModal}

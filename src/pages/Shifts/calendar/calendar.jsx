@@ -63,20 +63,18 @@ export default function Calendar() {
 
     return (
         <div className="relative">
-            <div className={`max-w-7xl mx-auto p-4 transition ${showForm ? 'blur-sm' : ''}`}>
+            <div className={`max-w-7xl mx-auto mt-6 p-4 transition ${showForm ? 'blur-sm' : ''}`}>
                 <div className="w-full mb-12 flex items-center justify-between p-4 bg-themeColor-500  border-b ">
-                    <h1 className="text-2xl font-bold">خطه الدوام</h1>
-                    <div className="flex items-center space-x-4">
+                    <h1 className="text-2xl text-white font-bold">خطه الدوام</h1>
+                    <div className="text-white flex items-center space-x-4">
                         <button onClick={prev} className="p-2">
                             <ChevronRight className="w-5 h-5" />
-
                         </button>
                         <span className="text-lg font-semibold">
                             {months[currentDate.getMonth()]} {currentDate.getFullYear()}
                         </span>
                         <button onClick={next} className="p-2">
                             <ChevronLeft className="w-5 h-5" />
-
                         </button>
                     </div>
                 </div>

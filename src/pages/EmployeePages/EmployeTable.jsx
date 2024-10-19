@@ -226,7 +226,7 @@ const EmployeeTable = ({ openCreate }) => {
             <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
                 <h2 className="text-2xl font-bold">طلبات تسجيل الموظفين</h2>
                 <button
-                    className="flex items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
+                    className="flex border-2 items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
                     onClick={() => openCreate()}
                 >
                     <FaPlus className="h-6 w-6" />

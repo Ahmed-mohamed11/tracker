@@ -86,7 +86,6 @@ const EmployeeStructureTable = ({ openCreate }) => {
                 { key: 'job_title', label: 'عنوان الوظيفة' },
                 { key: 'phone_number', label: 'رقم الهاتف' },
                 { key: 'nationality', label: 'الجنسية' },
-                { key: 'status', label: 'الحالة' }, // Add status if needed
             ]);
 
             const formattedData = employees.map(employee => ({
