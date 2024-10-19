@@ -161,4 +161,5 @@ const EntitiesTable = ({ openCreate }) => {
     );
 };
 
+
 export default EntitiesTable;
