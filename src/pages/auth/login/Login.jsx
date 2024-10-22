@@ -54,7 +54,7 @@ export default function Login() {
         }
       );
 
-      console.log("Response Data:", response.data); // Check response structure
+      console.log("Response Data:", response.data); 
 
       const data = response.data?.data || response.data;
 

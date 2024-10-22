@@ -16,6 +16,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
 import Cookies from "js-cookie"; // استيراد مكتبة js-cookie
 import { ListChecks } from "lucide-react";
+import axios from "axios";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -59,6 +60,7 @@ const NavbarItem = ({
       onClick();
     }
   };
+  
 
   return (
     <div className="relative" ref={ref}>
@@ -123,11 +125,28 @@ export default function Navbar({ dark }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef();
-  const navigate = useNavigate(); // لإعادة التوجيه
+  const navigate = useNavigate();  
+  const [login, setLogin] = useState(false);
+  const [user, setUser] = useState({ email: "", is_admin: false });
 
   useEffect(() => {
-    // إغلاق القائمة المنسدلة للمستخدم عند النقر خارجها
-    const handleClickOutside = (event) => {
+    const token = Cookies.get("token");  
+    if (token) {
+      axios
+        .post(`https://bio.skyrsys.com/api/company/login/`, {
+         })
+        .then((response) => {
+          setLogin(true); // Set login to true
+          setUser(response.data); // Save the user data (email, is_admin)
+         })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          setLogin(false);
+        });
+    }
+  }, []);
+  useEffect(() => {
+     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
@@ -170,21 +189,6 @@ export default function Navbar({ dark }) {
       link: `${import.meta.env.VITE_PUBLIC_URL}/`,
     },
 
-
-    {
-      icon: <UserCircleGear size={25} />,
-      name: t("sideBar.admin"),
-      subItems: [
-        {
-          name: t("sideBar.companies"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
-        },
-        {
-          name: t("sideBar.plans"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
-        },
-      ]
-    },
 
     {
       icon: <ListChecks size={25} />,
@@ -233,6 +237,22 @@ export default function Navbar({ dark }) {
         { name: t("sideBar.site"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
         { name: t("sideBar.audio"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
       ],
+    },
+
+    user.is_admin &&
+    {
+      icon: <UserCircleGear size={25} />,
+      name: t("sideBar.admin"),
+      subItems: [
+        {
+          name: t("sideBar.companies"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
+        },
+        {
+          name: t("sideBar.plans"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
+        },
+      ]
     },
   ];
 
@@ -306,7 +326,7 @@ export default function Navbar({ dark }) {
               alt="profile"
               className="w-7 h-7 rounded-full"
             />
-            <p className="font-semibold hidden md:block">Ahmed</p>
+            <p className="font-semibold hidden md:block">user</p>
           </div>
 
           {isUserMenuOpen && (
