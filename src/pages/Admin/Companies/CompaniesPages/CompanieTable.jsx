@@ -14,7 +14,6 @@ const MySwal = withReactContent(Swal);
 const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest }) => {
     return (
         <div className="flex gap-4">
-
             <button onClick={() => refuseRequest(row.id)} className="text-gray-500">
                 <Replace size={22} />
             </button>
@@ -24,8 +23,6 @@ const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest })
         </div>
     );
 };
-
-
 
 const CompaniesTable = ({ openCreate }) => {
     const [showReviewRequest, setShowReviewRequest] = useState(false);
@@ -58,18 +55,26 @@ const CompaniesTable = ({ openCreate }) => {
                 { key: 'plan', label: 'الخطة' },
                 { key: 'end_date', label: 'تاريخ انتهاء' },
                 { key: 'current_plan', label: 'الخطة الحالية' },
+                { key: 'status', label: 'الحالة' }, // New status column
             ]);
 
-            const formattedData = companies.map(company => ({
-                company_name: company.company_name || 'مجهول',
-                company_code: company.company_code || 'مجهول',
-                email: company.email || 'مجهول',
-                plan: company.plan || 'مجهول',
-                end_date: company.end_date || 'مجهول',
-                current_plan: company.current_plan || 'مجهول',
-                company_logo: company.company_logo || './default-image.jpg',
-                id: company.id,
-            }));
+            const formattedData = companies.map(company => {
+                const endDate = new Date(company.end_date);
+                const today = new Date();
+                const remainingDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+
+                return {
+                    company_name: company.company_name || 'مجهول',
+                    company_code: company.company_code || 'مجهول',
+                    email: company.email || 'مجهول',
+                    plan: company.plan || 'مجهول',
+                    end_date: company.end_date || 'مجهول',
+                    current_plan: company.current_plan || 'مجهول',
+                    status: remainingDays <= 0 ? 'منتهي' : `${remainingDays} يوم`,  
+                    company_logo: company.company_logo || './default-image.jpg',
+                    id: company.id,
+                };
+            });
 
             setTableData(formattedData);
             setFilteredData(formattedData);
@@ -102,12 +107,9 @@ const CompaniesTable = ({ openCreate }) => {
                 console.error('No token found in cookies');
                 return;
             }
-
-
-
             MySwal.fire({
                 icon: 'success',
-                title: 'تمت الموافقة على الطلب بنجاح',
+                title: 'تمت تجديد الطلب بنجاح',
             });
 
             fetchData(); // Reload data after approval
@@ -128,9 +130,6 @@ const CompaniesTable = ({ openCreate }) => {
                 console.error('No token found in cookies');
                 return;
             }
-
-
-
 
             fetchData(); // Reload data after refusal
         } catch (error) {
@@ -213,7 +212,6 @@ const CompaniesTable = ({ openCreate }) => {
             <Table
                 data={filteredData}
                 headers={tableHeaders}
-
                 actions={(row) => (
                     <TableActions
                         openPreview={() => console.log('Preview function')}
@@ -222,6 +220,22 @@ const CompaniesTable = ({ openCreate }) => {
                         refuseRequest={refuseRequest}
                         openReviewRequest={openReviewRequest}
                     />
+                )}
+                renderRow={(row) => (
+                    <tr key={row.id}>
+                        <td>{row.company_name}</td>
+                        <td>{row.company_code}</td>
+                        <td>{row.email}</td>
+                        <td>{row.plan}</td>
+                        <td>{row.end_date}</td>
+                        <td>{row.current_plan}</td>
+                        <td>
+                            <span  className={row.status.includes('منتهي') ? 'text-red-500' : 'text-green-500'}>
+                                {row.status}
+                            </span>
+                        </td>
+                        <td>{actions(row)}</td>
+                    </tr>
                 )}
                 currentPage={currentPage}
                 totalPages={Math.ceil(filteredData.length / itemsPerPage)}
