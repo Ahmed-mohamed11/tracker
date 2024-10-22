@@ -1,5 +1,4 @@
-'use client';
-import React, { useState, useEffect, useCallback } from "react";
+ import React, { useState, useEffect, useCallback } from "react";
 import { X } from "@phosphor-icons/react";
 import Cookies from 'js-cookie';
 import axios from 'axios';
