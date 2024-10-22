@@ -1,4 +1,4 @@
-import { Check, Eye, Play, Trash, X } from 'lucide-react';
+import { Check, Eye, Play, X } from 'lucide-react';
 import { Fragment, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -42,11 +42,10 @@ const TableUser = ({ row, openReviewRequest }) => {
             >
                 <img
                     className="w-10 h-10 rounded-full text-center"
-                    src={row.image || './default-image.jpg'}
-                    alt={`${row.first_name} image`}
+                    src={row.company_logo || './default-image.jpg'}
+                    alt={`${row.company_name} logo`}
                 />
             </td>
-
             <td className="py-4">
                 <Play className="mr-[30px] bg-blue-200 w-8 h-8 rounded-full p-2 text-blue-600 text-center" />
             </td>
@@ -55,9 +54,8 @@ const TableUser = ({ row, openReviewRequest }) => {
 };
 
 const CompaniesTable = ({ openCreate }) => {
-
     const [showReviewRequest, setShowReviewRequest] = useState(false);
-    const [requestData, setRequestData] = useState(null); // بيانات الطلب
+    const [requestData, setRequestData] = useState(null);
     const [tableData, setTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -73,41 +71,36 @@ const CompaniesTable = ({ openCreate }) => {
                 return;
             }
 
-            const response = await axios.get('https://bio.skyrsys.com/api/registration-requests/', {
+            const response = await axios.get('https://bio.skyrsys.com/api/superadmin/companies/', {
                 headers: { 'Authorization': `Token ${token}` },
             });
 
-            const registrationRequests = response.data;
+            const companies = response.data;
 
             setTableHeaders([
-                { key: 'first_name', label: 'الاسم الأول' },
-                { key: 'last_name', label: 'الاسم الأخير' },
+                { key: 'company_name', label: 'اسم الشركة' },
+                { key: 'company_code', label: 'كود الشركة' },
                 { key: 'email', label: 'البريد الإلكتروني' },
-                { key: 'job_number', label: 'رقم الوظيفة' },
-                { key: 'job_title', label: 'عنوان الوظيفة' },
-                { key: 'phone_number', label: 'رقم الهاتف' },
-                { key: 'nationality', label: 'الجنسية' }
+                { key: 'plan', label: 'الخطة' },
+                { key: 'end_date', label: 'تاريخ انتهاء' },
+                { key: 'current_plan', label: 'الخطة الحالية' },
             ]);
 
-            const formattedData = registrationRequests.map(request => ({
-                first_name: request.first_name || 'مجهول',
-                last_name: request.last_name || 'مجهول',
-                entity: request.entity || 'مجهول',
-                email: request.email || 'مجهول',
-                job_number: request.job_number || 'مجهول',
-                job_title: request.job_title || 'مجهول',
-                phone_number: request.phone_number || 'مجهول',
-                nationality: request.nationality || 'مجهول',
-                image: request.image || './default-image.jpg',
-                id: request.id,
-                voices: request.voices || []
+            const formattedData = companies.map(company => ({
+                company_name: company.company_name || 'مجهول',
+                company_code: company.company_code || 'مجهول',
+                email: company.email || 'مجهول',
+                plan: company.plan || 'مجهول',
+                end_date: company.end_date || 'مجهول',
+                current_plan: company.current_plan || 'مجهول',
+                company_logo: company.company_logo || './default-image.jpg',
+                id: company.id,
             }));
 
             setTableData(formattedData);
             setFilteredData(formattedData);
-
         } catch (error) {
-            console.error('Error fetching registration requests:', error.response?.data || error.message);
+            console.error('Error fetching companies:', error.response?.data || error.message);
         }
     }, []);
 
@@ -116,20 +109,16 @@ const CompaniesTable = ({ openCreate }) => {
         setSearchQuery(query);
 
         const filtered = tableData.filter(item =>
-            item.first_name.toLowerCase().includes(query) ||
-            item.last_name.toLowerCase().includes(query) ||
-            item.phone_number.includes(query)
+            item.company_name.toLowerCase().includes(query) ||
+            item.email.toLowerCase().includes(query) ||
+            item.company_code.includes(query)
         );
         setFilteredData(filtered);
     };
 
-    const openReviewRequest = async (row) => {
-        try {
-            setRequestData(row);
-            setShowReviewRequest(true);
-        } catch (error) {
-            console.error('Error fetching request details:', error);
-        }
+    const openReviewRequest = (row) => {
+        setRequestData(row);
+        setShowReviewRequest(true);
     };
 
     const approveRequest = async (id) => {
@@ -140,18 +129,14 @@ const CompaniesTable = ({ openCreate }) => {
                 return;
             }
 
-            const response = await axios.post(`https://bio.skyrsys.com/api/registration-requests/${id}/approve/`, {}, {
-                headers: { 'Authorization': `Token ${token}` },
-            });
+           
 
             MySwal.fire({
                 icon: 'success',
                 title: 'تمت الموافقة على الطلب بنجاح',
-                text: response.data.message || 'تمت الموافقة على الطلب.',
-            });
+             });
 
-            fetchData(); // إعادة تحميل البيانات بعد الموافقة
-
+            fetchData(); // Reload data after approval
         } catch (error) {
             console.error('Error approving the request:', error.response?.data || error.message);
             MySwal.fire({
@@ -162,8 +147,27 @@ const CompaniesTable = ({ openCreate }) => {
         }
     };
 
+    const refuseRequest = async (id) => {
+        try {
+            const token = Cookies.get('token');
+            if (!token) {
+                console.error('No token found in cookies');
+                return;
+            }
 
+           
 
+           
+            fetchData(); // Reload data after refusal
+        } catch (error) {
+            console.error('Error refusing the request:', error.response?.data || error.message);
+            MySwal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: error.response?.data?.detail || 'فشل في رفض الطلب.',
+            });
+        }
+    };
 
     const exportTableToExcel = () => {
         const table = document.getElementById('table');
@@ -180,41 +184,9 @@ const CompaniesTable = ({ openCreate }) => {
         const a = document.createElement('a');
         a.href = 'data:attachment/csv,' + encodeURIComponent(csvString);
         a.target = '_blank';
-        a.download = 'employees.csv';
+        a.download = 'companies.csv';
         document.body.appendChild(a);
         a.click();
-    }
-
-
-
-    const refuseRequest = async (id) => {
-        try {
-            const token = Cookies.get('token');
-            if (!token) {
-                console.error('No token found in cookies');
-                return;
-            }
-
-            const response = await axios.post(`https://bio.skyrsys.com/api/registration-requests/${id}/refuse/`, {}, {
-                headers: { 'Authorization': `Token ${token}` },
-            });
-
-            MySwal.fire({
-                icon: 'success',
-                title: 'تمت الموافقة على الطلب بنجاح',
-                text: response.data.message || 'تمت الموافقة على الطلب.',
-            });
-
-            fetchData(); // إعادة تحميل البيانات بعد الموافقة
-
-        } catch (error) {
-            console.error('Error approving the request:', error.response?.data || error.message);
-            MySwal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: error.response?.data?.detail || 'فشل في الموافقة على الطلب.',
-            });
-        }
     };
 
     useEffect(() => {
@@ -223,7 +195,7 @@ const CompaniesTable = ({ openCreate }) => {
 
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
-            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
+            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500 border-b">
                 <h2 className="text-2xl font-bold">الشركات</h2>
                 <button
                     className="flex border-2 items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
@@ -254,8 +226,8 @@ const CompaniesTable = ({ openCreate }) => {
                         <option value="rejected">مرفوض</option>
                     </select>
                     <button
-                        onClick={() => exportTableToExcel()}
-                        className="w-1/2  bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
+                        onClick={exportTableToExcel}
+                        className="w-1/2 bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
                     >
                         تصدير
                         <FaArrowCircleDown size={20} className="mr-2" />
@@ -287,14 +259,12 @@ const CompaniesTable = ({ openCreate }) => {
             {showReviewRequest && (
                 <ReviewRequest
                     className=""
-                    requestData={requestData} // تمرير بيانات الطلب إلى ReviewRequest
+                    requestData={requestData} // Pass request data to ReviewRequest
                     onClose={() => setShowReviewRequest(false)}
                 />
             )}
         </div>
-
     );
-
 };
 
 export default CompaniesTable;
