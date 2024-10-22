@@ -3,10 +3,8 @@ import FormLogin from "./form/FormLogin";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ErrorAlert } from "../../../components/Alert";
-import CryptoJS from "crypto-js";
-import Cookies from "js-cookie"; // استيراد مكتبة js-cookie
-
-export default function Login() {
+import Cookies from "js-cookie"; 
+export default function Login(response) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errorMsg, setErrorMsg] = useState("");
   const [errors, setErrors] = useState({ email: "", password: "" });
@@ -55,7 +53,7 @@ export default function Login() {
         }
       );
 
-      console.log("Response Data:", response.data); // Check response structure
+      console.log("Response Data:", response.data); 
 
       const data = response.data?.data || response.data;
 
