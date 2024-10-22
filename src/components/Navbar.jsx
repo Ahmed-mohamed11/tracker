@@ -59,7 +59,7 @@ const NavbarItem = ({
       onClick();
     }
   };
-  
+
 
   return (
     <div className="relative" ref={ref}>
@@ -127,7 +127,7 @@ export default function Navbar({ dark }) {
   const navigate = useNavigate();  
  
   useEffect(() => {
-     const handleClickOutside = (event) => {
+    const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
