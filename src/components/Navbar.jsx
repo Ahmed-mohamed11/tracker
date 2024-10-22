@@ -60,7 +60,7 @@ const NavbarItem = ({
       onClick();
     }
   };
-  
+
 
   return (
     <div className="relative" ref={ref}>
@@ -125,20 +125,20 @@ export default function Navbar({ dark }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef();
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const [login, setLogin] = useState(false);
   const [user, setUser] = useState({ email: "", is_admin: false });
 
   useEffect(() => {
-    const token = Cookies.get("token");  
+    const token = Cookies.get("token");
     if (token) {
       axios
         .post(`https://bio.skyrsys.com/api/company/login/`, {
-         })
+        })
         .then((response) => {
           setLogin(true); // Set login to true
           setUser(response.data); // Save the user data (email, is_admin)
-         })
+        })
         .catch((error) => {
           console.error("Error fetching user data:", error);
           setLogin(false);
@@ -146,7 +146,7 @@ export default function Navbar({ dark }) {
     }
   }, []);
   useEffect(() => {
-     const handleClickOutside = (event) => {
+    const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }

@@ -33,7 +33,7 @@ const TableUser = ({ row, openReviewRequest }) => {
             <td className="py-4">
                 <div className="flex items-center bg-themeColor-200 px-2.5 py-0.5 rounded">
                     <div className="h-2.5 w-2.5 rounded-full bg-themeColor-200 me-2"></div>
-                    {row.status || 'مستكمل'}
+                    {row.title || 'مستكمل'}
                 </div>
             </td>
             <td
@@ -43,7 +43,7 @@ const TableUser = ({ row, openReviewRequest }) => {
                 <img
                     className="w-10 h-10 rounded-full text-center"
                     src={row.image || './default-image.jpg'}
-                    alt={`${row.first_name} image`}
+                    alt={`${row.name} image`}
                 />
             </td>
 
@@ -55,7 +55,6 @@ const TableUser = ({ row, openReviewRequest }) => {
 };
 
 const EmployeeTable = ({ openCreate }) => {
-
     const [showReviewRequest, setShowReviewRequest] = useState(false);
     const [requestData, setRequestData] = useState(null); // بيانات الطلب
     const [tableData, setTableData] = useState([]);
@@ -73,41 +72,36 @@ const EmployeeTable = ({ openCreate }) => {
                 return;
             }
 
-            const response = await axios.get('https://bio.skyrsys.com/api/registration-requests/', {
+            // Fetching the plans from the new API
+            const response = await axios.get('https://bio.skyrsys.com/api/plan/plans/', {
                 headers: { 'Authorization': `Token ${token}` },
             });
 
-            const registrationRequests = response.data;
+            const plans = response.data;
 
             setTableHeaders([
-                { key: 'first_name', label: 'الاسم الأول' },
-                { key: 'last_name', label: 'الاسم الأخير' },
-                { key: 'email', label: 'البريد الإلكتروني' },
-                { key: 'job_number', label: 'رقم الوظيفة' },
-                { key: 'job_title', label: 'عنوان الوظيفة' },
-                { key: 'phone_number', label: 'رقم الهاتف' },
-                { key: 'nationality', label: 'الجنسية' }
+                { key: 'name', label: 'اسم الخطة' },
+                { key: 'price', label: 'السعر' },
+                { key: 'type', label: 'النوع' },
+                { key: 'max_branches', label: 'الحد الأقصى للفروع' },
+                { key: 'max_employees', label: 'الحد الأقصى للموظفين' },
             ]);
 
-            const formattedData = registrationRequests.map(request => ({
-                first_name: request.first_name || 'مجهول',
-                last_name: request.last_name || 'مجهول',
-                entity: request.entity || 'مجهول',
-                email: request.email || 'مجهول',
-                job_number: request.job_number || 'مجهول',
-                job_title: request.job_title || 'مجهول',
-                phone_number: request.phone_number || 'مجهول',
-                nationality: request.nationality || 'مجهول',
-                image: request.image || './default-image.jpg',
-                id: request.id,
-                voices: request.voices || []
+            const formattedData = plans.map(plan => ({
+                name: plan.name || 'غير محدد',
+                price: plan.price || 'غير محدد',
+                type: plan.type || 'غير محدد',
+                max_branches: plan.max_branches || 0,
+                max_employees: plan.max_employees || 0,
+                id: plan.id,
+                // Include any additional data you need
             }));
 
             setTableData(formattedData);
             setFilteredData(formattedData);
 
         } catch (error) {
-            console.error('Error fetching registration requests:', error.response?.data || error.message);
+            console.error('Error fetching plans:', error.response?.data || error.message);
         }
     }, []);
 
@@ -116,9 +110,9 @@ const EmployeeTable = ({ openCreate }) => {
         setSearchQuery(query);
 
         const filtered = tableData.filter(item =>
-            item.first_name.toLowerCase().includes(query) ||
-            item.last_name.toLowerCase().includes(query) ||
-            item.phone_number.includes(query)
+            item.name.toLowerCase().includes(query) ||
+            item.price.toLowerCase().includes(query) ||
+            item.type.toLowerCase().includes(query)
         );
         setFilteredData(filtered);
     };
@@ -132,38 +126,7 @@ const EmployeeTable = ({ openCreate }) => {
         }
     };
 
-    const approveRequest = async (id) => {
-        try {
-            const token = Cookies.get('token');
-            if (!token) {
-                console.error('No token found in cookies');
-                return;
-            }
-
-            const response = await axios.post(`https://bio.skyrsys.com/api/registration-requests/${id}/approve/`, {}, {
-                headers: { 'Authorization': `Token ${token}` },
-            });
-
-            MySwal.fire({
-                icon: 'success',
-                title: 'تمت الموافقة على الطلب بنجاح',
-                text: response.data.message || 'تمت الموافقة على الطلب.',
-            });
-
-            fetchData(); // إعادة تحميل البيانات بعد الموافقة
-
-        } catch (error) {
-            console.error('Error approving the request:', error.response?.data || error.message);
-            MySwal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: error.response?.data?.detail || 'فشل في الموافقة على الطلب.',
-            });
-        }
-    };
-
-
-
+    // Assume you will implement approveRequest and refuseRequest based on your logic
 
     const exportTableToExcel = () => {
         const table = document.getElementById('table');
@@ -180,42 +143,10 @@ const EmployeeTable = ({ openCreate }) => {
         const a = document.createElement('a');
         a.href = 'data:attachment/csv,' + encodeURIComponent(csvString);
         a.target = '_blank';
-        a.download = 'employees.csv';
+        a.download = 'plans.csv';
         document.body.appendChild(a);
         a.click();
     }
-
-
-
-    const refuseRequest = async (id) => {
-        try {
-            const token = Cookies.get('token');
-            if (!token) {
-                console.error('No token found in cookies');
-                return;
-            }
-
-            const response = await axios.post(`https://bio.skyrsys.com/api/registration-requests/${id}/refuse/`, {}, {
-                headers: { 'Authorization': `Token ${token}` },
-            });
-
-            MySwal.fire({
-                icon: 'success',
-                title: 'تمت الموافقة على الطلب بنجاح',
-                text: response.data.message || 'تمت الموافقة على الطلب.',
-            });
-
-            fetchData(); // إعادة تحميل البيانات بعد الموافقة
-
-        } catch (error) {
-            console.error('Error approving the request:', error.response?.data || error.message);
-            MySwal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: error.response?.data?.detail || 'فشل في الموافقة على الطلب.',
-            });
-        }
-    };
 
     useEffect(() => {
         fetchData();
@@ -223,8 +154,8 @@ const EmployeeTable = ({ openCreate }) => {
 
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
-            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
-                <h2 className="text-2xl font-bold">الخطط </h2>
+            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500 border-b">
+                <h2 className="text-2xl font-bold">الخطط</h2>
                 <button
                     className="flex border-2 items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
                     onClick={() => openCreate()}
@@ -255,7 +186,7 @@ const EmployeeTable = ({ openCreate }) => {
                     </select>
                     <button
                         onClick={() => exportTableToExcel()}
-                        className="w-1/2  bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
+                        className="w-1/2 bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
                     >
                         تصدير
                         <FaArrowCircleDown size={20} className="mr-2" />
@@ -284,17 +215,15 @@ const EmployeeTable = ({ openCreate }) => {
                 setCurrentPage={setCurrentPage}
             />
 
+            {/* Review Request Modal */}
             {showReviewRequest && (
                 <ReviewRequest
-                    className=""
-                    requestData={requestData} // تمرير بيانات الطلب إلى ReviewRequest
+                    requestData={requestData}
                     onClose={() => setShowReviewRequest(false)}
                 />
             )}
         </div>
-
     );
-
 };
 
 export default EmployeeTable;
