@@ -4,6 +4,8 @@
   /* تحسين التمرير */
 }
 
+
+
 .element {
   will-change: transform, opacity;
 }
