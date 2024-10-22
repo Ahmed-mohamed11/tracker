@@ -4,7 +4,7 @@ import { X } from "@phosphor-icons/react";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import FormText from "../../../../components/form/FormText";
- 
+
 const PreviewProjects = ({ closeModal, projectId, modal }) => {
     const [projectData, setProjectData] = useState({});
 
@@ -151,4 +151,4 @@ const PreviewProjects = ({ closeModal, projectId, modal }) => {
     );
 };
 
-export default React.memo(PreviewProjects);
+export default PreviewProjects;

@@ -5,6 +5,7 @@ import "./App.css";
 import "./App.scss";
 
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Error404Modern from "./pages/error/404-modern";
 import Layout from "./pages/auth/Layout"; // This includes the Login component
 import { AdminPages } from "./route/Index";
@@ -63,6 +64,8 @@ function App() {
             {/* Fallback Route */}
             <Route path="*" element={<Error404Modern />} />
           </Routes>
+
+          <Footer />
 
           {/* Global Loading Spinner */}
           {loading && (
