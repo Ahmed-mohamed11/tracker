@@ -16,8 +16,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
 import Cookies from "js-cookie"; // استيراد مكتبة js-cookie
 import { ListChecks } from "lucide-react";
-import axios from "axios";
-
+ 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -126,25 +125,7 @@ export default function Navbar({ dark }) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef();
   const navigate = useNavigate();  
-  const [login, setLogin] = useState(false);
-  const [user, setUser] = useState({ email: "", is_admin: false });
-
-  useEffect(() => {
-    const token = Cookies.get("token");  
-    if (token) {
-      axios
-        .post(`https://bio.skyrsys.com/api/company/login/`, {
-         })
-        .then((response) => {
-          setLogin(true); // Set login to true
-          setUser(response.data); // Save the user data (email, is_admin)
-         })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          setLogin(false);
-        });
-    }
-  }, []);
+ 
   useEffect(() => {
      const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -239,8 +220,7 @@ export default function Navbar({ dark }) {
       ],
     },
 
-    user.is_admin &&
-    {
+     {
       icon: <UserCircleGear size={25} />,
       name: t("sideBar.admin"),
       subItems: [
