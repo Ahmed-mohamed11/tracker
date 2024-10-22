@@ -55,7 +55,7 @@ const CompaniesTable = ({ openCreate }) => {
                 { key: 'plan', label: 'الخطة' },
                 { key: 'end_date', label: 'تاريخ انتهاء' },
                 { key: 'current_plan', label: 'الخطة الحالية' },
-                { key: 'status', label: 'الحالة' }, // New status column
+                { key: 'status', label: 'المده المتبقيه' }, // New status column
             ]);
 
             const formattedData = companies.map(company => {
@@ -70,7 +70,11 @@ const CompaniesTable = ({ openCreate }) => {
                     plan: company.plan || 'مجهول',
                     end_date: company.end_date || 'مجهول',
                     current_plan: company.current_plan || 'مجهول',
-                    status: remainingDays <= 0 ? 'منتهي' : `${remainingDays} يوم`,  
+                    status: (
+                        <span className={`px-3 py-1 rounded text-white  ${remainingDays <= 0 ? 'bg-red-500' : remainingDays <= 7 ? 'bg-yellow-500' : 'bg-green-400 '}`}>
+                            {remainingDays == 0 ? 'منتهي' : `${remainingDays} يوم`}
+                        </span>),
+
                     company_logo: company.company_logo || './default-image.jpg',
                     id: company.id,
                 };
@@ -221,34 +225,13 @@ const CompaniesTable = ({ openCreate }) => {
                         openReviewRequest={openReviewRequest}
                     />
                 )}
-                renderRow={(row) => (
-                    <tr key={row.id}>
-                        <td>{row.company_name}</td>
-                        <td>{row.company_code}</td>
-                        <td>{row.email}</td>
-                        <td>{row.plan}</td>
-                        <td>{row.end_date}</td>
-                        <td>{row.current_plan}</td>
-                        <td>
-                            <span  className={row.status.includes('منتهي') ? 'text-red-500' : 'text-green-500'}>
-                                {row.status}
-                            </span>
-                        </td>
-                        <td>{actions(row)}</td>
-                    </tr>
-                )}
+
                 currentPage={currentPage}
                 totalPages={Math.ceil(filteredData.length / itemsPerPage)}
                 setCurrentPage={setCurrentPage}
             />
 
-            {showReviewRequest && (
-                <ReviewRequest
-                    className=""
-                    requestData={requestData} // Pass request data to ReviewRequest
-                    onClose={() => setShowReviewRequest(false)}
-                />
-            )}
+
         </div>
     );
 };
