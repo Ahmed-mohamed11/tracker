@@ -42,7 +42,7 @@ export default function AccountSettings({ onClose }) {
                     onClick={(e) => e.stopPropagation()} // منع إغلاق النافذة عند النقر داخل الصندوق
                 >
                     <div className="flex justify-between items-center p-4 border-b">
-                        <h2 className="text-xl font-bold">إعدادات الحساب</h2>
+                        <h2 className="text-xl text-gray-900  font-bold">إعدادات الحساب</h2>
                         <button className="text-gray-500 hover:text-gray-700" onClick={handleClose}>
                             <X className="h-6 w-6" />
                         </button>

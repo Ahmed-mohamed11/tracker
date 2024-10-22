@@ -10,7 +10,10 @@ import Sites from "../pages/Sites/Sites";
 import Records from "../pages/Records/Records";
 import RejectedMovements from "../pages/RejectedMovements/RejectedMovements";
 import AccountSetting from "../pages/AccountSetting/accountSetting";
+import Companies from "../pages/Admin/Companies/Companies/Companies";
+import Plans from "../pages/Admin/Plans/Plans/Plans";
 import Login from "../pages/auth/login/Login";
+
 
 
 const AdminPages = ({ loading }) => {
@@ -25,6 +28,8 @@ const AdminPages = ({ loading }) => {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/registration`} element={<RegistrationRequests />} />
+        <Route path={`${import.meta.env.VITE_PUBLIC_URL}/companies`} element={<Companies />} />
+        <Route path={`${import.meta.env.VITE_PUBLIC_URL}/plans`} element={<Plans />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/departures`} element={<Departures />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/entities`} element={<Entities />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/entities`} element={<Entities />} />

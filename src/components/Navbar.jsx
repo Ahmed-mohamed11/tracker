@@ -15,6 +15,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
 import Cookies from "js-cookie"; // استيراد مكتبة js-cookie
+import { ListChecks } from "lucide-react";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -168,8 +169,25 @@ export default function Navbar({ dark }) {
       name: t("sideBar.dashboard"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/`,
     },
+
+
     {
       icon: <UserCircleGear size={25} />,
+      name: t("sideBar.admin"),
+      subItems: [
+        {
+          name: t("sideBar.companies"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
+        },
+        {
+          name: t("sideBar.plans"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
+        },
+      ]
+    },
+
+    {
+      icon: <ListChecks size={25} />,
       name: t("sideBar.registration"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/registration`,
     },
@@ -241,7 +259,7 @@ export default function Navbar({ dark }) {
 
   return (
     <div className="w-full  text-white shadow-lg sticky top-0 z-50 bg-gradient-to-r from-themeColor-700 via-themeColor-600 to-themeColor-500">
-      <nav className="flex items-center justify-between p-4 ">
+      <nav className="flex items-center justify-around p-4 ">
         {/* زر القائمة للشاشات الصغيرة */}
         <div className="lg:hidden">
           <button onClick={toggleMobileMenu} className="text-white">
@@ -286,21 +304,21 @@ export default function Navbar({ dark }) {
             <img
               src="https://avatars.githubusercontent.com/u/52693893?v=4"
               alt="profile"
-              className="w-10 h-10 rounded-full"
+              className="w-7 h-7 rounded-full"
             />
-            <p className="font-semibold hidden md:block">Ahmed Al-Masri</p>
-            <CaretDown size={20} className={`transition-transform ${isUserMenuOpen ? "rotate-180" : "rotate-0"}`} />
           </div>
 
           {isUserMenuOpen && (
             <div
               className={classNames(
-                "absolute z-50 right-0 mt-7 w-48 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
+                "absolute z-50 right-0 mt-7  w-48 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
                 isUserMenuOpen
                   ? "opacity-100 visible animate-slide-down"
                   : "opacity-0 invisible animate-slide-up"
               )}
             >
+              <p className="font-semibold hidden md:block">Ahmed Al-Masri</p>
+
               <Link
                 to="/settings"
                 className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
