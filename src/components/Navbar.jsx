@@ -167,7 +167,7 @@ export default function Navbar({ dark }) {
     {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
-      link: `${import.meta.env.VITE_PUBLIC_URL}/`, 
+      link: `${import.meta.env.VITE_PUBLIC_URL}/`,
     },
 
 
@@ -270,8 +270,8 @@ export default function Navbar({ dark }) {
         {/* شعار التطبيق */}
         <div>
           <img
-            className="w-14 h-14 border-2 border-orange-500 rounded-tl-lg rounded-br-lg"
-            src="/src/images/BIO2.jpeg" alt="" />
+            className="w-14 h-14 border-2 border-orange-500 rounded-full"
+            src="/public/SiteLogo.png" alt="" />
         </div>
 
         {/* روابط القائمة الكبيرة */}
@@ -298,7 +298,7 @@ export default function Navbar({ dark }) {
         {/* معلومات المستخدم */}
         <div className="relative" ref={userMenuRef}>
           <div
-            className="flex items-center gap-4 cursor-pointer"
+            className="bg-themeColor-400 px-4 py-2 rounded-full flex items-center gap-3 cursor-pointer"
             onClick={toggleUserMenu}
           >
             <img
@@ -306,6 +306,7 @@ export default function Navbar({ dark }) {
               alt="profile"
               className="w-7 h-7 rounded-full"
             />
+            <p className="font-semibold hidden md:block">Ahmed</p>
           </div>
 
           {isUserMenuOpen && (
@@ -317,7 +318,6 @@ export default function Navbar({ dark }) {
                   : "opacity-0 invisible animate-slide-up"
               )}
             >
-              <p className="font-semibold hidden md:block">Ahmed Al-Masri</p>
 
               <Link
                 to="/settings"
