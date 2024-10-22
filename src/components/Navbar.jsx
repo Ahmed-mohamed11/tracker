@@ -122,7 +122,6 @@ export default function Navbar({ dark }) {
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [login, setLogin] = useState(false);
   const userMenuRef = useRef();
   const navigate = useNavigate(); // لإعادة التوجيه
 

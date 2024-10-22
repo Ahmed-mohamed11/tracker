@@ -3,7 +3,6 @@ import FormLogin from "./form/FormLogin";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ErrorAlert } from "../../../components/Alert";
-import CryptoJS from "crypto-js";
 import Cookies from "js-cookie"; // استيراد مكتبة js-cookie
 
 export default function Login() {
@@ -68,7 +67,11 @@ export default function Login() {
       // Set the token in cookies for easy access
       Cookies.set("token", token, { expires: 7, path: "/" }); // Store the token with a 7-day expiration
 
+      // Store additional values in localStorage
+      localStorage.setItem("email", data.company.email);
+      localStorage.setItem("is_admin", data.is_admin); // تأكد من أن is_admin موجود في البيانات المسترجعة
       localStorage.setItem("id", data.id);
+
       setLoading(false);
 
       // Redirect to dashboard
