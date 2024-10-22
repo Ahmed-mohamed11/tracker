@@ -1,4 +1,4 @@
-import { Check, Eye, Play, X } from 'lucide-react';
+import { Check, Eye, PackagePlus, Play, Replace, X } from 'lucide-react';
 import { Fragment, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -13,45 +13,19 @@ const MySwal = withReactContent(Swal);
 
 const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest }) => {
     return (
-        <div className="flex gap-2">
-            <button onClick={() => openReviewRequest(row.id)} className="text-blue-500">
-                <Eye size={22} />
-            </button>
+        <div className="flex gap-4">
+
             <button onClick={() => refuseRequest(row.id)} className="text-gray-500">
-                <X size={22} />
+                <Replace size={22} />
             </button>
             <button onClick={() => approveRequest(row.id)} className="text-gray-500">
-                <Check size={22} />
+                <PackagePlus size={22} />
             </button>
         </div>
     );
 };
 
-const TableUser = ({ row, openReviewRequest }) => {
-    return (
-        <Fragment>
-            <td className="py-4">
-                <div className="flex items-center bg-themeColor-200 px-2.5 py-0.5 rounded">
-                    <div className="h-2.5 w-2.5 rounded-full bg-themeColor-200 me-2"></div>
-                    {row.status || 'مستكمل'}
-                </div>
-            </td>
-            <td
-                onClick={() => openReviewRequest(row)}
-                className="py-4 flex w-full items-center justify-center cursor-pointer"
-            >
-                <img
-                    className="w-10 h-10 rounded-full text-center"
-                    src={row.company_logo || './default-image.jpg'}
-                    alt={`${row.company_name} logo`}
-                />
-            </td>
-            <td className="py-4">
-                <Play className="mr-[30px] bg-blue-200 w-8 h-8 rounded-full p-2 text-blue-600 text-center" />
-            </td>
-        </Fragment>
-    );
-};
+
 
 const CompaniesTable = ({ openCreate }) => {
     const [showReviewRequest, setShowReviewRequest] = useState(false);
@@ -129,12 +103,12 @@ const CompaniesTable = ({ openCreate }) => {
                 return;
             }
 
-           
+
 
             MySwal.fire({
                 icon: 'success',
                 title: 'تمت الموافقة على الطلب بنجاح',
-             });
+            });
 
             fetchData(); // Reload data after approval
         } catch (error) {
@@ -155,9 +129,9 @@ const CompaniesTable = ({ openCreate }) => {
                 return;
             }
 
-           
 
-           
+
+
             fetchData(); // Reload data after refusal
         } catch (error) {
             console.error('Error refusing the request:', error.response?.data || error.message);
@@ -239,9 +213,7 @@ const CompaniesTable = ({ openCreate }) => {
             <Table
                 data={filteredData}
                 headers={tableHeaders}
-                userImage={(row) => (
-                    <TableUser row={row} openReviewRequest={openReviewRequest} />
-                )}
+
                 actions={(row) => (
                     <TableActions
                         openPreview={() => console.log('Preview function')}
