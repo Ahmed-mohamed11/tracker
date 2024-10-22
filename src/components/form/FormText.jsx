@@ -1,5 +1,4 @@
-import React from "react";
-
+ 
 function FormText({ label, name, value, placeholder, required, onChange }) {
   return (
     <div>

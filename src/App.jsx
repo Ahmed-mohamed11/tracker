@@ -42,7 +42,7 @@ function App() {
   return (
     <div
       className={`${isDarkMode ? "dark" : "light"}`}
-      dir={language === "ar" ? "rtl" : "ltr"}
+      dir={language === "ar" ? "rtl" : "rtl"}
     >
       {!hideNavbar && <Navbar toggleDark={toggleDarkMode} dark={isDarkMode} />}
 
