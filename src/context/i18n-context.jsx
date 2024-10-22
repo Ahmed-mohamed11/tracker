@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import  { createContext, useContext, useEffect, useState } from "react";
 
 import ar from "../locale/ar";
 import en from "../locale/en";
@@ -6,7 +6,7 @@ import en from "../locale/en";
 export const I18nContext = createContext(null);
 
 const supportedLanguages = ["en", "ar"];
-const defaultLanguage = "en";
+const defaultLanguage = "ar";
 
 export const I18nProvider = ({ children }) => {
   const [language, setLanguage] = useState(defaultLanguage);

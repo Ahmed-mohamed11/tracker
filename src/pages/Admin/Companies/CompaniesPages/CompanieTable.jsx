@@ -1,4 +1,4 @@
-import { Check, Eye, Play, Trash, X } from 'lucide-react';
+import { Check, Eye, Play,  X } from 'lucide-react';
 import { Fragment, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
