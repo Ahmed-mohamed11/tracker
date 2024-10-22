@@ -167,7 +167,7 @@ export default function Navbar({ dark }) {
     {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
-      link: `${import.meta.env.VITE_PUBLIC_URL}/`,
+      link: `${import.meta.env.VITE_PUBLIC_URL}/`, 
     },
 
 
