@@ -8,17 +8,20 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Table from '../../../../components/Table';
 import ReviewRequest from './ReviewRequest';
+import ChangePlan from './ChangePlan';
 
 const MySwal = withReactContent(Swal);
 
-const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest }) => {
+const TableActions = ({ changePlan, row, approveRequest, refuseRequest, openReviewRequest }) => {
     return (
-        <div className="flex gap-4">
-            <button onClick={() => refuseRequest(row.id)} className="text-gray-500">
-                <Replace size={22} />
+        <div className="w-full flex gap-4">
+            <button onClick={() => changePlan(row)} className="
+            bg-primary-400 hover:bg-primary-600  text-white px-4 py-2 rounded-md text-sm">
+                تغير الخطة
             </button>
-            <button onClick={() => approveRequest(row.id)} className="text-gray-500">
-                <PackagePlus size={22} />
+            <button onClick={() => approveRequest(row.id)} className="
+            bg-themeColor-400 hover:bg-themeColor-600  text-white px-4 py-2 rounded-md text-sm">
+                تجديد الاشتراك
             </button>
         </div>
     );
@@ -52,7 +55,6 @@ const CompaniesTable = ({ openCreate }) => {
                 { key: 'company_name', label: 'اسم الشركة' },
                 { key: 'company_code', label: 'كود الشركة' },
                 { key: 'email', label: 'البريد الإلكتروني' },
-                { key: 'plan', label: 'الخطة' },
                 { key: 'end_date', label: 'تاريخ انتهاء' },
                 { key: 'current_plan', label: 'الخطة الحالية' },
                 { key: 'status', label: 'المده المتبقيه' }, // New status column
@@ -67,12 +69,11 @@ const CompaniesTable = ({ openCreate }) => {
                     company_name: company.company_name || 'مجهول',
                     company_code: company.company_code || 'مجهول',
                     email: company.email || 'مجهول',
-                    plan: company.plan || 'مجهول',
                     end_date: company.end_date || 'مجهول',
                     current_plan: company.current_plan || 'مجهول',
                     status: (
                         <span className={`px-3 py-1 rounded text-white  ${remainingDays <= 0 ? 'bg-red-500' : remainingDays <= 7 ? 'bg-yellow-500' : 'bg-green-400 '}`}>
-                            {remainingDays == 0 ? 'منتهي' : `${remainingDays} يوم`}
+                            {remainingDays <= 0 ? 'منتهي' : `${remainingDays} يوم`}
                         </span>),
 
                     company_logo: company.company_logo || './default-image.jpg',
@@ -87,14 +88,19 @@ const CompaniesTable = ({ openCreate }) => {
         }
     }, []);
 
+    const [showChangePlan, setShowChangePlan] = useState(false);
+    const changePlan = (row) => {
+        setRequestData(row);
+        setShowChangePlan(true);
+    };
+
+
     const handleSearch = (event) => {
         const query = event.target.value.toLowerCase();
         setSearchQuery(query);
 
         const filtered = tableData.filter(item =>
-            item.company_name.toLowerCase().includes(query) ||
-            item.email.toLowerCase().includes(query) ||
-            item.company_code.includes(query)
+            item.company_name.toLowerCase().includes(query)
         );
         setFilteredData(filtered);
     };
@@ -111,12 +117,35 @@ const CompaniesTable = ({ openCreate }) => {
                 console.error('No token found in cookies');
                 return;
             }
-            MySwal.fire({
-                icon: 'success',
-                title: 'تمت تجديد الطلب بنجاح',
+
+            // Show a confirmation dialog
+            const result = await MySwal.fire({
+                title: 'هل تريد تجديد الاشتراك؟',
+                text: "لن تتمكن من التراجع عن هذا!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'نعم, جدد الاشتراك!',
+                cancelButtonText: 'إلغاء'
             });
 
-            fetchData(); // Reload data after approval
+            if (result.isConfirmed) {
+                // Proceed with the renewal if confirmed
+                await axios.post('https://bio.skyrsys.com/api/superadmin/renew-subscription/',
+                    { company_id: id },  // Send the company ID in the request body
+                    {
+                        headers: { 'Authorization': `Token ${token}` }
+                    }
+                );
+
+                MySwal.fire({
+                    icon: 'success',
+                    title: 'تمت تجديد الطلب بنجاح',
+                });
+
+                fetchData(); // Reload data after approval
+            }
         } catch (error) {
             console.error('Error approving the request:', error.response?.data || error.message);
             MySwal.fire({
@@ -126,6 +155,8 @@ const CompaniesTable = ({ openCreate }) => {
             });
         }
     };
+
+
 
     const refuseRequest = async (id) => {
         try {
@@ -187,7 +218,7 @@ const CompaniesTable = ({ openCreate }) => {
                     <div className="relative flex items-center justify-center">
                         <input
                             type="text"
-                            placeholder="بحث"
+                            placeholder="ابحث عن اسم الشركه"
                             value={searchQuery}
                             onChange={handleSearch}
                             className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
@@ -223,6 +254,7 @@ const CompaniesTable = ({ openCreate }) => {
                         approveRequest={approveRequest}
                         refuseRequest={refuseRequest}
                         openReviewRequest={openReviewRequest}
+                        changePlan={changePlan}
                     />
                 )}
 
@@ -231,6 +263,18 @@ const CompaniesTable = ({ openCreate }) => {
                 setCurrentPage={setCurrentPage}
             />
 
+            {
+                showChangePlan && (
+                    <ChangePlan
+                        showChangePlan={showChangePlan}
+                        setShowChangePlan={setShowChangePlan}
+                        requestData={requestData}
+                        fetchData={fetchData} // Pass fetchData as a prop
+                        closeModal={() => setShowChangePlan(false)}
+                    />
+
+                )
+            }
 
         </div>
     );

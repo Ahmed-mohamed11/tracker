@@ -5,48 +5,52 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../../../components/form/FormText";
 import FormSelect from "../../../../components/form/FormSelect";
+import FormPic from "../../../../components/form/FormPic";
 
-const AddCompanies = ({ closeModal, modal, onClientAdded }) => {
+const AddCompanies = ({ closeModal, modal }) => {
     const [formData, setFormData] = useState({
-        first_name: "",
-        last_name: "",
         email: "",
-        job_number: "",
-        job_title: "",
-        phone_number: "",
-        nationality: "",
-        entity: 1,
+        company_code: "",
+        company_name: "",
+        company_logo: null,
+        plan: 1,
     });
 
-    const [entities, setEntities] = useState([]); // الحالة لتخزين الجهات
+    const [plans, setPlans] = useState([]);
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
             ...prevData,
-            [name]: name === 'entity' ? parseInt(value, 10) : value, // تحويل القيمة إلى integer إذا كان الاسم هو 'entity'
+            [name]: parseInt(value, 10),
         }));
     }, []);
 
-    // get entity type
-    const getEntities = useCallback(async () => {
+    const handleFileChange = useCallback((e) => {
+        const file = e.target.files[0];
+        setFormData(prevData => ({
+            ...prevData,
+            company_logo: file
+        }));
+    }, []);
+
+    const getPlans = useCallback(async () => {
         try {
-            const response = await axios.get('https://bio.skyrsys.com/api/entity/', {
+            const response = await axios.get('https://bio.skyrsys.com/api/plan/plans/', {
                 headers: {
                     'Authorization': `Token ${Cookies.get('token')}`,
                 },
             });
-            setEntities(response.data);
+            setPlans(response.data);
         } catch (error) {
-            console.error('Error getting entities:', error.response?.data || error.message);
-            setEntities([]);
+            console.error('Error getting plans:', error.response?.data || error.message);
+            setPlans([]);
         }
     }, []);
 
-
     useEffect(() => {
-        getEntities();
-    }, [getEntities]);
+        getPlans();
+    }, [getPlans]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -58,18 +62,23 @@ const AddCompanies = ({ closeModal, modal, onClientAdded }) => {
                 return;
             }
 
-            const response = await axios.post('https://bio.skyrsys.com/api/registration-requests/', formData, {
+            const data = new FormData();
+            data.append('email', formData.email);
+            data.append('company_name', formData.company_name);
+            data.append('company_code', formData.company_code);
+            if (formData.company_logo) {
+                data.append('company_logo', formData.company_logo);
+            }
+            data.append('plan', formData.plan);
+
+            const response = await axios.post('https://bio.skyrsys.com/api/superadmin/companies/', data, {
                 headers: {
                     'Authorization': `Token ${token}`,
-                    'Content-Type': 'application/json'
                 },
             });
 
-            const newRegistration = response.data;
-            console.log('تمت إضافة طلب التسجيل بنجاح:', newRegistration);
-            onClientAdded(newRegistration);  // Call the callback to add the new client
+            console.log('تمت إضافة طلب التسجيل بنجاح:', response.data);
             closeModal();
-
         } catch (error) {
             console.error('خطأ في إضافة طلب التسجيل:', error.response?.data || error.message);
         }
@@ -94,9 +103,9 @@ const AddCompanies = ({ closeModal, modal, onClientAdded }) => {
                 h-screen overflow-auto`}
                 dir="rtl"
             >
-                <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5" >
-                    <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10 ">
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white"> اضافه شركه</h2>
+                <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5">
+                    <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10">
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">اضافة شركه</h2>
                         <button
                             type="button"
                             onClick={closeModal}
@@ -106,23 +115,23 @@ const AddCompanies = ({ closeModal, modal, onClientAdded }) => {
                             <span className="sr-only">إغلاق النافذة</span>
                         </button>
                     </div>
-                    <div className="main-content-wrap mt-5" >
-                        <form className="form-add-product text-right" onSubmit={handleSubmit} >
+                    <div className="main-content-wrap mt-5">
+                        <form className="form-add-product text-right" onSubmit={handleSubmit}>
                             <div className="grid grid-cols-2 gap-5 mb-3">
                                 <FormText
-                                    label="الاسم الأول"
+                                    label="اسم الشركه"
                                     type="text"
-                                    name="first_name"
-                                    placeholder="الاسم الأول"
-                                    value={formData.first_name}
+                                    name="company_name"
+                                    placeholder="اسم الشركه"
+                                    value={formData.company_name}
                                     onChange={handleChange}
                                 />
                                 <FormText
-                                    label="اسم العائلة"
+                                    label="كود الشركه"
                                     type="text"
-                                    name="last_name"
-                                    placeholder="اسم العائلة"
-                                    value={formData.last_name}
+                                    name="company_code"
+                                    placeholder="كود الشركه"
+                                    value={formData.company_code}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -136,58 +145,23 @@ const AddCompanies = ({ closeModal, modal, onClientAdded }) => {
                                     value={formData.email}
                                     onChange={handleChange}
                                 />
-                                <FormText
-                                    label="رقم الوظيفة"
-                                    type="text"
-                                    name="job_number"
-                                    placeholder="رقم الوظيفة"
-                                    value={formData.job_number}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText
-                                    label="المسمى الوظيفي"
-                                    type="text"
-                                    name="job_title"
-                                    placeholder="المسمى الوظيفي"
-                                    value={formData.job_title}
-                                    onChange={handleChange}
-                                />
-                                <FormText
-                                    label="رقم الهاتف"
-                                    type="tel"
-                                    name="phone_number"
-                                    placeholder="رقم الهاتف"
-                                    value={formData.phone_number}
-                                    onChange={handleChange}
+                                <FormPic
+                                    label="صورة الشركه"
+                                    name="company_logo"
+                                    onChange={handleFileChange}
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
                                 <FormSelect
-                                    label="الجنس"
-                                    selectLabel="nationality"
-                                    name="nationality"
-                                    onChange={handleChange}
-                                    options={[
-                                        { value: "ذكر", label: "ذكر" },
-                                        { value: "انثى", label: "انثى" },
-                                    ]}
-                                    value={formData.nationality}
-                                />
-
-                                <FormSelect
-                                    label="الجهات"
-                                    selectLabel="entity"
-                                    name="entity"
-                                    onChange={handleChange}
-                                    options={entities.map(entity => ({
-                                        value: entity.id,
-                                        label: entity.ar_name                                        // تأكد من استخدام الاسم الصحيح
+                                    label="نوع الخطة"
+                                    name="plan"
+                                    options={plans.map(plan => ({
+                                        value: plan.id,
+                                        label: `${plan.type} - ${plan.name}`,
                                     }))}
-                                    value={formData.entity}
+                                    onChange={handleChange}
+                                    value={formData.plan_id}
                                 />
                             </div>
 

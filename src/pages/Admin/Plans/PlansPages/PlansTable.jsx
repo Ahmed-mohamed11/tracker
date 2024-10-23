@@ -1,4 +1,4 @@
-import { Check, Eye, Play, Trash, X } from 'lucide-react';
+import { Check, Eye, PackagePlus, Play, Replace, X } from 'lucide-react';
 import { Fragment, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -13,50 +13,20 @@ const MySwal = withReactContent(Swal);
 
 const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest }) => {
     return (
-        <div className="flex gap-2">
-            <button onClick={() => openReviewRequest(row.id)} className="text-blue-500">
-                <Eye size={22} />
-            </button>
+        <div className="flex gap-4">
             <button onClick={() => refuseRequest(row.id)} className="text-gray-500">
-                <X size={22} />
+                <Replace size={22} />
             </button>
             <button onClick={() => approveRequest(row.id)} className="text-gray-500">
-                <Check size={22} />
+                <PackagePlus size={22} />
             </button>
         </div>
     );
 };
 
-const TableUser = ({ row, openReviewRequest }) => {
-    return (
-        <Fragment>
-            <td className="py-4">
-                <div className="flex items-center bg-themeColor-200 px-2.5 py-0.5 rounded">
-                    <div className="h-2.5 w-2.5 rounded-full bg-themeColor-200 me-2"></div>
-                    {row.title || 'مستكمل'}
-                </div>
-            </td>
-            <td
-                onClick={() => openReviewRequest(row)}
-                className="py-4 flex w-full items-center justify-center cursor-pointer"
-            >
-                <img
-                    className="w-10 h-10 rounded-full text-center"
-                    src={row.image || './default-image.jpg'}
-                    alt={`${row.name} image`}
-                />
-            </td>
-
-            <td className="py-4">
-                <Play className="mr-[30px] bg-blue-200 w-8 h-8 rounded-full p-2 text-blue-600 text-center" />
-            </td>
-        </Fragment>
-    );
-};
-
-const EmployeeTable = ({ openCreate }) => {
+const PlansTable = ({ openCreate }) => {
     const [showReviewRequest, setShowReviewRequest] = useState(false);
-    const [requestData, setRequestData] = useState(null); // بيانات الطلب
+    const [requestData, setRequestData] = useState(null);
     const [tableData, setTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -72,7 +42,6 @@ const EmployeeTable = ({ openCreate }) => {
                 return;
             }
 
-            // Fetching the plans from the new API
             const response = await axios.get('https://bio.skyrsys.com/api/plan/plans/', {
                 headers: { 'Authorization': `Token ${token}` },
             });
@@ -83,23 +52,21 @@ const EmployeeTable = ({ openCreate }) => {
                 { key: 'name', label: 'اسم الخطة' },
                 { key: 'price', label: 'السعر' },
                 { key: 'type', label: 'النوع' },
-                { key: 'max_branches', label: 'الحد الأقصى للفروع' },
-                { key: 'max_employees', label: 'الحد الأقصى للموظفين' },
+                { key: 'max_branches', label: 'الحد الأقصى من الفروع' },
+                { key: 'max_employees', label: 'الحد الأقصى من الموظفين' },
             ]);
 
             const formattedData = plans.map(plan => ({
                 name: plan.name || 'غير محدد',
                 price: plan.price || 'غير محدد',
                 type: plan.type || 'غير محدد',
-                max_branches: plan.max_branches || 0,
-                max_employees: plan.max_employees || 0,
+                max_branches: plan.max_branches || 'غير محدد',
+                max_employees: plan.max_employees || 'غير محدد',
                 id: plan.id,
-                // Include any additional data you need
             }));
 
             setTableData(formattedData);
             setFilteredData(formattedData);
-
         } catch (error) {
             console.error('Error fetching plans:', error.response?.data || error.message);
         }
@@ -117,16 +84,52 @@ const EmployeeTable = ({ openCreate }) => {
         setFilteredData(filtered);
     };
 
-    const openReviewRequest = async (row) => {
+    const openReviewRequest = (row) => {
+        setRequestData(row);
+        setShowReviewRequest(true);
+    };
+
+    const approveRequest = async (id) => {
         try {
-            setRequestData(row);
-            setShowReviewRequest(true);
+            const token = Cookies.get('token');
+            if (!token) {
+                console.error('No token found in cookies');
+                return;
+            }
+            MySwal.fire({
+                icon: 'success',
+                title: 'تمت تجديد الطلب بنجاح',
+            });
+
+            fetchData(); // Reload data after approval
         } catch (error) {
-            console.error('Error fetching request details:', error);
+            console.error('Error approving the request:', error.response?.data || error.message);
+            MySwal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: error.response?.data?.detail || 'فشل في الموافقة على الطلب.',
+            });
         }
     };
 
-    // Assume you will implement approveRequest and refuseRequest based on your logic
+    const refuseRequest = async (id) => {
+        try {
+            const token = Cookies.get('token');
+            if (!token) {
+                console.error('No token found in cookies');
+                return;
+            }
+
+            fetchData(); // Reload data after refusal
+        } catch (error) {
+            console.error('Error refusing the request:', error.response?.data || error.message);
+            MySwal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: error.response?.data?.detail || 'فشل في رفض الطلب.',
+            });
+        }
+    };
 
     const exportTableToExcel = () => {
         const table = document.getElementById('table');
@@ -146,7 +149,7 @@ const EmployeeTable = ({ openCreate }) => {
         a.download = 'plans.csv';
         document.body.appendChild(a);
         a.click();
-    }
+    };
 
     useEffect(() => {
         fetchData();
@@ -185,7 +188,7 @@ const EmployeeTable = ({ openCreate }) => {
                         <option value="rejected">مرفوض</option>
                     </select>
                     <button
-                        onClick={() => exportTableToExcel()}
+                        onClick={exportTableToExcel}
                         className="w-1/2 bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
                     >
                         تصدير
@@ -198,9 +201,6 @@ const EmployeeTable = ({ openCreate }) => {
             <Table
                 data={filteredData}
                 headers={tableHeaders}
-                userImage={(row) => (
-                    <TableUser row={row} openReviewRequest={openReviewRequest} />
-                )}
                 actions={(row) => (
                     <TableActions
                         openPreview={() => console.log('Preview function')}
@@ -214,16 +214,8 @@ const EmployeeTable = ({ openCreate }) => {
                 totalPages={Math.ceil(filteredData.length / itemsPerPage)}
                 setCurrentPage={setCurrentPage}
             />
-
-            {/* Review Request Modal */}
-            {showReviewRequest && (
-                <ReviewRequest
-                    requestData={requestData}
-                    onClose={() => setShowReviewRequest(false)}
-                />
-            )}
         </div>
     );
 };
 
-export default EmployeeTable;
+export default PlansTable;

@@ -65,6 +65,7 @@ const Companies = ({ role }) => {
                                 <AddCompanies
                                     closeModal={toggleOpenCreateModal}
                                     modal={openCreate}
+
                                     role={role}
                                 />
                             )}

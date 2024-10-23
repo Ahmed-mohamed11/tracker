@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
 import FormSelect from "../../components/form/FormSelect";
 
-const AddEmployee = ({ closeModal, modal, onClientAdded }) => {
+const AddEmployee = ({ closeModal, modal, }) => {
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -67,7 +67,7 @@ const AddEmployee = ({ closeModal, modal, onClientAdded }) => {
 
             const newRegistration = response.data;
             console.log('تمت إضافة طلب التسجيل بنجاح:', newRegistration);
-            onClientAdded(newRegistration);  // Call the callback to add the new client
+            // onClientAdded(newRegistration);  // Call the callback to add the new client
             closeModal();
 
         } catch (error) {

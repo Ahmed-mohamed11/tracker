@@ -54,9 +54,9 @@ export default function Login() {
         }
       );
 
-      console.log("Response Data:", response.data); 
+      console.log("Response Data:", response.data);
 
-      const data = response.data?.data || response.data;
+      const data = response.data;
 
       if (!data || !data.token) {
         throw new Error("Invalid response structure");
@@ -67,10 +67,14 @@ export default function Login() {
       // Set the token in cookies for easy access
       Cookies.set("token", token, { expires: 7, path: "/" }); // Store the token with a 7-day expiration
 
-      // Store additional values in localStorage
-      localStorage.setItem("email", data.company.email);
-      localStorage.setItem("is_admin", data.is_admin); // تأكد من أن is_admin موجود في البيانات المسترجعة
-      localStorage.setItem("id", data.id);
+      // Store additional user data in localStorage
+      localStorage.setItem("user", JSON.stringify({
+        email: data.company.email,
+        isAdmin: data.is_admin, // تحديد حالة الأدمن
+        companyName: data.company.company_name, // اسم الشركة
+        companyLogo: data.company.company_logo, // شعار الشركة
+        companyCode: data.company.company_code, // كود الشركة
+      }));
 
       setLoading(false);
 
@@ -85,6 +89,7 @@ export default function Login() {
       setErrorMsg(message);
       setLoading(false);
     }
+
   };
 
   useEffect(() => {

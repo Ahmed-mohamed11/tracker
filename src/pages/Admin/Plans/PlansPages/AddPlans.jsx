@@ -8,14 +8,11 @@ import FormSelect from "../../../../components/form/FormSelect";
 
 const AddPlans = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
-        first_name: "",
-        last_name: "",
-        email: "",
-        job_number: "",
-        job_title: "",
-        phone_number: "",
-        nationality: "",
-        entity: 1,
+        name: "",
+        price: "",
+        type: "monthly", // القيمة الافتراضية
+        max_branches: 3, // القيمة الافتراضية
+        max_employees: 10 // القيمة الافتراضية
     });
 
     const [entities, setEntities] = useState([]); // الحالة لتخزين الجهات
@@ -24,7 +21,7 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
             ...prevData,
-            [name]: name === 'entity' ? parseInt(value, 10) : value, // تحويل القيمة إلى integer إذا كان الاسم هو 'entity'
+            [name]: name === 'max_branches' || name === 'max_employees' ? parseInt(value, 10) : value,
         }));
     }, []);
 
@@ -43,7 +40,6 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
         }
     }, []);
 
-
     useEffect(() => {
         getEntities();
     }, [getEntities]);
@@ -58,28 +54,28 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
                 return;
             }
 
-            const response = await axios.post('https://bio.skyrsys.com/api/registration-requests/', formData, {
+            const response = await axios.post('https://bio.skyrsys.com/api/plan/plans/', formData, {
                 headers: {
                     'Authorization': `Token ${token}`,
                     'Content-Type': 'application/json'
                 },
             });
 
-            const newRegistration = response.data;
-            console.log('تمت إضافة طلب التسجيل بنجاح:', newRegistration);
-            onClientAdded(newRegistration);  // Call the callback to add the new client
+            const newPlan = response.data;
+            console.log('تمت إضافة الخطة بنجاح:', newPlan);
+            onClientAdded(newPlan);  // Call the callback to add the new plan
             closeModal();
 
         } catch (error) {
-            console.error('خطأ في إضافة طلب التسجيل:', error.response?.data || error.message);
+            console.error('خطأ في إضافة الخطة:', error.response?.data || error.message);
         }
     };
 
     return (
         <div
             onClick={(e) => e.target === e.currentTarget && closeModal()}
-            id="createStudent"
-            className={`createStudent overflow-y-auto overflow-x-hidden duration-200 ease-linear
+            id="createPlan"
+            className={`createPlan overflow-y-auto overflow-x-hidden duration-200 ease-linear
                 shadow-2xl shadow-slate-500 
                 backdrop-blur-sm backdrop-saturate-[180%]
                 dark:shadow-white/[0.10] dark:backdrop-blur-sm dark:backdrop-saturate-[180%] 
@@ -94,9 +90,9 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
                 h-screen overflow-auto`}
                 dir="rtl"
             >
-                <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5" >
-                    <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10 ">
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white"> اضافه خطه جديده </h2>
+                <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5">
+                    <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10">
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">اضافة خطة جديدة</h2>
                         <button
                             type="button"
                             onClick={closeModal}
@@ -106,88 +102,43 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
                             <span className="sr-only">إغلاق النافذة</span>
                         </button>
                     </div>
-                    <div className="main-content-wrap mt-5" >
-                        <form className="form-add-product text-right" onSubmit={handleSubmit} >
+                    <div className="main-content-wrap mt-5">
+                        <form className="form-add-product text-right" onSubmit={handleSubmit}>
                             <div className="grid grid-cols-2 gap-5 mb-3">
                                 <FormText
-                                    label="الاسم الأول"
+                                    label="اسم الخطة"
                                     type="text"
-                                    name="first_name"
-                                    placeholder="الاسم الأول"
-                                    value={formData.first_name}
+                                    name="name"
+                                    placeholder="اسم الخطة"
+                                    value={formData.name}
                                     onChange={handleChange}
                                 />
                                 <FormText
-                                    label="اسم العائلة"
+                                    label="السعر"
                                     type="text"
-                                    name="last_name"
-                                    placeholder="اسم العائلة"
-                                    value={formData.last_name}
+                                    name="price"
+                                    placeholder="السعر"
+                                    value={formData.price}
                                     onChange={handleChange}
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
                                 <FormText
-                                    label="البريد الإلكتروني"
-                                    type="email"
-                                    name="email"
-                                    placeholder="البريد الإلكتروني"
-                                    value={formData.email}
+                                    label="عدد الفروع القصوى"
+                                    type="number"
+                                    name="max_branches"
+                                    placeholder="عدد الفروع القصوى"
+                                    value={formData.max_branches}
                                     onChange={handleChange}
                                 />
                                 <FormText
-                                    label="رقم الوظيفة"
-                                    type="text"
-                                    name="job_number"
-                                    placeholder="رقم الوظيفة"
-                                    value={formData.job_number}
+                                    label="عدد الموظفين الأقصى"
+                                    type="number"
+                                    name="max_employees"
+                                    placeholder="عدد الموظفين الأقصى"
+                                    value={formData.max_employees}
                                     onChange={handleChange}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText
-                                    label="المسمى الوظيفي"
-                                    type="text"
-                                    name="job_title"
-                                    placeholder="المسمى الوظيفي"
-                                    value={formData.job_title}
-                                    onChange={handleChange}
-                                />
-                                <FormText
-                                    label="رقم الهاتف"
-                                    type="tel"
-                                    name="phone_number"
-                                    placeholder="رقم الهاتف"
-                                    value={formData.phone_number}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormSelect
-                                    label="الجنس"
-                                    selectLabel="nationality"
-                                    name="nationality"
-                                    onChange={handleChange}
-                                    options={[
-                                        { value: "ذكر", label: "ذكر" },
-                                        { value: "انثى", label: "انثى" },
-                                    ]}
-                                    value={formData.nationality}
-                                />
-
-                                <FormSelect
-                                    label="الجهات"
-                                    selectLabel="entity"
-                                    name="entity"
-                                    onChange={handleChange}
-                                    options={entities.map(entity => ({
-                                        value: entity.id,
-                                        label: entity.ar_name                                        // تأكد من استخدام الاسم الصحيح
-                                    }))}
-                                    value={formData.entity}
                                 />
                             </div>
 
