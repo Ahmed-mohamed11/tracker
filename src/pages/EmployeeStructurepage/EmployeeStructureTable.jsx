@@ -13,10 +13,6 @@ const MySwal = withReactContent(Swal);
 const TableActions = ({ row, deleteEmployee, openEditForm, openReviewRequest }) => {
     return (
         <div className="flex gap-2">
-
-            <button onClick={() => openEditForm(row.id)} className="text-gray-500">
-                <Edit size={22} />
-            </button>
             <button onClick={() => deleteEmployee(row.id)} className="text-gray-500">
                 <Trash size={22} />
             </button>
@@ -24,33 +20,7 @@ const TableActions = ({ row, deleteEmployee, openEditForm, openReviewRequest }) 
     );
 };
 
-const TableUser = ({ row, openReviewRequest }) => {
-    return (
-        <Fragment>
-            <td className="py-4">
 
-                <div className="flex items-center bg-themeColor-200 px-2.5 py-0.5 rounded">
-                    <div className={`h-2.5 w-2.5 rounded-full me-2  bg-themeColor-500`}></div>
-                    مستكمل
-                </div>
-            </td>
-            <td
-                onClick={() => openReviewRequest(row)}
-                className="py-4 flex w-full items-center justify-center cursor-pointer"
-            >
-                <img
-                    className="w-10 h-10 rounded-full text-center"
-                    src={row.image || './default-image.jpg'}
-                    alt={`${row.first_name} image`}
-                />
-            </td>
-
-            <td className="py-4">
-                <Play className="mr-[30px] bg-blue-200 w-8 h-8 rounded-full p-2 text-blue-600 text-center" />
-            </td>
-        </Fragment>
-    );
-};
 
 const EmployeeStructureTable = ({ openCreate }) => {
     const [showReviewRequest, setShowReviewRequest] = useState(false);
@@ -241,7 +211,6 @@ const EmployeeStructureTable = ({ openCreate }) => {
             <Table
                 data={filteredData}
                 headers={tableHeaders}
-                userImage={(row) => <TableUser row={row} openReviewRequest={openReviewRequest} />}
                 actions={(row) => (
                     <TableActions
                         row={row}
