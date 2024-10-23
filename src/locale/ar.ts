@@ -77,6 +77,7 @@ const ar = {
     departures: "  المغادرة",
     Administrative: "  الهيكل الاداري",
     Entities: " الجهات",
+    branches: "الفروع",
     Employee: "الموظفين", // Employee
     clients: "العملاء",
     Shifts: "مواعيد العمل",

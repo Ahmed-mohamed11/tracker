@@ -92,7 +92,7 @@ const EntitiesTable = ({ openCreate }) => {
                 <div className="divide-y flex flex-col justify-between">
                     {tableData.map((entity, index) => (
                         <div key={index} className={`flex items-center justify-between p-4 ${index % 2 === 1 ? 'bg-blue-50' : ''}`}>
-                            <div className="w-2/3 flex items-center justify-between space-x-4 space-x-reverse">
+                            <div className="w-3/4 flex items-center justify-between space-x-4 space-x-reverse">
                                 <div className="w-1/3 ">
                                     <span className="font-medium">{entity.ar_name}</span>
                                 </div>
@@ -137,7 +137,7 @@ const EntitiesTable = ({ openCreate }) => {
                             </div>
 
                             {/* الأزرار للشاشات الكبيرة */}
-                            <div className="hidden md:flex space-x-2 justify-end space-x-reverse">
+                            <div className="w-1/4 hidden md:flex space-x-2 justify-end space-x-reverse">
                                 <button className="p-1 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200">
                                     <BiEdit size={18} />
                                 </button>

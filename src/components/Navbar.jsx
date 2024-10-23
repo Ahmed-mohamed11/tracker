@@ -216,6 +216,11 @@ export default function Navbar({ dark }) {
           name: t("sideBar.Entities"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
         },
+
+        {
+          name: t("sideBar.branches"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
+        },
         {
           name: t("sideBar.Employee"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/employee`,
