@@ -19,11 +19,15 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
+
         setFormData(prevData => ({
             ...prevData,
-            [name]: name === 'max_branches' || name === 'max_employees' ? parseInt(value, 10) : value,
+            [name]: (name === 'max_branches' || name === 'max_employees')
+                ? (value === '' ? '' : parseInt(value, 10)) // إذا كانت القيمة فارغة، لا نحاول تحويلها
+                : value,
         }));
     }, []);
+
 
     // get entity type
     const getEntities = useCallback(async () => {

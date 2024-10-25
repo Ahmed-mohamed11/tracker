@@ -20,11 +20,14 @@ const AddCompanies = ({ closeModal, modal }) => {
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
+
+        // Check if the field is "plan" which is a numeric field, otherwise just update with the value as is
         setFormData(prevData => ({
             ...prevData,
-            [name]: parseInt(value, 10),
+            [name]: name === 'plan' ? parseInt(value, 10) : value,
         }));
     }, []);
+
 
     const handleFileChange = useCallback((e) => {
         const file = e.target.files[0];

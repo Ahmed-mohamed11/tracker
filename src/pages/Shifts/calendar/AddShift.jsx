@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { Trash, X, UserPlus } from "lucide-react";
+import { Trash, X, UserPlus, ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import axios from 'axios'; // استيراد مكتبة Axios
 import Cookies from 'js-cookie';
 import FormSelect from "../../../components/form/FormSelect";
 
+
+
 function AddEmployeeForm({ handleClose, handleAddEmployee }) {
-    const [selectedDepartment, setSelectedDepartment] = useState("");
-    const [selectedEmployee, setSelectedEmployee] = useState("");
-    const [selectedEntity, setSelectedEntity] = useState(""); // حالة لتخزين الكيان المحدد
-    const [employeesList, setEmployeesList] = useState([]); // حالة لتخزين قائمة الموظفين
-    const [entitiesList, setEntitiesList] = useState([]); // حالة لتخزين قائمة الكيانات
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [expandedGroups, setExpandedGroups] = useState([]);
+    const [branchesList, setBranchesList] = useState([]);
 
-    // جلب بيانات الموظفين من API
-    const fetchEemployee = async () => {
+    const fetchBranches = async () => {
         try {
             const token = Cookies.get('token');
             if (!token) {
@@ -20,47 +20,59 @@ function AddEmployeeForm({ handleClose, handleAddEmployee }) {
                 return;
             }
 
-            const response = await axios.get('https://bio.skyrsys.com/api/employee/', {
+            const response = await axios.get('https://bio.skyrsys.com/api/working-hours/branchs-list/', {
                 headers: { 'Authorization': `Token ${token}` },
             });
 
-            setEmployeesList(response.data); // تخزين بيانات الكيانات
+            setBranchesList(response.data);
         } catch (error) {
-            console.error("Error fetching employees:", error);
-        }
-    };
-
-
-
-    // جلب بيانات الكيانات من API
-    const fetchEntities = async () => {
-        try {
-            const token = Cookies.get('token');
-            if (!token) {
-                console.error('لم يتم العثور على الرمز في الكوكيز');
-                return;
-            }
-
-            const response = await axios.get('https://bio.skyrsys.com/api/entity/', {
-                headers: { 'Authorization': `Token ${token}` },
-            });
-
-            setEntitiesList(response.data); // تخزين بيانات الكيانات
-        } catch (error) {
-            console.error("Error fetching entities:", error);
+            console.error("Error fetching branches:", error);
         }
     };
 
     useEffect(() => {
-        fetchEemployee(); // استدعاء دالة جلب الموظفين
-        fetchEntities(); // استدعاء دالة جلب الكيانات
+        fetchBranches();
     }, []);
 
+    const toggleDropdown = () => setIsOpen(!isOpen);
+
+    const toggleGroup = (groupId) => {
+        setExpandedGroups(prev =>
+            prev.includes(groupId)
+                ? prev.filter(id => id !== groupId)
+                : [...prev, groupId]
+        );
+    };
+
+    const handleItemClick = (item, groupId) => {
+        setSelectedItems(prev => {
+            const groupEntities = branchesList.find(branch => branch.id === groupId).entities;
+            if (item === 'Select all') {
+                const allSelected = groupEntities.every(groupItem => prev.some(i => i.id === groupItem.id));
+                return allSelected
+                    ? prev.filter(i => !groupEntities.some(gi => gi.id === i.id))
+                    : [...new Set([...prev, ...groupEntities])];
+            } else {
+                return prev.some(i => i.id === item.id)
+                    ? prev.filter(i => i.id !== item.id)
+                    : [...prev, item];
+            }
+        });
+    };
+
+    const isGroupSelected = (groupId) => {
+        const groupEntities = branchesList.find(branch => branch.id === groupId).entities;
+        return groupEntities.every(item => selectedItems.some(i => i.id === item.id));
+    };
+
     const handleSave = () => {
-        if (selectedEmployee && selectedEntity) {
+        // معالجة البيانات المختارة وحفظها
+        const selectedBranch = selectedItems.find(item => branchesList.some(branch => branch.entities.some(e => e.id === item.id)));
+
+        if (selectedBranch) {
             handleAddEmployee({
-                employee: selectedEmployee,
-                entity: selectedEntity // تضمين الكيان
+                employee: selectedBranch.id, // افتراضًا أن المختار هو الفرع
+                entity: selectedBranch.id   // إذا كنت تريد التعامل مع الكيانات يمكن تعديل هذه الجزئية
             });
             handleClose();
         }
@@ -76,40 +88,57 @@ function AddEmployeeForm({ handleClose, handleAddEmployee }) {
                     <X className="w-6 h-6" />
                 </button>
                 <h2 className="text-2xl font-semibold mb-6 text-center">أضف موظف</h2>
-                <div className="space-y-4">
-
-
-                    <div>
-                        <FormSelect
-                            label="اختر الموظف"
-                            value={selectedEmployee}
-                            onChange={(e) => setSelectedEmployee(e.target.value)}
-                            options={[
-                                { value: '', label: 'اختر الموظف' },
-                                ...employeesList.map(employee => ({
-                                    label: `${employee.first_name} ${employee.last_name}`,
-                                    value: employee.id,
-                                })),
-                            ]}
-                        />
+                <div className="mb-4 space-y-4">
+                    <div className="mb-10 relative w-full font-sans">
+                        <button
+                            onClick={toggleDropdown}
+                            className="flex items-center justify-between w-full px-4 py-2 text-right bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <span className="text-gray-700">اختر الفرع والكيانات</span>
+                            <ChevronDownIcon className="w-5 h-5 text-gray-400" />
+                        </button>
+                        {isOpen && (
+                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                                {branchesList.map((branch) => (
+                                    <div key={branch.id} className="border-b border-gray-200 last:border-b-0">
+                                        <button
+                                            onClick={() => toggleGroup(branch.id)}
+                                            className="flex items-center justify-between w-full px-4 py-2 text-right hover:bg-gray-100"
+                                        >
+                                            <span className="text-sm font-medium text-gray-700">{branch.branch_name}</span>
+                                            <ChevronRightIcon className={`w-4 h-4 text-gray-400 transition-transform ${expandedGroups.includes(branch.id) ? 'transform rotate-90' : ''}`} />
+                                        </button>
+                                        {expandedGroups.includes(branch.id) && (
+                                            <div className="pr-4 pb-2">
+                                                <label className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isGroupSelected(branch.id)}
+                                                        onChange={() => handleItemClick('Select all', branch.id)}
+                                                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                    />
+                                                    <span className="mr-3 text-sm font-medium text-gray-700">تحديد الكل</span>
+                                                </label>
+                                                {branch.entities.map((entity) => (
+                                                    <label key={entity.id} className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedItems.some(i => i.id === entity.id)}
+                                                            onChange={() => handleItemClick(entity, branch.id)}
+                                                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                        />
+                                                        <span className="mr-3 text-sm font-medium text-gray-700">{entity.ar_name}</span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
-                    <div>
-                        <FormSelect
-                            label="اختر الكيان"
-                            value={selectedEntity}
-                            onChange={(e) => setSelectedEntity(e.target.value)}
-                            options={[
-                                { value: '', label: 'اختر الكيان' },
-                                ...entitiesList.map(entity => ({
-                                    label: entity.ar_name,
-                                    value: entity.id,
-                                })),
-                            ]}
-                        />
-                    </div>
-
-                    <div className="flex justify-between mt-6">
+                    <div className="flex justify-between mt-20">
                         <button
                             type="button"
                             onClick={handleClose}
@@ -130,6 +159,7 @@ function AddEmployeeForm({ handleClose, handleAddEmployee }) {
         </div>
     );
 }
+
 export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
     const [title, setTitle] = useState("");
     const [checkInTime, setCheckInTime] = useState("17:20"); // تعيين وقت تسجيل الدخول الافتراضي هنا

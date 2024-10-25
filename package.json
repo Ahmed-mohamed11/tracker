@@ -38,6 +38,7 @@
         "sweetalert2-react-content": "^5.0.7",
         "three-dots": "^0.3.2",
         "toast": "^0.5.4",
+        "tw-elements-react": "^1.0.0-alpha-end",
         "xlsx": "^0.18.5"
     },
     "devDependencies": {
