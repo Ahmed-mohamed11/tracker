@@ -1,5 +1,4 @@
-"use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { X } from "@phosphor-icons/react";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -15,7 +14,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 
-const EditSite = ({ closeModal, modal, onClientAdded }) => {
+const EditSite = ({ closeModal, open, site, fetchData }) => {
   const [formData, setFormData] = useState({
     ar_name: "",
     en_name: "",
@@ -26,7 +25,9 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
   });
 
   const [branchesList, setBranchesList] = useState([]);
+  const mapRef = useRef(); // مرجع للخريطة
 
+  // دالة جلب قائمة الفروع
   const fetchBranches = async () => {
     try {
       const token = Cookies.get("token");
@@ -42,8 +43,6 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
         }
       );
 
-      console.log("Fetched branches data:", response.data);
-
       const transformedOptions = response.data.map((branch) => ({
         label: branch.branch_name,
         value: branch.id,
@@ -53,14 +52,39 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
     } catch (error) {
       console.error("Error fetching branches:", error);
     }
-    // console.log("hay",branchesList);
   };
 
+  // تحديث بيانات الموقع وتحديد الحقول المبدئية
   useEffect(() => {
     fetchBranches();
   }, []);
 
-  const center = [35.755229, 51.30447];
+  // تحديث بيانات الموقع بعد الحصول على البيانات من API
+  useEffect(() => {
+    if (site) {
+      setFormData({
+        ar_name: site.ar_name || "",
+        en_name: site.en_name || "",
+        max_distance: site.max_distance || 0,
+        latitude: site.latitude || 0,
+        longitude: site.longitude || 0,
+        branch:
+          branchesList.find((branch) => branch.label === site.branch)?.value ||
+          0,
+      });
+    }
+  }, [site, branchesList]);
+  
+  useEffect(() => {
+    console.log("Updated Longitude:", formData.longitude, "Updated Latitude:", formData.latitude);
+  }, [formData]);
+
+  useEffect(() => {
+    if (open && formData.latitude && formData.longitude && mapRef.current) {
+      mapRef.current.flyTo([formData.latitude, formData.longitude], 8);
+    }
+  }, [open, formData.latitude, formData.longitude]);
+  
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
@@ -79,6 +103,7 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
 
   const { t } = useI18nContext();
 
+  // دالة تحديث الموقع
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -89,8 +114,8 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
         return;
       }
 
-      const response = await axios.post(
-        "https://bio.skyrsys.com/api/company/location/",
+      const response = await axios.put(
+        `https://bio.skyrsys.com/api/company/location/${site.id}/`,
         formData,
         {
           headers: {
@@ -99,24 +124,22 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
         }
       );
 
-      const newLocation = response.data;
-      console.log("Location added successfully:", newLocation);
-      onClientAdded(newLocation);
+      const updatedLocation = response.data;
+      console.log("Location updated successfully:", updatedLocation);
+      fetchData();
       closeModal();
     } catch (error) {
       console.error(
-        "Error adding location:",
+        "Error updating location:",
         error.response?.data || error.message
       );
     }
   };
 
-  // خريطة لتسجيل النقاط
   function MapEvents() {
     const map = useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
-        console.log(e.latlng);
         setFormData((prevData) => ({
           ...prevData,
           latitude: lat,
@@ -128,6 +151,26 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
     return null;
   }
 
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setFormData((prevData) => ({
+            ...prevData,
+            latitude,
+            longitude,
+          }));
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
+
   return (
     <div
       onClick={(e) => e.target === e.currentTarget && closeModal()}
@@ -137,23 +180,23 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
                 backdrop-blur-sm backdrop-saturate-[180%]
                 dark:shadow-white/[0.10] dark:backdrop-blur-sm dark:backdrop-saturate-[180%] 
                 fixed top-0 left-0 z-50 justify-center items-center
-                w-full h-full ${modal ? "visible" : "invisible"}`}
+                w-full h-full ${open ? "visible" : "invisible"}`}
     >
       <div
         style={{ boxShadow: "black 19px 0px 45px -12px" }}
         className={`rounded-l-[15px] p-4 w-full h-fit max-w-[50rem] pb-10 bg-white
                 dark:bg-gray-800 rounded-r-lg duration-200 ease-linear
                 ${
-                  modal
+                  open
                     ? "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                    : "absolute -left-full"
+                    : "absolute top-1/2 -left-full -translate-x-1/2 -translate-y-1/2"
                 }
                 overflow-auto`}
         dir="rtl"
       >
         <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5">
           <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10 ">
-            <h2>اضافه مجموعه مواقع جديده</h2>
+            <h2>تعديل مجموعة مواقع</h2>
             <button
               type="button"
               onClick={closeModal}
@@ -190,7 +233,7 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
                   name="branch"
                   options={branchesList}
                   onChange={handleChange}
-                  value={formData.plan_id}
+                  value={formData.branch}
                 />
                 <FormNumber
                   label="اقصى مسافة"
@@ -204,9 +247,10 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
               </div>
 
               <MapContainer
-                center={center}
-                zoom={16}
+                center={[formData.latitude, formData.longitude]}
+                zoom={8}
                 style={{ height: "300px", width: "100%" }}
+                whenCreated={(map) => (mapRef.current = map)}
               >
                 <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
                 <MapEvents />
@@ -227,14 +271,14 @@ const EditSite = ({ closeModal, modal, onClientAdded }) => {
               </MapContainer>
 
               <button
-                className="w-1/2 mx-auto text-center border-2 justify-center
+                className="w-1/3 mx-auto text-center border-2 justify-center
                   text-themeColor-700 px-4 py-2 rounded-md bg-white
                  duration-150 ease-linear hover:translate-y-[-0.25em]
                  hover:shadow-[0_0.5em_0.5em_-0.4em_#131a50] focus:shadow-[0_0.5em_0.5em_-0.4em_#131a50]
                  hover:text-white hover:bg-themeColor-700 border-themeColor-700 transition flex items-center"
                 type="submit"
               >
-                {t("registrationForm.submitButton")}
+                {t("sites.edit")}
               </button>
             </form>
           </div>

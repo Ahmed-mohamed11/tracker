@@ -15,7 +15,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 
-const AddSites = ({ closeModal, modal, onClientAdded }) => {
+const AddSites = ({ closeModal, open, fetchData }) => {
   const [formData, setFormData] = useState({
     ar_name: "",
     en_name: "",
@@ -42,7 +42,7 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
         }
       );
 
-      console.log("Fetched branches data:", response.data);
+      // console.log("Fetched branches data:", response.data);
 
       const transformedOptions = response.data.map((branch) => ({
         label: branch.branch_name,
@@ -60,7 +60,8 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
     fetchBranches();
   }, []);
 
-  const center = [35.755229, 51.30447];
+  const center = [24.647017162630366, 46.66992187500001];
+ 
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
@@ -101,7 +102,7 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
 
       const newLocation = response.data;
       console.log("Location added successfully:", newLocation);
-      onClientAdded(newLocation);
+      fetchData();
       closeModal();
     } catch (error) {
       console.error(
@@ -137,16 +138,16 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
                 backdrop-blur-sm backdrop-saturate-[180%]
                 dark:shadow-white/[0.10] dark:backdrop-blur-sm dark:backdrop-saturate-[180%] 
                 fixed top-0 left-0 z-50 justify-center items-center
-                w-full h-full ${modal ? "visible" : "invisible"}`}
+                w-full h-full ${open ? "visible" : "invisible"}`}
     >
       <div
         style={{ boxShadow: "black 19px 0px 45px -12px" }}
         className={`rounded-l-[15px] p-4 w-full h-fit max-w-[50rem] pb-10 bg-white
                 dark:bg-gray-800 rounded-r-lg duration-200 ease-linear
                 ${
-                  modal
+                  open
                     ? "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                    : "absolute -left-full"
+                    : "absolute top-1/2 -left-full -translate-x-1/2 -translate-y-1/2"
                 }
                 overflow-auto`}
         dir="rtl"
@@ -205,8 +206,9 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
 
               <MapContainer
                 center={center}
-                zoom={16}
+                zoom={8}
                 style={{ height: "300px", width: "100%" }}
+                key={formData.latitude}
               >
                 <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
                 <MapEvents />
