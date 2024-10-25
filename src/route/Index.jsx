@@ -13,6 +13,7 @@ import AccountSetting from "../pages/AccountSetting/accountSetting";
 import Companies from "../pages/Admin/Companies/Companies/Companies";
 import Plans from "../pages/Admin/Plans/Plans/Plans";
 import Branches from "../pages/Branch/Branch";
+import Dashboard from "../pages/dashboard/Dashboard";
 import Login from "../pages/auth/login/Login";
 
 
@@ -24,7 +25,7 @@ const AdminPages = ({ loading }) => {
         <Route
           exact
           path={`${import.meta.env.VITE_PUBLIC_URL}/`}
-          element={<div>ServerDash</div>}
+          element={<Dashboard />}
         />
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
