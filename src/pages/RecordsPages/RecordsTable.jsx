@@ -103,15 +103,14 @@ const RecordsTable = () => {
     return (
         <div className="min-h-screen mt-5 font-sans" dir="rtl">
             <div className="lg:max-w-7xl w-full mx-auto">
-                <div className="flex items-center justify-between p-4 bg-themeColor-500  border-b">
-                    <h2 className="text-2xl font-semibold text-themeColor-500">التسجيلات الصوتية</h2>
+                <div className=" flex items-center justify-between p-4 bg-themeColor-500  border-b">
+                    <h2 className="text-2xl font-semibold text-white">الصوتيات</h2>
                     <div className="flex items-center space-x-4">
                         <button
-                            onClick={handleCreate} // فتح نموذج الإضافة
-                            className="flex items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
+                            onClick={handleCreate} // استدعاء الدالة عند الضغط
+                            className="border-2 flex items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
                         >
                             <FaPlus size={18} />
-                            <span className="ml-2">إضافة تسجيل صوتي</span>
                         </button>
                     </div>
                 </div>

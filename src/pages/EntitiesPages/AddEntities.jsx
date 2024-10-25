@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { X } from "@phosphor-icons/react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
 import { useI18nContext } from "../../context/i18n-context";
 import Select from 'react-select';
+import FormSelect from "../../components/form/FormSelect";
 
 const AddEntities = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
-        firstName: "",   // الاسم بالعربي
-        secondName: "",  // الاسم بالإنجليزي
-        shifts: ["All"], // المناوبات
-        employeeType: [], // نوع الموظفين
+        ar_name: "",
+        en_name: "",
+        active: true,
+        branch: "",
     });
 
     const { t } = useI18nContext();
@@ -27,6 +28,35 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
         setSelectedEmployeeTypes(selectedOptions);
     };
 
+    const handleChange = useCallback((e) => {
+        const { name, value } = e.target;
+        setFormData(prevData => ({
+            ...prevData,
+            [name]: name === 'entity' ? parseInt(value, 10) : value, // تحويل القيمة إلى integer إذا كان الاسم هو 'entity'
+        }));
+    }, []); axios
+
+
+    const [branch, setBranch] = useState([]); // الحالة لتخزين الجهات
+
+    const getEntities = useCallback(async () => {
+        try {
+            const response = await axios.get('https://bio.skyrsys.com/api/branch/branches/', {
+                headers: {
+                    'Authorization': `Token ${Cookies.get('token')}`,
+                },
+            });
+            setBranch(response.data);
+        } catch (error) {
+            console.error('Error getting entities:', error.response?.data || error.message);
+            setBranch([]);
+        }
+    }, []);
+
+    useEffect(() => {
+        getEntities();
+    }, [getEntities]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -40,10 +70,10 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
 
             // البيانات التي سيتم إرسالها للـ API
             const requestData = {
-                ar_name: formData.firstName,  // اسم الجهة بالعربية
-                en_name: formData.secondName, // اسم الجهة بالإنجليزية
-                shifts: selectedShifts.map(shift => shift.value), // المناوبات المحددة
-                employeeType: selectedEmployeeTypes.map(type => type.value), // نوع الموظفين
+                ar_name: formData.ar_name,  // اسم الجهة بالعربية
+                en_name: formData.en_name, // اسم الجهة بالإنجليزية
+                active: formData.active, // حالة الجهة
+                branch: formData.branch, // فرع الجهة
             };
 
             // استدعاء الـ API باستخدام Axios
@@ -95,94 +125,37 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
                                 <FormText
                                     label="اسم الجهة بالعربي"
                                     type="text"
-                                    name="firstName"
+                                    name="ar_name"
                                     placeholder=" الاسم بالعربي"
-                                    value={formData.firstName}
-                                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                    value={formData.ar_name}
+                                    onChange={(e) => setFormData({ ...formData, ar_name: e.target.value })}
                                     className="border rounded-lg"
                                 />
 
                                 <FormText
                                     label="اسم الجهة بالإنجليزية"
                                     type="text"
-                                    name="secondName"
+                                    name="en_name"
                                     placeholder=" الاسم بالإنجليزية"
-                                    value={formData.secondName}
-                                    onChange={(e) => setFormData({ ...formData, secondName: e.target.value })}
+                                    value={formData.en_name}
+                                    onChange={(e) => setFormData({ ...formData, en_name: e.target.value })}
                                     className="border rounded-lg"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 mb-3">
-                                <div>
-                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        المناوبات
-                                    </label>
-                                    <Select
-                                        isMulti
-                                        name="shifts"
-                                        options={[
-                                            { value: "male", label: t('registrationForm.shiftsOptions.male') },
-                                            { value: "female", label: t('registrationForm.shiftsOptions.female') },
-                                        ]}
-                                        className="basic-multi-select"
-                                        classNamePrefix="select"
-                                        value={selectedShifts}
-                                        onChange={handleSelectShiftsChange}
-                                    />
-                                </div>
 
-                                <div>
-                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        الموظفين
-                                    </label>
-                                    <Select
-                                        isMulti
-                                        name="Shifts"
-                                        options={[
-                                            { value: "male", label: t('registrationForm.shiftsOptions.male') },
-                                            { value: "female", label: t('registrationForm.shiftsOptions.female') },
-                                        ]}
-                                        className="basic-multi-select"
-                                        classNamePrefix="select"
-                                        value={selectedEmployeeTypes}
-                                        onChange={handleSelectEmployeeTypesChange}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5">
-                                <div className="mt-3">
-                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">المناوبات</label>
-                                    <div className="flex gap-2">
-                                        {selectedShifts.map((shifts, index) => (
-                                            <span key={index} className="px-2 py-1 text-gray-50 bg-themeColor-500 rounded-lg">
-                                                {shifts.label}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="mt-3">
-                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">الموظفين</label>
-                                    <div className="flex gap-2">
-                                        {selectedEmployeeTypes.map((employeeType, index) => (
-                                            <span key={index} className="px-2 py-1 text-gray-50 bg-themeColor-500 rounded-lg">
-                                                {employeeType.label}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-5 mt-5">
-                                <div className="mt-3">
-                                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">رابط GPS</label>
-                                    <input
-                                        type="text"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                        placeholder="https://www.example.com"
-                                    />
-                                </div>
+                                <FormSelect
+                                    label="branch"
+                                    selectLabel="branch"
+                                    name="branch"
+                                    onChange={handleChange}
+                                    options={branch.map(branches => ({
+                                        value: branches.id,
+                                        label: branches.branch_name                                        // تأكد من استخدام الاسم الصحيح
+                                    }))}
+                                    value={formData.entity}
+                                />
                             </div>
 
                             <div className="w-full flex justify-start mt-5">

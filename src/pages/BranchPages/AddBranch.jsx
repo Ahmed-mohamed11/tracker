@@ -8,11 +8,9 @@ import FormSelect from "../../components/form/FormSelect";
 
 const AddBranch = ({ closeModal, modal }) => {
     const [formData, setFormData] = useState({
-        company: "",
         branch_name: "",
     });
 
-    const [companies, setCompanies] = useState([]); // Assuming you'll fetch company data
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
@@ -22,23 +20,8 @@ const AddBranch = ({ closeModal, modal }) => {
         }));
     }, []);
 
-    const getCompanies = useCallback(async () => {
-        try {
-            const response = await axios.get('https://bio.skyrsys.com/api/superadmin/companies/', {
-                headers: {
-                    'Authorization': `Token ${Cookies.get('token')}`,
-                },
-            });
-            setCompanies(response.data); // Adjust according to the actual response structure
-        } catch (error) {
-            console.error('Error getting companies:', error.response?.data || error.message);
-            setCompanies([]);
-        }
-    }, []);
 
-    useEffect(() => {
-        getCompanies();
-    }, [getCompanies]);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -51,7 +34,6 @@ const AddBranch = ({ closeModal, modal }) => {
             }
 
             const data = {
-                company: formData.company,
                 branch_name: formData.branch_name,
             };
 
@@ -103,7 +85,7 @@ const AddBranch = ({ closeModal, modal }) => {
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-right" onSubmit={handleSubmit}>
 
-                            <div>
+                            <div className="mb-4">
                                 <FormText
                                     label="اسم الفرع"
                                     type="text"
@@ -113,18 +95,7 @@ const AddBranch = ({ closeModal, modal }) => {
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className=" my-6">
-                                <FormSelect
-                                    label="الشركة"
-                                    name="company"
-                                    options={companies.map(company => ({
-                                        value: company.id,
-                                        label: company.company_name,
-                                    }))}
-                                    onChange={handleChange}
-                                    value={formData.company}
-                                />
-                            </div>
+
 
 
                             <button

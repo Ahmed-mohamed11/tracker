@@ -14,9 +14,7 @@ const MySwal = withReactContent(Swal);
 const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest }) => {
     return (
         <div className="flex gap-2">
-            <button onClick={() => openReviewRequest(row.id)} className="text-blue-500">
-                <Eye size={22} />
-            </button>
+
             <button onClick={() => refuseRequest(row.id)} className="text-gray-500">
                 <X size={22} />
             </button>
@@ -85,6 +83,7 @@ const EmployeeTable = ({ openCreate }) => {
                 { key: 'email', label: 'البريد الإلكتروني' },
                 { key: 'job_number', label: 'رقم الوظيفة' },
                 { key: 'job_title', label: 'عنوان الوظيفة' },
+                { key: 'entity', label: 'اسم الجهه ' },
                 { key: 'phone_number', label: 'رقم الهاتف' },
                 { key: 'nationality', label: 'الجنسية' }
             ]);
@@ -92,10 +91,11 @@ const EmployeeTable = ({ openCreate }) => {
             const formattedData = registrationRequests.map(request => ({
                 first_name: request.first_name || 'مجهول',
                 last_name: request.last_name || 'مجهول',
-                entity: request.entity || 'مجهول',
+                entity: request.entity_name || 'مجهول',
                 email: request.email || 'مجهول',
                 job_number: request.job_number || 'مجهول',
                 job_title: request.job_title || 'مجهول',
+                // entity_name: request.entity_name || 'مجهول',
                 phone_number: request.phone_number || 'مجهول',
                 nationality: request.nationality || 'مجهول',
                 image: request.image || './default-image.jpg',

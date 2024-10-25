@@ -1,23 +1,33 @@
-import { useEffect, useState, useCallback } from 'react';
+import { Check, Edit, Eye, Play, Trash, X } from 'lucide-react';
+import { Fragment, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import AddDepartures from './AddDepartures';
-import PreviewProjects from './PreviewProjects';
+import { IoSearch } from 'react-icons/io5';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import Table from '../../components/Table';
 
-import { FaPlus } from "react-icons/fa";
-import FormText from "../../components/form/FormText";
-import FormSelect from '../../components/form/FormSelect';
+const MySwal = withReactContent(Swal);
 
+const TableActions = ({ row, deleteRequest }) => {
+    return (
+        <div className="flex gap-2">
+            <button onClick={() => deleteRequest(row.id)} className="text-gray-500">
+                <Trash size={22} />
+            </button>
+        </div>
+    );
+};
 
-
-const ProjectTable = ({ openPreview, openCreate }) => {
-    const [modalType, setModalType] = useState(null);
+const RefusedTable = ({ openCreate }) => {
     const [tableData, setTableData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
-    const [clients, setClients] = useState([]);
-    const [selectedProjectId, setSelectedProjectId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(10);
 
+    // Fetch data from API
     const fetchData = useCallback(async () => {
         try {
             const token = Cookies.get('token');
@@ -26,137 +36,127 @@ const ProjectTable = ({ openPreview, openCreate }) => {
                 return;
             }
 
+            // API endpoint to fetch refused registration requests
+            const response = await axios.get('https://bio.skyrsys.com/api/registration-requests/refused/', {
+                headers: { 'Authorization': `Token ${token}` },
+            });
 
-            const [projectsResponse, clientsResponse] = await Promise.all([
-                axios.get('https://dashboard.cowdly.com/api/projects/', {
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                    },
-                }),
-                axios.get('https://dashboard.cowdly.com/api/clients/', {
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                    },
-                })
+            const requests = response.data;
+
+            // Set table headers
+            setTableHeaders([
+                { key: 'first_name', label: 'الاسم الأول' },
+                { key: 'last_name', label: 'الاسم الأخير' },
+                { key: 'email', label: 'البريد الإلكتروني' },
+                { key: 'entity_name', label: 'اسم الجهه' },
+                { key: 'job_number', label: 'رقم الوظيفة' },
+                { key: 'job_title', label: 'عنوان الوظيفة' },
+                { key: 'phone_number', label: 'رقم الهاتف' },
+                { key: 'nationality', label: 'الجنسية' },
             ]);
 
-            const projects = projectsResponse.data;
-            const clientsData = clientsResponse.data;
+            // Format data to match table structure
+            const formattedData = requests.map(request => ({
+                first_name: request.first_name || 'مجهول',
+                last_name: request.last_name || 'مجهول',
+                email: request.email || 'مجهول',
+                entity_name: request.entity_name || 'مجهول',
+                job_number: request.job_number || 'مجهول',
+                job_title: request.job_title || 'مجهول',
+                phone_number: request.phone_number || 'مجهول',
+                status: request.status || 'مجهول',
+                nationality: request.nationality || 'مجهول',
+                image: request.image || '',
+                id: request.id,
+            }));
 
-            setClients(clientsData);
-
-            if (projects.length > 0) {
-                const headers = Object.keys(projects[0]);
-                setTableHeaders(headers.map(header => ({ key: header, label: header })));
-
-                const formattedProjects = projects.map(project => {
-                    const client = clientsData.find(c => c.id === project.client);
-                    return {
-                        ...project,
-                        client: client ? client.name : 'Unknown Client'
-                    };
-                });
-
-                setTableData(formattedProjects);
-            } else {
-                setTableHeaders([]);
-                setTableData([]);
-            }
+            setTableData(formattedData);
+            setFilteredData(formattedData);
         } catch (error) {
-            console.error('Error fetching data:', error.response?.data || error.message);
+            console.error('Error fetching registration requests:', error.response?.data || error.message);
         }
     }, []);
 
-    const handleOpenCreate = () => {
-        console.log('Open Create button clicked');
-        openCreate();
+    // Handle search functionality
+    const handleSearch = (event) => {
+        const query = event.target.value.toLowerCase();
+        setSearchQuery(query);
+
+        const filtered = tableData.filter(item =>
+            item.first_name.toLowerCase().includes(query) ||
+            item.last_name.toLowerCase().includes(query) ||
+            item.phone_number.includes(query) ||
+            item.status.toLowerCase().includes(query)
+        );
+        setFilteredData(filtered);
+    };
+
+    // Delete request function
+    const deleteRequest = async (id) => {
+        try {
+            const token = Cookies.get('token');
+            if (!token) {
+                console.error('No token found in cookies');
+                return;
+            }
+
+            const response = await axios.delete(`https://bio.skyrsys.com/api/registration-requests/refused/${id}/`, {
+                headers: { 'Authorization': `Token ${token}` },
+            });
+
+            if (response.status === 204) {
+                const newTableData = tableData.filter(item => item.id !== id);
+                setTableData(newTableData);
+                setFilteredData(newTableData);
+            }
+        } catch (error) {
+            console.error('Error deleting request:', error.response?.data || error.message);
+        }
     };
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    const addNewProjectToTable = (newProject) => {
-        const client = clients.find(c => c.id === newProject.client);
-        const formattedProject = {
-            ...newProject,
-            client: client ? client.name : 'Unknown Client'
-        };
-        setTableData((prevData) => [...prevData, formattedProject]);
-    };
-
     return (
-        <div className="min-h-screen mt-6 font-sans lg:max-w-7xl w-full mx-auto">
-            <div className="mb-6 flex items-center justify-between">
-                <div className="w-full flex items-center justify-between p-4 bg-themeColor-500  border-b ">
+        <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
+            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
+                <h2 className="text-2xl font-bold">طلبات التسجيل المرفوضة</h2>
+            </div>
 
-                    <h2 className="text-xl font-bold">الحركات المرفوضه</h2>
-
+            <div className="mb-6 gap-14">
+                <div className="grid grid-cols-4 gap-4">
+                    <div className="relative w-full">
+                        <input
+                            type="text"
+                            placeholder="بحث"
+                            value={searchQuery}
+                            onChange={handleSearch}
+                            className="w-full bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
+                        />
+                        <div className="h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center">
+                            <IoSearch size={20} />
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-4">
-
-                <FormSelect
-                    label="نوع الطلب "
-                    name="gender"
-                    options={[
-                        { value: "male", label: "Male" },
-                        { value: "female", label: "Female" },
-                    ]}
-                />
-
-                <div className='flex flex-col justify-end items-start  text-right'>
-                    <label className="block  mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear"> تاريخ المغادرة</label>
-                    <input type="date" className=" bg-gray-50 border border-gray-300
-                        text-gray-900 text-sm rounded-md
-                        block w-full p-2.5 dark:bg-gray-700
-                        dark:border-gray-600 dark:placeholder-gray-400 
-                        dark:text-white outline-none 
-                        focus:border-orange-400 dark:focus:border-orange-400
-                        duration-100 ease-linear" value="2024-9-22" />
-                </div>
-
-                <FormSelect
-                    label=" نوع الطلب"
-                    name="gender"
-                    options={[
-                        { value: "male", label: "Male" },
-                        { value: "female", label: "Female" },
-                    ]}
-                />
-
-                <div className='flex justify-end items-end '>
-                    <button
-
-                        className="  bg-themeColor-600 text-white w-full text-center px-4 py-2 rounded-md hover:bg-themeColor-700 transition duration-200 ">
-                        عرض
-                    </button>
-                </div>
-
-            </div>
-
-
+            {/* Table component */}
             <Table
-                data={tableData}
+                data={filteredData}
                 headers={tableHeaders}
-                openCreate={() => setModalType('project')}
-                openPreview={openPreview}
-                addItemLabel="Project"
-                onDelete={() => console.log('Delete function not implemented')}
+                actions={(row) => (
+                    <TableActions
+                        row={row}
+                        deleteRequest={deleteRequest}
+                    />
+                )}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
             />
-            {modalType === 'preview' && (
-                <PreviewProjects closeModal={() => setModalType(null)} projectIdId={selectedProjectId} />
-            )}
-            {modalType === "project" && (
-                <AddDepartures
-                    closeModal={() => setModalType(null)}
-                    modal={modalType === "project"}
-                    onClientAdded={addNewProjectToTable}
-                />
-            )}
         </div>
     );
 };
 
-export default ProjectTable;
+export default RefusedTable;

@@ -14,6 +14,7 @@ export default function Calendar() {
     const [tasks, setTasks] = useState({})
     const [showForm, setShowForm] = useState(false)
     const [selectedDay, setSelectedDay] = useState(null)
+    const [selectedDate, setSelectedDate] = useState(null) // حالة جديدة
 
     const getDaysInMonth = (date) => {
         const year = date.getFullYear()
@@ -36,6 +37,7 @@ export default function Calendar() {
 
     const handleDayClick = (day) => {
         setSelectedDay(day)
+        setSelectedDate(day.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })) // تعيين التاريخ المحدد
         setShowForm(true)
     }
 
@@ -64,7 +66,7 @@ export default function Calendar() {
     return (
         <div className="relative">
             <div className={`max-w-7xl mx-auto mt-6 p-4 transition ${showForm ? 'blur-sm' : ''}`}>
-                <div className="w-full mb-12 flex items-center justify-between p-4 bg-themeColor-500  border-b ">
+                <div className="w-full mb-12 flex items-center justify-between p-4 bg-themeColor-500 border-b ">
                     <h1 className="text-2xl text-white font-bold">خطه الدوام</h1>
                     <div className="text-white flex items-center space-x-4">
                         <button onClick={prev} className="p-2">
@@ -89,6 +91,14 @@ export default function Calendar() {
                     ))}
                     {renderDays()}
                 </div>
+
+                {/* نص يظهر تاريخ اليوم المحدد */}
+                {selectedDate && (
+                    <div className="mt-4 p-4 bg-gray-100 rounded">
+                        <h2 className="text-lg font-semibold">لقد اخترت:</h2>
+                        <p>{selectedDate}</p>
+                    </div>
+                )}
             </div>
 
             {showForm && (
@@ -101,6 +111,7 @@ export default function Calendar() {
                         <ShiftForm
                             handleSave={(data) => console.log(data)}
                             handleCancel={() => setShowForm(false)}
+                            selectedDate={selectedDay} // Pass the selected day
                         />
                     </div>
                 </div>
