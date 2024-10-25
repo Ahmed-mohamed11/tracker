@@ -14,7 +14,6 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
       className="flex items-center gap-2 text-gray-500"
     >
       <CaretRight size={18} weight="bold" />
-
     </button>
     <div className="space-x-2 hidden md:block">
       {Array.from({ length: totalPages }, (_, i) => (
@@ -42,6 +41,8 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
 const Table = ({ data, headers, actions, userImage }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  console.log(headers);
 
   // حساب إجمالي عدد الصفحات
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -75,10 +76,10 @@ const Table = ({ data, headers, actions, userImage }) => {
       <table className="w-full text-right border-collapse table-auto">
         <thead>
           <tr className="bg-gray-200">
-            {headers.map(header => (
+            {headers.map((header) => (
               <th
                 key={header.key}
-                className="p-4 border-b text-center px-6" // إضافة px-6 لضبط المسافات الثابتة
+                className="p-4 border-b text-center px-6"
                 style={{ whiteSpace: 'nowrap' }}
               >
                 {header.label}
@@ -101,7 +102,7 @@ const Table = ({ data, headers, actions, userImage }) => {
                 {headers.map(header => (
                   <td
                     key={header.key}
-                    className="p-4 text-center px-6" // توسيط النصوص وإضافة التباعد الثابت
+                    className="p-4 text-center px-6"
                     style={{ whiteSpace: 'nowrap' }}
                   >
                     {row[header.key]}
@@ -127,7 +128,6 @@ const Table = ({ data, headers, actions, userImage }) => {
         </tbody>
       </table>
 
-      {/* تفعيل عناصر التحكم في الترقيم */}
       <PaginationControls
         currentPage={currentPage}
         totalPages={totalPages}
