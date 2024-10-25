@@ -1,55 +1,52 @@
 'use client';
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X } from "@phosphor-icons/react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
-// import FormSelect from "../../components/form/FormSelect";
-import FormTextArea from "../../components/form/FormTextArea";
-import { useI18nContext } from "../../context/i18n-context";
+import FormSelect from "../../components/form/FormSelect";
 
-const AddSites = ({ closeModal, modal, onClientAdded }) => {
+const AddEmployee = ({ closeModal, modal, }) => {
     const [formData, setFormData] = useState({
-        firstName: "",
-        secondName: "",
-        userName: "",
+        first_name: "",
+        last_name: "",
         email: "",
-        jobTitle: "",
-        jobNumber: "",
-        phoneNumber: "",
-        gender: "",
-        responsibleParty: "",
-        employeeType: "",
+        job_number: "",
+        job_title: "",
+        phone_number: "",
+        nationality: "",
+        entity: 1,
     });
 
+    const [entities, setEntities] = useState([]); // الحالة لتخزين الجهات
+
     const handleChange = useCallback((e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value } = e.target;
         setFormData(prevData => ({
             ...prevData,
-            [name]: type === 'checkbox' ? checked : value,
+            [name]: name === 'entity' ? parseInt(value, 10) : value, // تحويل القيمة إلى integer إذا كان الاسم هو 'entity'
         }));
     }, []);
 
-    const { t } = useI18nContext();
+    // get entity type
+    const getEntities = useCallback(async () => {
+        try {
+            const response = await axios.get('https://bio.skyrsys.com/api/entity/', {
+                headers: {
+                    'Authorization': `Token ${Cookies.get('token')}`,
+                },
+            });
+            setEntities(response.data);
+        } catch (error) {
+            console.error('Error getting entities:', error.response?.data || error.message);
+            setEntities([]);
+        }
+    }, []);
 
-    const [clients, setClients] = useState([]);
 
     useEffect(() => {
-        const fetchClients = async () => {
-            try {
-                const token = Cookies.get('token');
-                const response = await axios.get('https://dashboard.cowdly.com/api/clients/', {
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                    },
-                });
-                setClients(response.data);
-            } catch (error) {
-                console.error("Error fetching clients:", error);
-            }
-        };
-        fetchClients();
-    }, []);
+        getEntities();
+    }, [getEntities]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -57,23 +54,24 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
         try {
             const token = Cookies.get('token');
             if (!token) {
-                console.error('No token found in cookies');
+                console.error('لم يتم العثور على الرمز في الكوكيز');
                 return;
             }
 
-            const response = await axios.post('https://dashboard.cowdly.com/api/projects/', formData, {
+            const response = await axios.post('https://bio.skyrsys.com/api/registration-requests/', formData, {
                 headers: {
                     'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
                 },
             });
 
-            const newProject = response.data;
-            console.log('Project added successfully:', newProject);
-            onClientAdded(newProject);
+            const newRegistration = response.data;
+            console.log('تمت إضافة طلب التسجيل بنجاح:', newRegistration);
+            // onClientAdded(newRegistration);  // Call the callback to add the new client
             closeModal();
 
         } catch (error) {
-            console.error('Error adding project:', error.response?.data || error.message);
+            console.error('خطأ في إضافة طلب التسجيل:', error.response?.data || error.message);
         }
     };
 
@@ -90,95 +88,114 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
         >
             <div
                 style={{ boxShadow: "black 19px 0px 45px -12px" }}
-                className={`rounded-l-[15px] p-4 w-full max-w-[35rem] pb-10 bg-white
+                className={`rounded-l-[15px] p-4 w-full max-w-[45rem] pb-10 bg-white
                 dark:bg-gray-800 rounded-r-lg duration-200 ease-linear
                 ${modal ? "fixed left-0" : "absolute -left-full"}
                 h-screen overflow-auto`}
                 dir="rtl"
             >
-                <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5">
+                <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5" >
                     <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10 ">
-                        <h2>اضافه مجموعه مواقع جديده</h2>
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">نموذج التسجيل</h2>
                         <button
                             type="button"
                             onClick={closeModal}
-                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5  inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         >
                             <X size={18} weight="bold" />
-                            <span className="sr-only">Close modal</span>
+                            <span className="sr-only">إغلاق النافذة</span>
                         </button>
                     </div>
-                    <div className="main-content-wrap mt-5">
-                        <form className="form-add-product text-right" onSubmit={handleSubmit}>
-                            {/* Form content */}
-
-                            <div className="mb-5">
+                    <div className="main-content-wrap mt-5" >
+                        <form className="form-add-product text-right" onSubmit={handleSubmit} >
+                            <div className="grid grid-cols-2 gap-5 mb-3">
                                 <FormText
-                                    label="الاسم بالعربي"
+                                    label="الاسم الأول"
                                     type="text"
-                                    name="firstName"
-                                    placeholder="الاسم بالعربي"
-                                    value={formData.firstName}
+                                    name="first_name"
+                                    placeholder="الاسم الأول"
+                                    value={formData.first_name}
                                     onChange={handleChange}
-                                    className="mb-4"
                                 />
-                            </div>
-
-                            <div className="mb-5">
                                 <FormText
-                                    label="الاسم بالانجليزي"
-                                    placeholder="الاسم بالانجليزي"
+                                    label="اسم العائلة"
                                     type="text"
-                                    name="secondName"
-                                    value={formData.secondName}
+                                    name="last_name"
+                                    placeholder="اسم العائلة"
+                                    value={formData.last_name}
                                     onChange={handleChange}
-                                    className="mt-10"
                                 />
                             </div>
 
-                            <div className="mb-5">
-
-                                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="attendance-time">
-                                    وقت الحضور والانصراف
-                                </label>
-                                <input
-                                    type="time"
-                                    name="attendanceTime"
-                                    id="attendance-time"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    value={formData.attendanceTime}
-                                    onChange={handleChange}
-                                />
-
-                            </div>
-
-                            <div className="mb-5">
-                                <FormTextArea
-                                    label="الوصف"
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormText
+                                    label="البريد الإلكتروني"
                                     type="email"
                                     name="email"
-                                    placeholder={t('registrationForm.fields.email')}
+                                    placeholder="البريد الإلكتروني"
                                     value={formData.email}
                                     onChange={handleChange}
                                 />
+                                <FormText
+                                    label="رقم الوظيفة"
+                                    type="text"
+                                    name="job_number"
+                                    placeholder="رقم الوظيفة"
+                                    value={formData.job_number}
+                                    onChange={handleChange}
+                                />
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4 mb-5">
-                                <div className=" col-span-2">
-                                    <p className="text-lg font-medium text-gray-900 dark:text-gray-300">الحاله</p>
-                                </div>
-                                <label className=" col-span-1 px-4 py-2 rounded-full bg-themeColor-300 inline-flex items-center cursor-pointer" >
-                                    <input type="checkbox" value="" className="sr-only peer" />
-                                    <span className="me-3 text-sm font-medium text-gray-900 dark:text-gray-300">Toggle me</span>
-                                    <div className="relative w-11 h-6 bg-gray-200  dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                                </label>
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormText
+                                    label="المسمى الوظيفي"
+                                    type="text"
+                                    name="job_title"
+                                    placeholder="المسمى الوظيفي"
+                                    value={formData.job_title}
+                                    onChange={handleChange}
+                                />
+                                <FormText
+                                    label="رقم الهاتف"
+                                    type="tel"
+                                    name="phone_number"
+                                    placeholder="رقم الهاتف"
+                                    value={formData.phone_number}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5 mb-3">
+                                <FormSelect
+                                    label="الجنس"
+                                    selectLabel="nationality"
+                                    name="nationality"
+                                    onChange={handleChange}
+                                    options={[
+                                        { value: "ذكر", label: "ذكر" },
+                                        { value: "انثى", label: "انثى" },
+                                    ]}
+                                    value={formData.nationality}
+                                />
+
+                                <FormSelect
+                                    label="الجهات"
+                                    selectLabel="entity"
+                                    name="entity"
+                                    onChange={handleChange}
+                                    options={entities.map(entity => ({
+                                        value: entity.id,
+                                        label: entity.ar_name                                        // تأكد من استخدام الاسم الصحيح
+                                    }))}
+                                    value={formData.entity}
+                                />
                             </div>
 
                             <button
                                 className="bg-themeColor-600 text-white px-4 py-2 rounded-md hover:bg-themeColor-700 transition duration-200 flex items-center"
                                 type="submit"
                             >
-                                {t('registrationForm.submitButton')}
+                                إرسال الطلب
                             </button>
                         </form>
                     </div>
@@ -188,4 +205,4 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
     );
 };
 
-export default AddSites;
+export default AddEmployee;

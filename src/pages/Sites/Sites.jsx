@@ -1,6 +1,6 @@
 import Sites from "../SitesPages/Sites"
 
-const Site = () => {
+const MainSites = () => {
   return (
     <div>
       <Sites />
@@ -8,4 +8,4 @@ const Site = () => {
   )
 }
 
-export default Site
+export default MainSites
