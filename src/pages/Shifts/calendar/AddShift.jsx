@@ -117,9 +117,6 @@ function AddEmployeeForm({ handleClose, handleAddEmployee }) {
         }
     };
 
-
-
-
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-2xl relative">
@@ -225,12 +222,20 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
     const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
     const [employees, setEmployees] = useState([]);
 
+    const [isChecked, setIsChecked] = useState(true);
+
+    const handleToggle = () => {
+        setIsChecked(!isChecked);
+    };
+
+
     const handleAddEmployee = (newEmployees) => {
         setEmployees((prevEmployees) => [
             ...prevEmployees,
             ...newEmployees // Merge the existing employees with the newly added ones
         ]);
     };
+
 
     const handleRemoveEmployee = (index) => {
         setEmployees(employees.filter((_, i) => i !== index));
@@ -288,13 +293,12 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                 </div>
 
                 <div className="mb-4">
-                    <h3 className="text-lg font-semibold">التاريخ المحدد:</h3>
-                    <p>{selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'غير محدد'}</p>
+                    <h3 className="text-lg font-semibold">التاريخ المحدد: {selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'غير محدد'}</h3>
                 </div>
 
                 <form className="space-y-6">
-                    <div className="flex col-span-2">
-                        <div>
+                    <div className=" flex justify-between  grid-cols-1 gap-6 md:grid-cols-2">
+                        <div className="w-1/2" >
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 عنوان المناوبة
                             </label>
@@ -305,6 +309,26 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
                                 placeholder="أدخل عنوان المناوبة"
                             />
+                        </div>
+                        <div className="w-1/2 ">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                وقت البدء
+                            </label>
+                            <div className="flex items-center justify-start border-2 border-gray-300 p-2 rounded-md">
+                                <label className="inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        value=""
+                                        className="sr-only peer"
+                                        checked={isChecked}
+                                        onChange={handleToggle}
+                                    />
+                                    <div className="relative w-11 h-6 bg-gray-200 rounded-full peer   dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        {isChecked ? 'يوم عطله' : 'يوم مناوبه'}
+                                    </span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -358,11 +382,10 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                             onChange={(e) => setRepeat(e.target.value)}
                             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
                         >
-                            <option value="">لا يوجد</option>
-                            <option value="يومي">يومي</option>
+                            <option value="يومي">ليوم</option>
                             <option value="أسبوعي">أسبوعي</option>
-                            <option value="شهري">شهري</option>
                         </select>
+
                     </div>
 
                     <button
