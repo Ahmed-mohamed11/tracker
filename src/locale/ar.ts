@@ -457,6 +457,12 @@ const ar = {
     deleteTitle: "حذف العنصر",
     deleteText: "هل انت متاكد من حذف هذا العنصر ؟",
   },
+  sites: {
+    branch: "الفرع",
+    arName: "الاسم بالعربي",
+    enName: "الاسم بالانجليزي",
+
+  },
 };
 
 export default ar;

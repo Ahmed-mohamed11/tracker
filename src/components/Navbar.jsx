@@ -60,7 +60,6 @@ const NavbarItem = ({
     }
   };
 
-
   return (
     <div className="relative" ref={ref}>
       <Link
@@ -77,22 +76,22 @@ const NavbarItem = ({
         {name}
         {subItems && (
           <div
-            className={`transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
-              }`}
+            className={`transform duration-300 ${
+              isOpen ? "rotate-180" : "rotate-0"
+            }`}
           >
             <CaretDown size={20} />
           </div>
         )}
       </Link>
 
-
       {subItems && (
         <div
           className={classNames(
             "absolute z-50 top-full left-0 mt-5 bg-themeColor-700 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
             isOpen
-              ? "opacity-100 visible w-full animate-slide-down"  // إضافة w-full لجعل القائمة بحجم الزر
-              : "opacity-0 invisible w-full animate-slide-up"      // إضافة w-full هنا أيضاً
+              ? "opacity-100 visible w-full animate-slide-down" // إضافة w-full لجعل القائمة بحجم الزر
+              : "opacity-0 invisible w-full animate-slide-up" // إضافة w-full هنا أيضاً
           )}
         >
           {subItems.map((subItem, index) => (
@@ -110,14 +109,11 @@ const NavbarItem = ({
           ))}
         </div>
       )}
-
-
-
     </div>
   );
 };
 
-export default function Navbar({ dark }) {
+export default function Navbar() {
   const { t } = useI18nContext();
   const [role, setRole] = useState("admin");
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -125,7 +121,6 @@ export default function Navbar({ dark }) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef();
   const navigate = useNavigate();
-
 
   const [user, setUser] = useState(null);
 
@@ -136,7 +131,6 @@ export default function Navbar({ dark }) {
       setUser(JSON.parse(storedUser));
     }
   }, []);
-
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -177,13 +171,6 @@ export default function Navbar({ dark }) {
 
   const navigationAdmin = [
     {
-      icon: <House size={25} />,
-      name: t("sideBar.dashboard"),
-      link: `${import.meta.env.VITE_PUBLIC_URL}/`,
-    },
-
-
-    {
       icon: <UserCircleGear size={25} />,
       name: t("sideBar.admin"),
       subItems: [
@@ -197,7 +184,26 @@ export default function Navbar({ dark }) {
         },
       ],
     },
+    {
+      icon: <House size={25} />,
+      name: t("sideBar.dashboard"),
+      link: `${import.meta.env.VITE_PUBLIC_URL}/`,
+    },
 
+    {
+      icon: <Gear size={25} />,
+      name: t("sideBar.reports"),
+      subItems: [
+        {
+          name: t("sideBar.site"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
+        },
+        {
+          name: t("sideBar.audio"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
+        },
+      ],
+    },
     {
       icon: <ListChecks size={25} />,
       name: t("sideBar.registration"),
@@ -236,23 +242,28 @@ export default function Navbar({ dark }) {
       icon: <Gear size={25} />,
       name: t("sideBar.setting"),
       subItems: [
-        { name: t("sideBar.site"), link: `${import.meta.env.VITE_PUBLIC_URL}/sites` },
-        { name: t("sideBar.audio"), link: `${import.meta.env.VITE_PUBLIC_URL}/records` },
-        { name: t("sideBar.reject"), link: `${import.meta.env.VITE_PUBLIC_URL}/rejected` },
-        { name: t("sideBar.changeSetting"), link: `${import.meta.env.VITE_PUBLIC_URL}/account` },
-        { name: t("sideBar.ComeSetting"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
+        {
+          name: t("sideBar.site"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/sites`,
+        },
+        {
+          name: t("sideBar.audio"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/records`,
+        },
+        {
+          name: t("sideBar.reject"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/rejected`,
+        },
+        {
+          name: t("sideBar.changeSetting"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/account`,
+        },
+        {
+          name: t("sideBar.ComeSetting"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
+        },
       ],
     },
-    {
-      icon: <Gear size={25} />,
-      name: t("sideBar.reports"),
-      subItems: [
-        { name: t("sideBar.site"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
-        { name: t("sideBar.audio"), link: `${import.meta.env.VITE_PUBLIC_URL}/entities` },
-      ],
-    },
-
-
   ];
 
   const navigationError = [
@@ -263,10 +274,13 @@ export default function Navbar({ dark }) {
     },
   ];
 
-  const selectedNavigation = role === "admin" ? navigationAdmin : navigationError;
+  const selectedNavigation =
+    role === "admin" ? navigationAdmin : navigationError;
 
   const [activeIndex, setActiveIndex] = useState(
-    selectedNavigation.findIndex((item) => item.link === `${import.meta.env.VITE_PUBLIC_URL}/`)
+    selectedNavigation.findIndex(
+      (item) => item.link === `${import.meta.env.VITE_PUBLIC_URL}/`
+    )
   );
 
   const handleItemClick = (index, link) => {
@@ -290,7 +304,9 @@ export default function Navbar({ dark }) {
         <div>
           <img
             className="w-14 h-14 border-2 border-orange-500 rounded-full"
-            src="/public/SiteLogo.png" alt="" />
+            src="/public/SiteLogo.png"
+            alt=""
+          />
         </div>
 
         {/* روابط القائمة الكبيرة */}
@@ -337,7 +353,6 @@ export default function Navbar({ dark }) {
                   : "opacity-0 invisible animate-slide-up"
               )}
             >
-
               <Link
                 to="/settings"
                 className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"

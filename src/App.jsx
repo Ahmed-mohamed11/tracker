@@ -13,9 +13,9 @@ import { useI18nContext } from "./context/i18n-context";
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(
-    localStorage.getItem("isDarkMode") === "true" || false
-  );
+  // const [isDarkMode, setIsDarkMode] = useState(
+  //   localStorage.getItem("isDarkMode") === "true" || false
+  // );
 
   const { language } = useI18nContext();
   const location = useLocation();
@@ -31,20 +31,20 @@ function App() {
     };
   }, []);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    localStorage.setItem("isDarkMode", !isDarkMode);
-  };
+  // const toggleDarkMode = () => {
+  //   setIsDarkMode(!isDarkMode);
+  //   localStorage.setItem("isDarkMode", !isDarkMode);
+  // };
 
   // Determine if the current path is for authentication
   const hideNavbar = location.pathname.startsWith("/login") || location.pathname.startsWith("/register");
 
   return (
     <div
-      className={`${isDarkMode ? "dark" : "light"}`}
+      className={`light`}
       dir={language === "ar" ? "rtl" : "rtl"}
     >
-      {!hideNavbar && <Navbar toggleDark={toggleDarkMode} dark={isDarkMode} />}
+      {!hideNavbar && <Navbar  />}
 
       <div className="dark:bg-gray-900 bg-white overflow-x-hidden">
         <div className="h-screen w-full items-center justify-center bg-cover bg-no-repeat">
