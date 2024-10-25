@@ -76,9 +76,8 @@ const NavbarItem = ({
         {name}
         {subItems && (
           <div
-            className={`transform duration-300 ${
-              isOpen ? "rotate-180" : "rotate-0"
-            }`}
+            className={`transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
+              }`}
           >
             <CaretDown size={20} />
           </div>
@@ -170,6 +169,8 @@ export default function Navbar() {
   };
 
   const navigationAdmin = [
+
+
     {
       icon: <UserCircleGear size={25} />,
       name: t("sideBar.admin"),
@@ -184,6 +185,7 @@ export default function Navbar() {
         },
       ],
     },
+
     {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),

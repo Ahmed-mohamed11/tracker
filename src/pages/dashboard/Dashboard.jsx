@@ -1,8 +1,11 @@
 import React from 'react'
 import ApexCharts from 'apexcharts'
 import Chart1 from "../../components/Chart-1"
+import Chart2 from "../../components/Chart-2"
+import Chart3 from "../../components/Chart-3"
+import Chart4 from "../../components/Chart-4"
 import FormSelect from '../../components/form/FormSelect'
-
+import { Clock, Plane, UserRoundX } from 'lucide-react'
 
 export default function Dashboard() {
     return (
@@ -58,7 +61,35 @@ export default function Dashboard() {
                 </div>
 
                 <div className='my-5 p-5 border-2 border-gray-300 rounded-md'>
-                    <Chart1 />
+                    <Chart2 />
+                </div>
+
+                <div className='md:grid md:grid-cols-2 xl:grid-cols-2 lg:grid-cols-1 gap-4 my-5 p-5 border-2 border-gray-300 rounded-md'>
+                    <Chart3 className="w-full" />
+                    <Chart4 className="w-full" />
+                </div>
+
+                <div className='my-5 p-5 border-2 border-gray-300 rounded-md'>
+                    <div className='mt-5 flex justify-between bg-themeColor-200 p-4'>
+                        <div className='flex items-center gap-2'>
+                            <span><Plane size={25} /></span>
+                            ألمغادرات اليوميه </div>
+                        <div>0 ايام</div>
+                    </div>
+                    <div className='mt-5 flex justify-between bg-themeColor-200 p-4'>
+                        <div className='flex items-center gap-2'>
+                            <span><Clock size={25} /></span>
+                            ألمغادرات الساعيه</div>
+                        <div>0 ساعات</div>
+                    </div>
+                    <div className='mt-5 flex justify-between bg-themeColor-200 p-4'>
+                        <div className='flex items-center gap-2'>
+                            <span><UserRoundX size={25} /></span>
+                            الغياب </div>
+                        <div>2 ايام</div>
+                    </div>
+
+
                 </div>
 
             </div>
