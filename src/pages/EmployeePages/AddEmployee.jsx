@@ -12,9 +12,7 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
     const [options, setOptions] = useState([]);
     const [loading, setLoading] = useState(true); // Loading state
     const [error, setError] = useState(''); // Error state
-
     const toggleDropdown = () => setIsOpen(!isOpen);
-
     const toggleGroup = (groupName) => {
         setExpandedGroups((prev) =>
             prev.includes(groupName)
@@ -22,7 +20,6 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
                 : [...prev, groupName]
         );
     };
-
     const handleItemClick = (itemId, groupName) => {
         setSelectedItems((prev) => {
             if (itemId === 'تحديد الكل') {
@@ -38,12 +35,10 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
             }
         });
     };
-
     const isGroupSelected = (groupName) => {
         const group = options.find((g) => g.name === groupName);
         return group.items.every((item) => selectedItems.includes(item.id));
     };
-
     const isAllSelected = () => {
         const allItems = options.flatMap((group) => group.items.map(item => item.id));
         return allItems.every((item) => selectedItems.includes(item));
@@ -57,7 +52,6 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
             setSelectedItems(allItems);
         }
     };
-
     const fetchBranches = async () => {
         try {
             const token = Cookies.get('token');
@@ -88,61 +82,19 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
             console.error("Error fetching branches:", error);
         }
     };
-
-
-
     useEffect(() => {
         fetchBranches();
     }, []);
 
-    // const handleSave = () => {
-    //     console.log("branchesList:", branchesList);
-    //     console.log("selectedItems:", selectedItems);
-
-    //     const selectedEmployees = selectedItems.map(itemId =>
-    //         branchesList.flatMap(branch => branch.entities)
-    //             .find(entity => entity.id === itemId)
-    //     ).filter(Boolean);
-
-    //     console.log("selectedEmployees:", selectedEmployees);
-
-    //     const employeeIds = selectedEmployees.map(emp => emp.id);
-
-    //     if (employeeIds.length > 0) {
-    //         handleAddEmployee(employeeIds);
-    //         console.log("Employee IDs:", employeeIds);
-    //         handleClose();
-    //     } else {
-    //         console.log("No employee IDs found.");
-    //     }
-    // };
-
     const handleSave = () => {
-        console.log("branchesList:", branchesList);
-        console.log("selectedItems:", selectedItems);
-
-        // تحديد الموظفين المحددين
-        const selectedEmployees = selectedItems.map(itemId =>
-            branchesList.flatMap(branch => branch.entities)
-                .find(entity => entity.id === itemId)
-        ).filter(Boolean); // إزالة أي قيم undefined
-
-        console.log("selectedEmployees:", selectedEmployees);
-
-        // جمع معرفات الموظفين كـ string
-        const entities_ids = selectedEmployees.map(emp => emp.id.toString());
-
-        if (entities_ids.length > 0) {
-            handleAddEmployee(entities_ids);
-            console.log("Employee IDs:", entities_ids);
+        const selectedEmployeesIds = selectedItems.filter(Boolean); // تأكد من أن جميع القيم صالحة
+        if (selectedEmployeesIds.length > 0) {
+            handleAddEmployee(selectedEmployeesIds); // أرسل الـ idات فقط
             handleClose();
         } else {
             console.log("No employee IDs found.");
-            // يمكنك هنا إضافة رسالة للمستخدم إذا كنت ترغب
         }
     };
-
-
 
 
 

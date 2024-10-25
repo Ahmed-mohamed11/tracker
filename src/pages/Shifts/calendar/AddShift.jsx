@@ -31,9 +31,11 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
         setIsChecked(!isChecked);
     };
 
-    const handleAddEmployee = (newEmployees) => {
-        setEmployees((prevEmployees) => [...prevEmployees, ...newEmployees]);
+    const handleAddEmployee = (newEmployeesIds) => {
+        setEmployees((prevEmployees) => [...prevEmployees, ...newEmployeesIds]);
     };
+
+
 
     const handleRemoveEmployee = (index) => {
         setEmployees(employees.filter((_, i) => i !== index));
@@ -44,19 +46,21 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
         const maxCheckInDate = new Date(`1970-01-01T${maxCheckInTime}:00`);
         const flexibleMinutes = Math.max(0, (maxCheckInDate - checkInDate) / (1000 * 60)); // حساب الفارق بالدقائق
 
-        // تنسيق التاريخ بشكل صحيح إلى YYYY-MM-DD
-        const formattedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : null;
+        const formattedDate = selectedDate
+            ? new Date(selectedDate).toLocaleDateString("en-CA") // تنسيق yyyy-mm-dd
+            : null;
 
-        console.log('Employees before sending:', employees);
+        // Extract only the IDs from the employees array
+        const entitiesIds = employees.filter(id => id != null); // تأكد من أن جميع القيم صالحة
 
         const payload = {
-            title: title,
+            title,
             date: formattedDate,
             start_hour: checkInTime,
             end_hour: shiftEndTime,
             flexible_minutes: flexibleMinutes,
-            is_vacation: isChecked, // استخدام حالة isChecked لتحديد قيمة is_vacation
-            entities_ids: employees
+            is_vacation: isChecked,
+            entities_ids: entitiesIds
         };
 
         try {
@@ -82,6 +86,10 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
             console.error("Error sending data:", error);
         }
     };
+
+
+
+
 
     return (
         <>
@@ -216,10 +224,10 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                         <h3 className="text-lg font-semibold mb-2">الموظفين المضافين:</h3>
                         {employees.map((employee, index) => (
                             <div
-                                key={index}
+                                key={employee.id || index} // Use employee.id if available, or index as fallback
                                 className="flex items-center justify-between mb-2"
                             >
-                                <span>{employee}</span>
+                                <span>{employee.ar_name || employee.en_name}</span> {/* Display ar_name or en_name */}
                                 <button
                                     onClick={() => handleRemoveEmployee(index)}
                                     className="text-red-500 hover:text-red-700 focus:outline-none"

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ShiftForm from './AddShift'; // تأكد من استيراد نموذج الإضافة الخاص بك
-import axios from 'axios'; // تأكد من تثبيت axios
+import ShiftForm from './AddShift';
+import axios from 'axios';
 import Cookies from 'js-cookie';
-
 
 const daysOfWeek = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 const months = [
@@ -12,21 +11,18 @@ const months = [
 ];
 
 export default function Calendar() {
-    const [currentDate, setCurrentDate] = useState(new Date()); // تعيين تاريخ اليوم الحالي
-    const [showForm, setShowForm] = useState(false); // حالة لعرض النموذج
-    const [selectedDay, setSelectedDay] = useState(null); // يوم مختار
-    const [selectedData, setSelectedData] = useState({}); // يوم مختار
-    const [daysData, setDaysData] = useState([]); // بيانات الأيام
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [showForm, setShowForm] = useState(false);
+    const [selectedDay, setSelectedDay] = useState(null);
+    const [selectedData, setSelectedData] = useState({});
+    const [daysData, setDaysData] = useState([]);
 
-    console.log(selectedDay);
-    // استخدام useEffect لتعيين التاريخ الحالي عند تحميل المكون
     useEffect(() => {
-        setCurrentDate(new Date()); // تعيين التاريخ الحالي
-        fetchData(); // استدعاء الدالة لجلب البيانات
+        setCurrentDate(new Date());
+        fetchData();
     }, []);
 
     const fetchData = async () => {
-
         const token = Cookies.get('token');
         if (!token) {
             console.error('No token found in cookies');
@@ -36,7 +32,7 @@ export default function Calendar() {
             const response = await axios.get('https://bio.skyrsys.com/api/working-hours/', {
                 headers: { 'Authorization': `Token ${token}` },
             });
-            setDaysData(response.data); // تعيين البيانات المستردة
+            setDaysData(response.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -62,28 +58,25 @@ export default function Calendar() {
         const today = new Date().setHours(0, 0, 0, 0);
 
         return days.map((day) => {
-            // البحث عن بيانات اليوم
             const dayData = daysData.find(d => new Date(d.date).toDateString() === day.toDateString());
 
             return (
                 <div
                     key={day.toISOString()}
-                    onClick={() => handleDayClick(day)} // استدعاء الدالة عند الضغط
+                    onClick={() => handleDayClick(day)}
                     className={`bg-white p-2 h-32 cursor-pointer ${day.getMonth() !== currentDate.getMonth() ? 'text-gray-400' : ''} ${day.setHours(0, 0, 0, 0) === today ? 'bg-green-200' : ''}`}
                 >
                     <div className="flex justify-between items-center">
                         <span className="font-bold">{day.getDate()}</span>
-                        {/* عرض الحالة بناءً على is_vacation */}
                         {dayData && (
-                            <span className={`text-sm p-1 rounded-md font-bold ${dayData.is_vacation ? 'bg-green-500  text-white' : ' bg-themeColor-500 text-white'}`}>
+                            <span className={`text-sm p-1 rounded-md font-bold ${dayData.is_vacation ? 'bg-green-500 text-white' : 'bg-themeColor-500 text-white'}`}>
                                 {dayData.is_vacation ? 'يوم عطلة' : 'يوم مناوبة'}
                             </span>
                         )}
                     </div>
-                    {/* عرض القيمة الناتجة */}
                     {dayData && dayData.value && (
                         <div className="text-sm text-gray-600">
-                            القيمة: {dayData.value}
+                            القيمة: {typeof dayData.value === 'object' ? JSON.stringify(dayData.value) : dayData.value}
                         </div>
                     )}
                 </div>
@@ -95,13 +88,12 @@ export default function Calendar() {
         const dayData = daysData.find(d => new Date(d.date).toDateString() === day.toDateString());
         setSelectedDay(day);
         setSelectedData(dayData);
-        setShowForm(true); 
+        setShowForm(true);
     };
-    console.log(selectedData);
 
     const handleOutsideClick = (e) => {
         if (e.target.id === 'overlay') {
-            setShowForm(false); // إغلاق النموذج عند الضغط خارج النموذج
+            setShowForm(false);
         }
     };
 
@@ -143,10 +135,10 @@ export default function Calendar() {
                 >
                     <div onClick={(e) => e.stopPropagation()}>
                         <ShiftForm
-                            handleSave={(data) => console.log(data)} // تنفيذ عند حفظ النموذج
-                            handleCancel={() => setShowForm(false)} // إغلاق النموذج
-                            selectedDate={selectedDay} // تمرير اليوم المختار
-                            selectedData={selectedData} // تمرير اليوم المختار
+                            handleSave={(data) => console.log(data)}
+                            handleCancel={() => setShowForm(false)}
+                            selectedDate={selectedDay}
+                            selectedData={selectedData}
                         />
                     </div>
                 </div>
