@@ -1,28 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash, X, UserPlus } from "lucide-react";
-import axios from 'axios'; // استيراد مكتبة Axios
-import Cookies from 'js-cookie';
+import axios from "axios"; // استيراد مكتبة Axios
+import Cookies from "js-cookie";
 import AddEmployeeForm from "../../EmployeePages/AddEmployee";
 
-export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
+export default function ShiftForm({ handleSave, handleCancel, selectedDate, selectedData }) {
     const [title, setTitle] = useState("");
+    const [date, setDate] = useState("");
     const [checkInTime, setCheckInTime] = useState("17:20");
     const [maxCheckInTime, setMaxCheckInTime] = useState("");
     const [shiftEndTime, setShiftEndTime] = useState("");
     const [repeat, setRepeat] = useState("");
     const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
     const [employees, setEmployees] = useState([]);
-    const [isChecked, setIsChecked] = useState(false); // تغيير القيمة الافتراضية إلى false
+    const [isChecked, setIsChecked] = useState(false);
+
+    useEffect(() => {
+        if (selectedData) {
+            setDate(selectedDate ? new Date(selectedDate) : null); // تعيين التاريخ
+            setTitle(selectedData.title || ''); // تعيين العنوان
+            setCheckInTime(selectedData.start_hour || ''); // تعيين وقت البداية
+            setShiftEndTime(selectedData.end_hour || ''); // تعيين وقت النهاية
+            setIsChecked(selectedData.is_vacation || false); // تعيين حالة العطلة
+            setEmployees(selectedData.entities || []); // تعيين قائمة الموظفين
+        }
+    }, [selectedData]);
+
 
     const handleToggle = () => {
         setIsChecked(!isChecked);
     };
 
     const handleAddEmployee = (newEmployees) => {
-        setEmployees((prevEmployees) => [
-            ...prevEmployees,
-            ...newEmployees
-        ]);
+        setEmployees((prevEmployees) => [...prevEmployees, ...newEmployees]);
     };
 
     const handleRemoveEmployee = (index) => {
@@ -35,7 +45,8 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
         const flexibleMinutes = Math.max(0, (maxCheckInDate - checkInDate) / (1000 * 60)); // حساب الفارق بالدقائق
 
         // تنسيق التاريخ بشكل صحيح إلى YYYY-MM-DD
-        const formattedDate = selectedDate ? new Date(selectedDate).toISOString().slice(0, 10) : null;
+        const formattedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : null;
+
         console.log('Employees before sending:', employees);
 
         const payload = {
@@ -49,24 +60,26 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
         };
 
         try {
-            const token = Cookies.get('token');
+            const token = Cookies.get("token");
             if (!token) {
-                console.error('لم يتم العثور على الرمز في الكوكيز');
+                console.error("Token not found in cookies");
                 return;
             }
 
-            const response = await axios.post('https://bio.skyrsys.com/api/working-hours/', payload, {
-                headers: {
-                    'Authorization': `Token ${token}`,
+            const response = await axios.post(
+                "https://bio.skyrsys.com/api/working-hours/",
+                payload,
+                {
+                    headers: {
+                        Authorization: `Token ${token}`,
+                    },
                 }
-            });
-            console.log('Data sent successfully:', response.data);
+            );
+            console.log("Data sent successfully:", response.data);
             handleSave(payload);
             handleCancel();
-
         } catch (error) {
-            console.error('Error sending data:', error);
-            // يمكنك إضافة رسالة خطأ للمستخدم هنا إذا رغبت في ذلك
+            console.error("Error sending data:", error);
         }
     };
 
@@ -77,18 +90,30 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                     <h2 className="text-2xl font-semibold text-themeColor-600">
                         إضافة مناوبة
                     </h2>
-                    <button onClick={handleCancel} className="text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <button
+                        onClick={handleCancel}
+                        className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
                         <X className="w-6 h-6" />
                     </button>
                 </div>
 
                 <div className="mb-4">
-                    <h3 className="text-lg font-semibold">التاريخ المحدد: {selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'غير محدد'}</h3>
+                    <h3 className="text-lg font-semibold">
+                        التاريخ المحدد:{" "}
+                        {selectedDate
+                            ? new Date(selectedDate).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                            })
+                            : "غير محدد"}
+                    </h3>
                 </div>
 
                 <form className="space-y-6">
                     <div className=" flex justify-between  grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className="w-1/2" >
+                        <div className="w-1/2">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 عنوان المناوبة
                             </label>
@@ -102,7 +127,8 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                         </div>
                         <div className="w-1/2 ">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                نوع اليوم                          </label>
+                                نوع اليوم{" "}
+                            </label>
                             <div className="flex items-center justify-start border-2 border-gray-300 p-2 rounded-md">
                                 <label className="inline-flex items-center cursor-pointer">
                                     <input
@@ -114,7 +140,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                                     />
                                     <div className="relative w-11 h-6 bg-gray-200 rounded-full peer   dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                                     <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                        {isChecked ? 'يوم عطله' : 'يوم مناوبه'}
+                                        {isChecked ? "يوم عطله" : "يوم مناوبه"}
                                     </span>
                                 </label>
                             </div>
@@ -189,7 +215,10 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                     <div>
                         <h3 className="text-lg font-semibold mb-2">الموظفين المضافين:</h3>
                         {employees.map((employee, index) => (
-                            <div key={index} className="flex items-center justify-between mb-2">
+                            <div
+                                key={index}
+                                className="flex items-center justify-between mb-2"
+                            >
                                 <span>{employee}</span>
                                 <button
                                     onClick={() => handleRemoveEmployee(index)}
@@ -221,7 +250,10 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
             </div>
 
             {showAddEmployeeForm && (
-                <AddEmployeeForm onAddEmployee={handleAddEmployee} onClose={() => setShowAddEmployeeForm(false)} />
+                <AddEmployeeForm
+                    handleAddEmployee={handleAddEmployee}
+                    handleClose={() => setShowAddEmployeeForm(false)}
+                />
             )}
         </>
     );

@@ -24,8 +24,10 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
     branch: 0,
   });
 
+  const [isFormDataReady, setIsFormDataReady] = useState(false);
+  const mapRef = useRef();
   const [branchesList, setBranchesList] = useState([]);
-  const mapRef = useRef(); // مرجع للخريطة
+  const [mapInitialized, setMapInitialized] = useState(false);
 
   // دالة جلب قائمة الفروع
   const fetchBranches = async () => {
@@ -59,7 +61,6 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
     fetchBranches();
   }, []);
 
-  // تحديث بيانات الموقع بعد الحصول على البيانات من API
   useEffect(() => {
     if (site) {
       setFormData({
@@ -74,9 +75,11 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
       });
     }
   }, [site, branchesList]);
-  
+
   useEffect(() => {
-    console.log("Updated Longitude:", formData.longitude, "Updated Latitude:", formData.latitude);
+    if (formData.latitude !== 0 && formData.longitude !== 0) {
+      setIsFormDataReady(true);
+    }
   }, [formData]);
 
   useEffect(() => {
@@ -84,7 +87,6 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
       mapRef.current.flyTo([formData.latitude, formData.longitude], 8);
     }
   }, [open, formData.latitude, formData.longitude]);
-  
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
@@ -246,29 +248,35 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
                 />
               </div>
 
-              <MapContainer
-                center={[formData.latitude, formData.longitude]}
-                zoom={8}
-                style={{ height: "300px", width: "100%" }}
-                whenCreated={(map) => (mapRef.current = map)}
-              >
-                <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
-                <MapEvents />
-                {formData.latitude && formData.longitude && (
-                  <Marker position={[formData.latitude, formData.longitude]}>
-                    <Popup>
-                      Current location:{" "}
-                      <pre>
-                        {JSON.stringify(
-                          { lat: formData.latitude, lng: formData.longitude },
-                          null,
-                          2
-                        )}
-                      </pre>
-                    </Popup>
-                  </Marker>
-                )}
-              </MapContainer>
+              {open && isFormDataReady && !mapInitialized && (
+                <MapContainer
+                  center={[formData.latitude, formData.longitude]}
+                  zoom={8}
+                  style={{ height: "300px", width: "100%" }}
+                  whenCreated={(map) => {
+                    if (!mapInitialized.current) {
+                      mapRef.current = map;
+                      mapInitialized.current = true; // تعيين الخريطة كتم تهيئتها
+                    }
+                  }}
+                >
+                  <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
+                  {formData.latitude && formData.longitude && (
+                    <Marker position={[formData.latitude, formData.longitude]}>
+                      <Popup>
+                        Current location:{" "}
+                        <pre>
+                          {JSON.stringify(
+                            { lat: formData.latitude, lng: formData.longitude },
+                            null,
+                            2
+                          )}
+                        </pre>
+                      </Popup>
+                    </Marker>
+                  )}
+                </MapContainer>
+              )}
 
               <button
                 className="w-1/3 mx-auto text-center border-2 justify-center

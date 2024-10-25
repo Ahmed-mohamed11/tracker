@@ -15,8 +15,10 @@ export default function Calendar() {
     const [currentDate, setCurrentDate] = useState(new Date()); // تعيين تاريخ اليوم الحالي
     const [showForm, setShowForm] = useState(false); // حالة لعرض النموذج
     const [selectedDay, setSelectedDay] = useState(null); // يوم مختار
+    const [selectedData, setSelectedData] = useState({}); // يوم مختار
     const [daysData, setDaysData] = useState([]); // بيانات الأيام
 
+    console.log(selectedDay);
     // استخدام useEffect لتعيين التاريخ الحالي عند تحميل المكون
     useEffect(() => {
         setCurrentDate(new Date()); // تعيين التاريخ الحالي
@@ -90,9 +92,12 @@ export default function Calendar() {
     };
 
     const handleDayClick = (day) => {
-        setSelectedDay(day); // تعيين اليوم المختار
-        setShowForm(true); // فتح النموذج
+        const dayData = daysData.find(d => new Date(d.date).toDateString() === day.toDateString());
+        setSelectedDay(day);
+        setSelectedData(dayData);
+        setShowForm(true); 
     };
+    console.log(selectedData);
 
     const handleOutsideClick = (e) => {
         if (e.target.id === 'overlay') {
@@ -130,7 +135,6 @@ export default function Calendar() {
                 </div>
             </div>
 
-            {/* نموذج الإضافة عند الضغط على يوم */}
             {showForm && (
                 <div
                     id="overlay"
@@ -142,6 +146,7 @@ export default function Calendar() {
                             handleSave={(data) => console.log(data)} // تنفيذ عند حفظ النموذج
                             handleCancel={() => setShowForm(false)} // إغلاق النموذج
                             selectedDate={selectedDay} // تمرير اليوم المختار
+                            selectedData={selectedData} // تمرير اليوم المختار
                         />
                     </div>
                 </div>
