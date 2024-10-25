@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { X, ChevronDown, ChevronRight } from "lucide-react";
 import Cookies from 'js-cookie';
 import axios from 'axios';
-
 
 export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,10 +9,11 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
     const [expandedGroups, setExpandedGroups] = useState([]);
     const [branchesList, setBranchesList] = useState([]);
     const [options, setOptions] = useState([]);
-    const [loading, setLoading] = useState(true); // Loading state
-    const [error, setError] = useState(''); // Error state
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const dropdownRef = useRef(null); // Ref for detecting clicks outside
 
-    const toggleDropdown = () => setIsOpen(!isOpen);
+    const toggleDropdown = () => setIsOpen(prev => !prev);
 
     const toggleGroup = (groupName) => {
         setExpandedGroups((prev) =>
@@ -24,45 +24,41 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
     };
 
     const handleItemClick = (itemId, groupName) => {
-        setSelectedItems((prev) => {
+        setSelectedItems(prev => {
             if (itemId === 'تحديد الكل') {
-                const group = options.find((g) => g.name === groupName);
-                const allSelected = group.items.every((i) => prev.includes(i.id));
+                const group = options.find(g => g.name === groupName);
+                const allSelected = group.items.every(i => prev.includes(i.id));
                 return allSelected
-                    ? prev.filter((i) => !group.items.map(item => item.id).includes(i))
+                    ? prev.filter(i => !group.items.some(item => item.id === i))
                     : [...new Set([...prev, ...group.items.map(item => item.id)])];
             } else {
                 return prev.includes(itemId)
-                    ? prev.filter((i) => i !== itemId)
+                    ? prev.filter(i => i !== itemId)
                     : [...prev, itemId];
             }
         });
     };
 
     const isGroupSelected = (groupName) => {
-        const group = options.find((g) => g.name === groupName);
-        return group.items.every((item) => selectedItems.includes(item.id));
+        const group = options.find(g => g.name === groupName);
+        return group.items.every(item => selectedItems.includes(item.id));
     };
 
     const isAllSelected = () => {
-        const allItems = options.flatMap((group) => group.items.map(item => item.id));
-        return allItems.every((item) => selectedItems.includes(item));
+        const allItems = options.flatMap(group => group.items.map(item => item.id));
+        return allItems.every(item => selectedItems.includes(item));
     };
 
     const handleSelectAll = () => {
-        if (isAllSelected()) {
-            setSelectedItems([]);
-        } else {
-            const allItems = options.flatMap((group) => group.items.map(item => item.id));
-            setSelectedItems(allItems);
-        }
+        setSelectedItems(isAllSelected() ? [] : options.flatMap(group => group.items.map(item => item.id)));
     };
 
     const fetchBranches = async () => {
+        setLoading(true); // Start loading
         try {
             const token = Cookies.get('token');
             if (!token) {
-                console.error('لم يتم العثور على الرمز في الكوكيز');
+                setError('لم يتم العثور على الرمز في الكوكيز');
                 return;
             }
 
@@ -71,10 +67,6 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
             });
 
             setBranchesList(response.data);
-
-            // إضافة سجل للتحقق من هيكل البيانات
-            console.log("Fetched branches data:", response.data);
-
             const transformedOptions = response.data.map(branch => ({
                 name: branch.branch_name,
                 items: branch.entities.map(entity => ({
@@ -86,78 +78,56 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
             setOptions(transformedOptions);
         } catch (error) {
             console.error("Error fetching branches:", error);
+            setError('فشل في تحميل البيانات.');
+        } finally {
+            setLoading(false); // End loading
         }
     };
-
-
 
     useEffect(() => {
         fetchBranches();
     }, []);
 
-    // const handleSave = () => {
-    //     console.log("branchesList:", branchesList);
-    //     console.log("selectedItems:", selectedItems);
-
-    //     const selectedEmployees = selectedItems.map(itemId =>
-    //         branchesList.flatMap(branch => branch.entities)
-    //             .find(entity => entity.id === itemId)
-    //     ).filter(Boolean);
-
-    //     console.log("selectedEmployees:", selectedEmployees);
-
-    //     const employeeIds = selectedEmployees.map(emp => emp.id);
-
-    //     if (employeeIds.length > 0) {
-    //         handleAddEmployee(employeeIds);
-    //         console.log("Employee IDs:", employeeIds);
-    //         handleClose();
-    //     } else {
-    //         console.log("No employee IDs found.");
-    //     }
-    // };
-
     const handleSave = () => {
-        console.log("branchesList:", branchesList);
-        console.log("selectedItems:", selectedItems);
-    
-        // تحديد الموظفين المحددين
+        console.log('handleAddEmployee:', handleAddEmployee); // Debugging line
         const selectedEmployees = selectedItems.map(itemId =>
             branchesList.flatMap(branch => branch.entities)
                 .find(entity => entity.id === itemId)
-        ).filter(Boolean); // إزالة أي قيم undefined
-    
-        console.log("selectedEmployees:", selectedEmployees);
-    
-        // جمع معرفات الموظفين كـ string
+        ).filter(Boolean);
+
         const employeeIds = selectedEmployees.map(emp => emp.id.toString());
-    
+
         if (employeeIds.length > 0) {
             handleAddEmployee(employeeIds);
-            console.log("Employee IDs:", employeeIds);
             handleClose();
         } else {
             console.log("No employee IDs found.");
-            // يمكنك هنا إضافة رسالة للمستخدم إذا كنت ترغب
         }
     };
-    
 
 
-
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-2xl relative">
-                <button
-                    onClick={handleClose}
-                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none"
-                >
+            <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-2xl relative" ref={dropdownRef}>
+                <button onClick={handleClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                     <X className="w-6 h-6" />
                 </button>
                 <h2 className="text-2xl font-semibold mb-6 text-center">أضف موظف</h2>
-                {loading && <p>جارٍ التحميل...</p>} {/* Loading indicator */}
-                {error && <p className="text-red-500">{error}</p>} {/* Error message */}
+                {loading && <p>جارٍ التحميل...</p>}
+                {error && <p className="text-red-500">{error}</p>}
                 <div className="w-80 font-sans">
                     <div className="relative mb-4">
                         <button
@@ -190,10 +160,7 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
                                                 onClick={() => toggleGroup(group.name)}
                                             >
                                                 <span className="text-sm font-medium text-gray-700">{group.name}</span>
-                                                <ChevronRight
-                                                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expandedGroups.includes(group.name) ? 'transform rotate-90' : ''
-                                                        }`}
-                                                />
+                                                <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expandedGroups.includes(group.name) ? 'transform rotate-90' : ''}`} />
                                             </div>
                                             {expandedGroups.includes(group.name) && (
                                                 <div className="pr-4 pb-2">
@@ -227,7 +194,7 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
                     </div>
                     <button
                         onClick={handleSave}
-                        className="w-full py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                        className="w-full px-4 py-2 font-semibold text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200"
                     >
                         حفظ
                     </button>
@@ -236,4 +203,3 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
         </div>
     );
 }
-

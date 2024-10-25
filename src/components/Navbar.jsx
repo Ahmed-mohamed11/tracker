@@ -335,7 +335,7 @@ export default function Navbar() {
         {/* معلومات المستخدم */}
         <div className="relative" ref={userMenuRef}>
           <div
-            className="bg-themeColor-400 px-4 py-2 rounded-full flex items-center gap-3 cursor-pointer"
+            className="bg-themeColor-400 p-2 rounded-full flex items-center gap-3 cursor-pointer"
             onClick={toggleUserMenu}
           >
             <img
@@ -343,7 +343,6 @@ export default function Navbar() {
               alt="profile"
               className="w-7 h-7 rounded-full"
             />
-            <p className="font-semibold hidden md:block">user</p>
           </div>
 
           {isUserMenuOpen && (
