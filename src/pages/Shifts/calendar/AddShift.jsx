@@ -35,8 +35,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
         const flexibleMinutes = Math.max(0, (maxCheckInDate - checkInDate) / (1000 * 60)); // حساب الفارق بالدقائق
 
         // تنسيق التاريخ بشكل صحيح إلى YYYY-MM-DD
-        const formattedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : null;
-
+        const formattedDate = selectedDate ? new Date(selectedDate).toISOString().slice(0, 10) : null;
         console.log('Employees before sending:', employees);
 
         const payload = {
