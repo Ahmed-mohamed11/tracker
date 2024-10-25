@@ -5,11 +5,16 @@ const ApexChart = () => {
     const [chartData] = useState({
         series: [
             {
-                name: 'series1',
+                name: 'الحضور',
                 data: [31, 40, 28, 51, 42, 109, 100],
             },
             {
-                name: 'series2',
+                name: ' الغياب',
+                data: [11, 32, 45, 32, 34, 52, 41],
+            },
+
+            {
+                name: ' التأخير',
                 data: [11, 32, 45, 32, 34, 52, 41],
             },
         ],
@@ -17,7 +22,11 @@ const ApexChart = () => {
             chart: {
                 height: 350,
                 type: 'area',
+                toolbar: {
+                    show: false, // إخفاء أدوات التحكم في الرسم
+                },
             },
+
             dataLabels: {
                 enabled: false,
             },

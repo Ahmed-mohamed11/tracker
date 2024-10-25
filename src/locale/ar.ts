@@ -71,7 +71,7 @@ const ar = {
     delete: "حذف",
   },
   sideBar: {
-    dashboard: "لوحة التحكم",
+    dashboard: "لوحة الاداء",
     profile: "الملف الشخصي",
     users: "  المستخدمين",
     departures: "  المغادرة",

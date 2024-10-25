@@ -76,9 +76,8 @@ const NavbarItem = ({
         {name}
         {subItems && (
           <div
-            className={`transform duration-300 ${
-              isOpen ? "rotate-180" : "rotate-0"
-            }`}
+            className={`transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
+              }`}
           >
             <CaretDown size={20} />
           </div>
@@ -170,6 +169,8 @@ export default function Navbar() {
   };
 
   const navigationAdmin = [
+
+
     {
       icon: <UserCircleGear size={25} />,
       name: t("sideBar.admin"),
@@ -184,6 +185,7 @@ export default function Navbar() {
         },
       ],
     },
+
     {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
@@ -333,7 +335,7 @@ export default function Navbar() {
         {/* معلومات المستخدم */}
         <div className="relative" ref={userMenuRef}>
           <div
-            className="bg-themeColor-400 px-4 py-2 rounded-full flex items-center gap-3 cursor-pointer"
+            className="bg-themeColor-400 p-2 rounded-full flex items-center gap-3 cursor-pointer"
             onClick={toggleUserMenu}
           >
             <img
@@ -341,7 +343,6 @@ export default function Navbar() {
               alt="profile"
               className="w-7 h-7 rounded-full"
             />
-            <p className="font-semibold hidden md:block">user</p>
           </div>
 
           {isUserMenuOpen && (

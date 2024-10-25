@@ -4,11 +4,6 @@ import axios from 'axios'; // استيراد مكتبة Axios
 import Cookies from 'js-cookie';
 import AddEmployeeForm from "../../EmployeePages/AddEmployee";
 
-
-
-
-
-
 export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
     const [title, setTitle] = useState("");
     const [checkInTime, setCheckInTime] = useState("17:20");
@@ -17,13 +12,11 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
     const [repeat, setRepeat] = useState("");
     const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
     const [employees, setEmployees] = useState([]);
-
-    const [isChecked, setIsChecked] = useState(true);
+    const [isChecked, setIsChecked] = useState(false); // تغيير القيمة الافتراضية إلى false
 
     const handleToggle = () => {
         setIsChecked(!isChecked);
     };
-
 
     const handleAddEmployee = (newEmployees) => {
         setEmployees((prevEmployees) => [
@@ -31,7 +24,6 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
             ...newEmployees
         ]);
     };
-
 
     const handleRemoveEmployee = (index) => {
         setEmployees(employees.filter((_, i) => i !== index));
@@ -44,16 +36,17 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
 
         // تنسيق التاريخ بشكل صحيح إلى YYYY-MM-DD
         const formattedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : null;
-        
+
         console.log('Employees before sending:', employees);
 
         const payload = {
+            title: title,
             date: formattedDate,
             start_hour: checkInTime,
             end_hour: shiftEndTime,
             flexible_minutes: flexibleMinutes,
-            is_vacation: false,
-            empolyees_ids: employees
+            is_vacation: isChecked, // استخدام حالة isChecked لتحديد قيمة is_vacation
+            entities_ids: employees
         };
 
         try {
@@ -110,8 +103,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                         </div>
                         <div className="w-1/2 ">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                وقت البدء
-                            </label>
+                                نوع اليوم                          </label>
                             <div className="flex items-center justify-start border-2 border-gray-300 p-2 rounded-md">
                                 <label className="inline-flex items-center cursor-pointer">
                                     <input
@@ -183,7 +175,6 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                             <option value="يومي">ليوم</option>
                             <option value="أسبوعي">أسبوعي</option>
                         </select>
-
                     </div>
 
                     <button
@@ -199,9 +190,8 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                     <div>
                         <h3 className="text-lg font-semibold mb-2">الموظفين المضافين:</h3>
                         {employees.map((employee, index) => (
-                            <div key={index} className="flex items-center justify-between mb-2 p-2 border border-gray-300 rounded-md">
-                                <span>{employee.employee}</span>
-                                <span>{employee.entity}</span>
+                            <div key={index} className="flex items-center justify-between mb-2">
+                                <span>{employee}</span>
                                 <button
                                     onClick={() => handleRemoveEmployee(index)}
                                     className="text-red-500 hover:text-red-700 focus:outline-none"
@@ -216,14 +206,14 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
                         <button
                             type="button"
                             onClick={handleCancel}
-                            className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 focus:outline-none"
+                            className="px-4 py-2 text-white bg-gray-400 rounded-md hover:bg-gray-500 focus:outline-none"
                         >
                             إلغاء
                         </button>
                         <button
                             type="button"
                             onClick={handleSubmit}
-                            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+                            className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
                         >
                             حفظ
                         </button>
@@ -232,12 +222,8 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
             </div>
 
             {showAddEmployeeForm && (
-                <AddEmployeeForm
-                    handleClose={() => setShowAddEmployeeForm(false)}
-                    handleAddEmployee={handleAddEmployee}
-                />
+                <AddEmployeeForm onAddEmployee={handleAddEmployee} onClose={() => setShowAddEmployeeForm(false)} />
             )}
         </>
     );
 }
-

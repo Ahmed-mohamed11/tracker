@@ -120,28 +120,28 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
     const handleSave = () => {
         console.log("branchesList:", branchesList);
         console.log("selectedItems:", selectedItems);
-    
+
         // تحديد الموظفين المحددين
         const selectedEmployees = selectedItems.map(itemId =>
             branchesList.flatMap(branch => branch.entities)
                 .find(entity => entity.id === itemId)
         ).filter(Boolean); // إزالة أي قيم undefined
-    
+
         console.log("selectedEmployees:", selectedEmployees);
-    
+
         // جمع معرفات الموظفين كـ string
-        const employeeIds = selectedEmployees.map(emp => emp.id.toString());
-    
-        if (employeeIds.length > 0) {
-            handleAddEmployee(employeeIds);
-            console.log("Employee IDs:", employeeIds);
+        const entities_ids = selectedEmployees.map(emp => emp.id.toString());
+
+        if (entities_ids.length > 0) {
+            handleAddEmployee(entities_ids);
+            console.log("Employee IDs:", entities_ids);
             handleClose();
         } else {
             console.log("No employee IDs found.");
             // يمكنك هنا إضافة رسالة للمستخدم إذا كنت ترغب
         }
     };
-    
+
 
 
 
