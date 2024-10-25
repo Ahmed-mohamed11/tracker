@@ -1,16 +1,62 @@
 import { useEffect, useState } from "react";
-import { Trash, X, UserPlus, ChevronDownIcon, ChevronRightIcon } from "lucide-react";
+import { Trash, X, UserPlus, ChevronDownIcon, ChevronRightIcon, CheckCheckIcon, ChevronDown, ChevronRight, } from "lucide-react";
 import axios from 'axios'; // استيراد مكتبة Axios
 import Cookies from 'js-cookie';
 import FormSelect from "../../../components/form/FormSelect";
-
-
 
 function AddEmployeeForm({ handleClose, handleAddEmployee }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
     const [expandedGroups, setExpandedGroups] = useState([]);
     const [branchesList, setBranchesList] = useState([]);
+    const [options, setOptions] = useState([]);
+    const [loading, setLoading] = useState(true); // Loading state
+    const [error, setError] = useState(''); // Error state
+
+    const toggleDropdown = () => setIsOpen(!isOpen);
+
+    const toggleGroup = (groupName) => {
+        setExpandedGroups((prev) =>
+            prev.includes(groupName)
+                ? prev.filter((name) => name !== groupName)
+                : [...prev, groupName]
+        );
+    };
+
+    const handleItemClick = (itemId, groupName) => {
+        setSelectedItems((prev) => {
+            if (itemId === 'تحديد الكل') {
+                const group = options.find((g) => g.name === groupName);
+                const allSelected = group.items.every((i) => prev.includes(i.id));
+                return allSelected
+                    ? prev.filter((i) => !group.items.map(item => item.id).includes(i))
+                    : [...new Set([...prev, ...group.items.map(item => item.id)])];
+            } else {
+                return prev.includes(itemId)
+                    ? prev.filter((i) => i !== itemId)
+                    : [...prev, itemId];
+            }
+        });
+    };
+
+    const isGroupSelected = (groupName) => {
+        const group = options.find((g) => g.name === groupName);
+        return group.items.every((item) => selectedItems.includes(item.id));
+    };
+
+    const isAllSelected = () => {
+        const allItems = options.flatMap((group) => group.items.map(item => item.id));
+        return allItems.every((item) => selectedItems.includes(item));
+    };
+
+    const handleSelectAll = () => {
+        if (isAllSelected()) {
+            setSelectedItems([]);
+        } else {
+            const allItems = options.flatMap((group) => group.items.map(item => item.id));
+            setSelectedItems(allItems);
+        }
+    };
 
     const fetchBranches = async () => {
         try {
@@ -25,58 +71,54 @@ function AddEmployeeForm({ handleClose, handleAddEmployee }) {
             });
 
             setBranchesList(response.data);
+
+            // إضافة سجل للتحقق من هيكل البيانات
+            console.log("Fetched branches data:", response.data);
+
+            const transformedOptions = response.data.map(branch => ({
+                name: branch.branch_name,
+                items: branch.entities.map(entity => ({
+                    id: entity.id,
+                    ar_name: entity.ar_name
+                }))
+            }));
+
+            setOptions(transformedOptions);
         } catch (error) {
             console.error("Error fetching branches:", error);
         }
     };
 
+
+
     useEffect(() => {
         fetchBranches();
     }, []);
 
-    const toggleDropdown = () => setIsOpen(!isOpen);
-
-    const toggleGroup = (groupId) => {
-        setExpandedGroups(prev =>
-            prev.includes(groupId)
-                ? prev.filter(id => id !== groupId)
-                : [...prev, groupId]
-        );
-    };
-
-    const handleItemClick = (item, groupId) => {
-        setSelectedItems(prev => {
-            const groupEntities = branchesList.find(branch => branch.id === groupId).entities;
-            if (item === 'Select all') {
-                const allSelected = groupEntities.every(groupItem => prev.some(i => i.id === groupItem.id));
-                return allSelected
-                    ? prev.filter(i => !groupEntities.some(gi => gi.id === i.id))
-                    : [...new Set([...prev, ...groupEntities])];
-            } else {
-                return prev.some(i => i.id === item.id)
-                    ? prev.filter(i => i.id !== item.id)
-                    : [...prev, item];
-            }
-        });
-    };
-
-    const isGroupSelected = (groupId) => {
-        const groupEntities = branchesList.find(branch => branch.id === groupId).entities;
-        return groupEntities.every(item => selectedItems.some(i => i.id === item.id));
-    };
-
     const handleSave = () => {
-        // معالجة البيانات المختارة وحفظها
-        const selectedBranch = selectedItems.find(item => branchesList.some(branch => branch.entities.some(e => e.id === item.id)));
+        console.log("branchesList:", branchesList);
+        console.log("selectedItems:", selectedItems);
 
-        if (selectedBranch) {
-            handleAddEmployee({
-                employee: selectedBranch.id, // افتراضًا أن المختار هو الفرع
-                entity: selectedBranch.id   // إذا كنت تريد التعامل مع الكيانات يمكن تعديل هذه الجزئية
-            });
+        const selectedEmployees = selectedItems.map(itemId =>
+            branchesList.flatMap(branch => branch.entities)
+                .find(entity => entity.id === itemId)
+        ).filter(Boolean); // تأكد من تصفية القيم الصحيحة
+
+        console.log("selectedEmployees:", selectedEmployees);
+
+        const employeeIds = selectedEmployees.map(emp => emp.id);
+
+        if (employeeIds.length > 0) {
+            handleAddEmployee(employeeIds);
+            console.log("Employee IDs:", employeeIds);
             handleClose();
+        } else {
+            console.log("No employee IDs found."); // سجل إذا لم يتم العثور على أي IDs
         }
     };
+
+
+
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -88,89 +130,106 @@ function AddEmployeeForm({ handleClose, handleAddEmployee }) {
                     <X className="w-6 h-6" />
                 </button>
                 <h2 className="text-2xl font-semibold mb-6 text-center">أضف موظف</h2>
-                <div className="mb-4 space-y-4">
-                    <div className="mb-10 relative w-full font-sans">
+                {loading && <p>جارٍ التحميل...</p>} {/* Loading indicator */}
+                {error && <p className="text-red-500">{error}</p>} {/* Error message */}
+                <div className="w-80 font-sans">
+                    <div className="relative mb-4">
                         <button
                             onClick={toggleDropdown}
-                            className="flex items-center justify-between w-full px-4 py-2 text-right bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="flex items-center justify-between w-full px-4 py-2 text-right bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                         >
-                            <span className="text-gray-700">اختر الفرع والكيانات</span>
-                            <ChevronDownIcon className="w-5 h-5 text-gray-400" />
+                            <span className="text-gray-700 font-medium">
+                                {selectedItems.length > 0
+                                    ? `تم اختيار ${selectedItems.length} عنصر`
+                                    : 'اختر العناصر'}
+                            </span>
+                            <ChevronDown className="w-5 h-5 text-gray-400" />
                         </button>
                         {isOpen && (
-                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
-                                {branchesList.map((branch) => (
-                                    <div key={branch.id} className="border-b border-gray-200 last:border-b-0">
-                                        <button
-                                            onClick={() => toggleGroup(branch.id)}
-                                            className="flex items-center justify-between w-full px-4 py-2 text-right hover:bg-gray-100"
-                                        >
-                                            <span className="text-sm font-medium text-gray-700">{branch.branch_name}</span>
-                                            <ChevronRightIcon className={`w-4 h-4 text-gray-400 transition-transform ${expandedGroups.includes(branch.id) ? 'transform rotate-90' : ''}`} />
-                                        </button>
-                                        {expandedGroups.includes(branch.id) && (
-                                            <div className="pr-4 pb-2">
-                                                <label className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isGroupSelected(branch.id)}
-                                                        onChange={() => handleItemClick('Select all', branch.id)}
-                                                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                                    />
-                                                    <span className="mr-3 text-sm font-medium text-gray-700">تحديد الكل</span>
-                                                </label>
-                                                {branch.entities.map((entity) => (
-                                                    <label key={entity.id} className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                                <div className="max-h-60 overflow-y-auto">
+                                    <label className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 transition-colors duration-150">
+                                        <input
+                                            type="checkbox"
+                                            checked={isAllSelected()}
+                                            onChange={handleSelectAll}
+                                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                        />
+                                        <span className="mr-3 text-sm font-medium text-gray-700">تحديد الكل</span>
+                                    </label>
+                                    {options.map((group) => (
+                                        <div key={group.name} className="border-b border-gray-200 last:border-b-0">
+                                            <div
+                                                className="flex items-center justify-between px-4 py-2 bg-gray-50 cursor-pointer transition-colors duration-150"
+                                                onClick={() => toggleGroup(group.name)}
+                                            >
+                                                <span className="text-sm font-medium text-gray-700">{group.name}</span>
+                                                <ChevronRight
+                                                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expandedGroups.includes(group.name) ? 'transform rotate-90' : ''
+                                                        }`}
+                                                />
+                                            </div>
+                                            {expandedGroups.includes(group.name) && (
+                                                <div className="pr-4 pb-2">
+                                                    <label className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-150">
                                                         <input
                                                             type="checkbox"
-                                                            checked={selectedItems.some(i => i.id === entity.id)}
-                                                            onChange={() => handleItemClick(entity, branch.id)}
+                                                            checked={isGroupSelected(group.name)}
+                                                            onChange={() => handleItemClick('تحديد الكل', group.name)}
                                                             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                                                         />
-                                                        <span className="mr-3 text-sm font-medium text-gray-700">{entity.ar_name}</span>
+                                                        <span className="mr-3 text-sm font-medium text-gray-700">تحديد الكل</span>
                                                     </label>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
+                                                    {group.items.map((item) => (
+                                                        <label key={item.id} className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-150">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedItems.includes(item.id)}
+                                                                onChange={() => handleItemClick(item.id, group.name)}
+                                                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                            />
+                                                            <span className="mr-3 text-sm font-medium text-gray-700">{item.ar_name}</span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>
-
-                    <div className="flex justify-between mt-20">
-                        <button
-                            type="button"
-                            onClick={handleClose}
-                            className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 focus:outline-none"
-                        >
-                            إلغاء
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleSave}
-                            className="px-6 py-2 bg-themeColor-600 text-white rounded-md hover:bg-themeColor-700 focus:outline-none"
-                        >
-                            حفظ
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleSave}
+                        className="w-full py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                    >
+                        حفظ
+                    </button>
                 </div>
             </div>
         </div>
     );
 }
 
+
+
+
+
+
 export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
     const [title, setTitle] = useState("");
-    const [checkInTime, setCheckInTime] = useState("17:20"); // تعيين وقت تسجيل الدخول الافتراضي هنا
+    const [checkInTime, setCheckInTime] = useState("17:20");
     const [maxCheckInTime, setMaxCheckInTime] = useState("");
     const [shiftEndTime, setShiftEndTime] = useState("");
     const [repeat, setRepeat] = useState("");
     const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
     const [employees, setEmployees] = useState([]);
 
-    const handleAddEmployee = (employee) => {
-        setEmployees([...employees, employee]);
+    const handleAddEmployee = (newEmployees) => {
+        setEmployees((prevEmployees) => [
+            ...prevEmployees,
+            ...newEmployees // Merge the existing employees with the newly added ones
+        ]);
     };
 
     const handleRemoveEmployee = (index) => {
@@ -191,7 +250,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
             end_hour: shiftEndTime,
             flexible_minutes: flexibleMinutes, // استخدام القيمة المحسوبة هنا
             is_vacation: false,
-            employees_ids: []
+            employees_ids: employees.map(employee => employee.id) // Populate employees_ids with selected employee IDs
         };
 
         try {
@@ -360,3 +419,4 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate }) {
         </>
     );
 }
+
