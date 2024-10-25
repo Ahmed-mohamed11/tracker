@@ -8,12 +8,14 @@ import {
     useMemo,
 } from "react";
 import gsap from "gsap";
-import SiteTable from "./SiteTable";
+import SitesTable from "./SitesTable";
 
-const PreviewProject = lazy(() => import("./PreviewProjects"));
+// const PreviewProjects = lazy(() => import("./PreviewProjects"));
+
+const PreviewSites = lazy(() => import("./PreviewSites"));
 const AddSites = lazy(() => import("./AddSites"));
 
-const Projects = ({ role }) => {
+const Sites = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
 
@@ -46,14 +48,13 @@ const Projects = ({ role }) => {
         ),
         [],
     );
+
     return (
         <>
-            <div className="flex items-center max-w-7xl mx-auto">
+            <div className="flex items-center">
                 <main className="-mt-5 flex w-full flex-col lg:flex-row">
                     <section className="flex-1">
-
-
-                        <SiteTable
+                        <SitesTable
                             openPreview={toggleOpenPreviewModal}
                             openCreate={toggleOpenCreateModal}
                         />
@@ -66,7 +67,7 @@ const Projects = ({ role }) => {
                                 />
                             )}
                             {openPreview && (
-                                <PreviewProject closeModal={toggleOpenPreviewModal} />
+                                <PreviewSites closeModal={toggleOpenPreviewModal} />
                             )}
                         </Suspense>
                     </section>
@@ -76,4 +77,4 @@ const Projects = ({ role }) => {
     );
 };
 
-export default Projects;
+export default Sites;

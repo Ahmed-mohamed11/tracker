@@ -1,9 +1,5 @@
-import { IoSearch } from "react-icons/io5";
-import { FaFilter } from "react-icons/fa6";
-import { IoMdSettings } from "react-icons/io";
-import { FaPlus } from "react-icons/fa";
-import { ChevronLeft, ChevronRight, Pause, Play, MoreVertical } from "react-icons/all";
-import { useI18nContext } from 'path-to-your-i18n'; // Adjust the path based on your project
+import { ChevronLeft, ChevronRight, Filter, MoreVertical, Pause, Play, Plus, Search, Settings } from 'lucide-react';
+import { useI18nContext } from '../../context/i18n-context';
 
 const tasks = [
     { id: 1, name: 'Upload feed and Reels in Instagram', status: 'In progress', users: 5, progress: 75, website: true, timeTracking: '6:47/8:00', dueDate: '23 Nov 2022' },
@@ -32,17 +28,17 @@ export default function TaskManagement() {
                             placeholder={t('tasksManagement.searchPlaceholder')}
                             className="bg-gray-800 text-white px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <IoSearch className="absolute right-3 top-2.5 text-gray-400" size={20} />
+                        <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
                     </div>
                     <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">
                         {t('tasksManagement.search')}
                     </button>
                     <button className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200 flex items-center">
-                        <FaFilter size={20} className="mr-2" />
+                        <Filter size={20} className="mr-2" />
                         {t('tasksManagement.filter')}
                     </button>
                     <button className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200 flex items-center">
-                        <IoMdSettings size={20} className="mr-2" />
+                        <Settings size={20} className="mr-2" />
                         {t('tasksManagement.config')}
                     </button>
                 </div>
@@ -50,7 +46,7 @@ export default function TaskManagement() {
                     onClick={() => { }}
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 flex items-center"
                 >
-                    <FaPlus size={20} className="mr-2" />
+                    <Plus size={20} className="mr-2" />
                     {t('tasksManagement.addNewTask')}
                 </button>
             </div>
