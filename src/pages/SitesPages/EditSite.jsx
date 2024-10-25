@@ -15,7 +15,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 
-const AddSites = ({ closeModal, modal, onClientAdded }) => {
+const EditSite = ({ closeModal, modal, onClientAdded }) => {
   const [formData, setFormData] = useState({
     ar_name: "",
     en_name: "",
@@ -244,4 +244,4 @@ const AddSites = ({ closeModal, modal, onClientAdded }) => {
   );
 };
 
-export default AddSites;
+export default EditSite;
