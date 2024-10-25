@@ -4,7 +4,8 @@ import "./index.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import { I18nProvider } from "./context/i18n-context.jsx";
 import { Provider } from "react-redux";
- import store from "./store/index.js";
+import store from "./store/index.js";
+import 'leaflet/dist/leaflet.css';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
@@ -13,5 +14,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <App />
       </Router>
     </I18nProvider>
-   </Provider>
+  </Provider>
 );

@@ -4,9 +4,9 @@ import { X } from "@phosphor-icons/react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import FormText from "../../components/form/FormText";
-import FormNumber from "./../../components/form/FormNumber";
+import FormNumber from "../../components/form/FormNumber";
 import { useI18nContext } from "../../context/i18n-context";
-import FormSelect from "./../../components/form/FormSelect";
+import FormSelect from "../../components/form/FormSelect";
 import {
   MapContainer,
   TileLayer,

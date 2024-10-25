@@ -59,7 +59,7 @@ const ProjectTable = ({ openPreview, openCreate }) => {
   }, []);
 
   const handleOpenCreate = () => {
-    console.log("Open Create button clicked");
+    // console.log("Open Create button clicked");
     openCreate();
   };
 

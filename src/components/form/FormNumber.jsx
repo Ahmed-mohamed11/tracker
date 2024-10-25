@@ -7,6 +7,8 @@ function FormNumber({
   placeholder,
   required,
   onChange,
+  min,
+  lang
 }) {
   
   return (
@@ -32,7 +34,8 @@ function FormNumber({
         placeholder={placeholder}
         required={required}
         onChange={onChange}
-      
+        min={min}
+        lang={lang}
       />
     </div>
   );
