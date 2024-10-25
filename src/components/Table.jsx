@@ -42,7 +42,6 @@ const Table = ({ data, headers, actions, userImage }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  console.log(headers);
 
   // حساب إجمالي عدد الصفحات
   const totalPages = Math.ceil(data.length / itemsPerPage);
