@@ -303,7 +303,7 @@ export default function Navbar() {
         <div>
           <img
             className="w-14 h-14 border-2 border-orange-500 rounded-full"
-            src="/public/SiteLogo.png"
+            src="/SiteLogo.png"
             alt=""
           />
         </div>
