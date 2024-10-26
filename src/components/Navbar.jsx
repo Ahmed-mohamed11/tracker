@@ -163,15 +163,28 @@ export default function Navbar() {
   const handleLogout = () => {
     // إزالة التوكن من الكوكيز
     Cookies.remove("token", { path: "/" }); // حذف التوكن مع تحديد نفس المسار
+    localStorage.removeItem("user");
 
     // إعادة التوجيه إلى صفحة تسجيل الدخول بعد تسجيل الخروج
     navigate("/login");
   };
 
+
+
+
+
+
+
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      setUserData(JSON.parse(user));
+    }
+  }, []);
+
   const navigationAdmin = [
-
-
-    {
+    userData && userData.isAdmin && {
       icon: <UserCircleGear size={25} />,
       name: t("sideBar.admin"),
       subItems: [
@@ -185,26 +198,10 @@ export default function Navbar() {
         },
       ],
     },
-
     {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/`,
-    },
-
-    {
-      icon: <Gear size={25} />,
-      name: t("sideBar.reports"),
-      subItems: [
-        {
-          name: t("sideBar.site"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
-        },
-        {
-          name: t("sideBar.audio"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
-        },
-      ],
     },
     {
       icon: <ListChecks size={25} />,
@@ -266,7 +263,7 @@ export default function Navbar() {
         },
       ],
     },
-  ];
+  ].filter(Boolean);
 
   const navigationError = [
     {
@@ -306,7 +303,7 @@ export default function Navbar() {
         <div>
           <img
             className="w-14 h-14 border-2 border-orange-500 rounded-full"
-            src="/public/SiteLogo.png"
+            src="/SiteLogo.png"
             alt=""
           />
         </div>
@@ -335,37 +332,52 @@ export default function Navbar() {
         {/* معلومات المستخدم */}
         <div className="relative" ref={userMenuRef}>
           <div
-            className="bg-themeColor-400 p-2 rounded-full flex items-center gap-3 cursor-pointer"
+            className=" p-2 rounded-full flex items-center gap-3 cursor-pointer"
             onClick={toggleUserMenu}
           >
-            <img
-              src="https://avatars.githubusercontent.com/u/52693893?v=4"
-              alt="profile"
-              className="w-7 h-7 rounded-full"
-            />
+            {userData && userData.companyLogo && (
+              <div>
+                <img
+                  src={userData.companyLogo}
+                  alt={userData.companyName}
+                  className="w-10 h-10 border-2 border-orange-500 rounded-full"
+                />
+                <span className="text-sm font-semibold">{userData && userData.companyName}</span>
+              </div>
+            )}
+
           </div>
 
           {isUserMenuOpen && (
             <div
               className={classNames(
-                "absolute z-50 right-0 mt-7  w-48 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
+                "absolute z-50 left-0 mt-7  w-48 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
                 isUserMenuOpen
                   ? "opacity-100 visible animate-slide-down"
                   : "opacity-0 invisible animate-slide-up"
               )}
             >
+              {userData && userData.email && (
+                <Link
+                  to="/profile"
+                  className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
+                >
+                  <User size={25} className="mx-2" />
+                  {userData && userData.email}
+                </Link>
+              )}
               <Link
                 to="/settings"
                 className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
               >
-                <User size={20} className="mr-2" />
+                <Gear size={20} className=" mx-2" />
                 إعدادات
               </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center w-full px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500 text-left"
               >
-                <SignOut size={20} className="mr-2" />
+                <SignOut size={20} className="mx-2" />
                 تسجيل خروج
               </button>
             </div>

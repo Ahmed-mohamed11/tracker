@@ -49,7 +49,7 @@ export default function Footer() {
       <div className="grid justify-center py-10">
         <img
           className=' rounded-lg w-full h-16'
-          src="/public/cowdly.png" alt="" />
+          src="/cowdly.png" alt="" />
         <p className="mt-5 text-center text-sm leading-6 text-white">© 2022 Site Created by : <a href="" className="hover:underline ">
           <span className="font-semibold text-white">Cowdly Team Work</span>
         </a>

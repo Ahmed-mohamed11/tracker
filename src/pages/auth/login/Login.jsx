@@ -13,21 +13,24 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // تحديث قيمة البريد الإلكتروني في حالة النموذج
   const handleEmailInput = (e) => {
     setFormData({ ...formData, email: e.target.value });
   };
 
+  // تحديث قيمة كلمة المرور في حالة النموذج
   const handlePasswordChange = (e) => {
     setFormData({ ...formData, password: e.target.value });
   };
 
+  // التحكم في عرض/إخفاء كلمة المرور
   const handleShowPass = () => {
     setShowPass(!showPass);
   };
 
+  // التعامل مع عملية تسجيل الدخول
   const handleLogin = async (event) => {
     event.preventDefault();
-
     const newErrors = {};
 
     if (!formData.email) {
@@ -46,6 +49,7 @@ export default function Login() {
     setLoading(true);
 
     try {
+      // طلب تسجيل الدخول إلى API
       const response = await axios.post(
         "https://bio.skyrsys.com/api/company/login/",
         {
@@ -64,21 +68,24 @@ export default function Login() {
 
       const token = data.token;
 
-      // Set the token in cookies for easy access
-      Cookies.set("token", token, { expires: 7, path: "/" }); // Store the token with a 7-day expiration
+      // حفظ الـ token في الكوكيز
+      Cookies.set("token", token, { expires: 7, path: "/" }); // يخزن token مع انتهاء الصلاحية بعد 7 أيام
 
-      // Store additional user data in localStorage
-      localStorage.setItem("user", JSON.stringify({
-        email: data.company.email,
-        isAdmin: data.is_admin, // تحديد حالة الأدمن
-        companyName: data.company.company_name, // اسم الشركة
-        companyLogo: data.company.company_logo, // شعار الشركة
-        companyCode: data.company.company_code, // كود الشركة
-      }));
+      // حفظ بيانات المستخدم في localStorage
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          email: data.company.email,
+          isAdmin: data.is_admin, // حالة الأدمن
+          companyName: data.company.company_name, // اسم الشركة
+          companyLogo: data.company.company_logo, // شعار الشركة
+          companyCode: data.company.company_code, // كود الشركة
+        })
+      );
 
       setLoading(false);
 
-      // Redirect to dashboard
+      // توجيه المستخدم إلى لوحة التحكم
       navigate(`${import.meta.env.VITE_PUBLIC_URL}/`);
     } catch (error) {
       console.error("Login Error:", error);
@@ -89,13 +96,13 @@ export default function Login() {
       setErrorMsg(message);
       setLoading(false);
     }
-
   };
 
+  // التحقق من وجود token لتحديد ما إذا كان المستخدم قد سجل الدخول بالفعل
   useEffect(() => {
-    const token = Cookies.get("token"); // Retrieve token from cookies
+    const token = Cookies.get("token"); // استرجاع token من الكوكيز
     if (token) {
-      navigate(`${import.meta.env.VITE_PUBLIC_URL}/`); // Redirect if the user is already logged in
+      navigate(`${import.meta.env.VITE_PUBLIC_URL}/`); // توجيه إذا كان المستخدم مسجلاً الدخول
     }
   }, [navigate]);
 
