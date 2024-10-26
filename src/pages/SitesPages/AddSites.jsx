@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { X } from "@phosphor-icons/react";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -26,6 +26,7 @@ const AddSites = ({ closeModal, open, fetchData }) => {
   });
 
   const [branchesList, setBranchesList] = useState([]);
+  const mapRef = useRef();
 
   const fetchBranches = async () => {
     try {
@@ -61,7 +62,6 @@ const AddSites = ({ closeModal, open, fetchData }) => {
   }, []);
 
   const center = [24.647017162630366, 46.66992187500001];
- 
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
@@ -203,30 +203,58 @@ const AddSites = ({ closeModal, open, fetchData }) => {
                   className="w-full"
                 />
               </div>
+              {open && (
+                <MapContainer
+                  center={center}
+                  zoom={8}
+                  style={{ height: "300px", width: "100%" }}
+                  key={formData.latitude}
+                  whenCreated={(map) => (mapRef.current = map)}
+                >
+                  <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
+                  <MapEvents />
+                  {formData.latitude && formData.longitude && (
+                    <Marker position={[formData.latitude, formData.longitude]}>
+                      <Popup>
+                        Current location:{" "}
+                        <pre>
+                          {JSON.stringify(
+                            { lat: formData.latitude, lng: formData.longitude },
+                            null,
+                            2
+                          )}
+                        </pre>
+                      </Popup>
+                    </Marker>
+                  )}
+                </MapContainer>
+              )}
 
-              <MapContainer
-                center={center}
-                zoom={8}
-                style={{ height: "300px", width: "100%" }}
-                key={formData.latitude}
-              >
-                <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
-                <MapEvents />
-                {formData.latitude && formData.longitude && (
-                  <Marker position={[formData.latitude, formData.longitude]}>
-                    <Popup>
-                      Current location:{" "}
-                      <pre>
-                        {JSON.stringify(
-                          { lat: formData.latitude, lng: formData.longitude },
-                          null,
-                          2
-                        )}
-                      </pre>
-                    </Popup>
-                  </Marker>
-                )}
-              </MapContainer>
+              {open && isFormDataReady && !mapInitialized && (
+                <MapContainer
+                  center={[formData.latitude, formData.longitude]}
+                  zoom={8}
+                  style={{ height: "300px", width: "100%" }}
+                  whenCreated={(map) => (mapRef.current = map)}
+                >
+                  <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
+                  <MapEvents />
+                  {formData.latitude && formData.longitude && (
+                    <Marker position={[formData.latitude, formData.longitude]}>
+                      <Popup>
+                        Current location:
+                        <pre>
+                          {JSON.stringify(
+                            { lat: formData.latitude, lng: formData.longitude },
+                            null,
+                            2
+                          )}
+                        </pre>
+                      </Popup>
+                    </Marker>
+                  )}
+                </MapContainer>
+              )}
 
               <button
                 className="w-1/2 mx-auto text-center border-2 justify-center

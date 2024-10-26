@@ -56,7 +56,6 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
     }
   };
 
-  // تحديث بيانات الموقع وتحديد الحقول المبدئية
   useEffect(() => {
     fetchBranches();
   }, []);
@@ -73,6 +72,7 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
           branchesList.find((branch) => branch.label === site.branch)?.value ||
           0,
       });
+      console.log("Longitude:", site.longitude, "Latitude:", site.latitude);
     }
   }, [site, branchesList]);
 
@@ -87,7 +87,6 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
       mapRef.current.flyTo([formData.latitude, formData.longitude], 8);
     }
   }, [open, formData.latitude, formData.longitude]);
-
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
     const newValue =
@@ -147,12 +146,12 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
           latitude: lat,
           longitude: lng,
         }));
+        map.flyTo([lat, lng], map.getZoom());
       },
     });
 
     return null;
   }
-
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -253,18 +252,14 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
                   center={[formData.latitude, formData.longitude]}
                   zoom={8}
                   style={{ height: "300px", width: "100%" }}
-                  whenCreated={(map) => {
-                    if (!mapInitialized.current) {
-                      mapRef.current = map;
-                      mapInitialized.current = true; // تعيين الخريطة كتم تهيئتها
-                    }
-                  }}
+                  whenCreated={(map) => (mapRef.current = map)}
                 >
                   <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
+                  <MapEvents />
                   {formData.latitude && formData.longitude && (
                     <Marker position={[formData.latitude, formData.longitude]}>
                       <Popup>
-                        Current location:{" "}
+                        Current location:
                         <pre>
                           {JSON.stringify(
                             { lat: formData.latitude, lng: formData.longitude },
