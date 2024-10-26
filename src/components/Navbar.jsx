@@ -175,19 +175,6 @@ export default function Navbar() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   const [userData, setUserData] = useState(null);
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -211,26 +198,10 @@ export default function Navbar() {
         },
       ],
     },
-
     {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/`,
-    },
-
-    {
-      icon: <Gear size={25} />,
-      name: t("sideBar.reports"),
-      subItems: [
-        {
-          name: t("sideBar.site"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
-        },
-        {
-          name: t("sideBar.audio"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
-        },
-      ],
     },
     {
       icon: <ListChecks size={25} />,
@@ -292,7 +263,7 @@ export default function Navbar() {
         },
       ],
     },
-  ];
+  ].filter(Boolean);
 
   const navigationError = [
     {
