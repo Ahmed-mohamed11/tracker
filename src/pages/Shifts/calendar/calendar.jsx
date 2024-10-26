@@ -55,7 +55,7 @@ export default function Calendar() {
 
     const renderDays = () => {
         const days = getDaysInMonth(currentDate);
-        const today = new Date().setHours(0, 0, 0, 0);
+        const today = new Date().setHours(0, 0, 0, 0); // تحديد اليوم الحالي
 
         return days.map((day) => {
             const dayData = daysData.find(d => new Date(d.date).toDateString() === day.toDateString());
@@ -64,7 +64,9 @@ export default function Calendar() {
                 <div
                     key={day.toISOString()}
                     onClick={() => handleDayClick(day)}
-                    className={`bg-white p-2 h-32 cursor-pointer ${day.getMonth() !== currentDate.getMonth() ? 'text-gray-400' : ''} ${day.setHours(0, 0, 0, 0) === today ? 'bg-green-200' : ''}`}
+                    className={` p-2 h-32 cursor-pointer 
+                        ${day.getMonth() !== currentDate.getMonth() ? 'text-gray-400' : ''} 
+                        ${day.setHours(0, 0, 0, 0) === today ? 'bg-green-200 text-red-700' : 'bg-white'}`} // تغيير اللون اليوم الحقيقي
                 >
                     <div className="flex justify-between items-center">
                         <span className="font-bold">{day.getDate()}</span>
@@ -83,6 +85,8 @@ export default function Calendar() {
             );
         });
     };
+
+
 
     const handleDayClick = (day) => {
         const dayData = daysData.find(d => new Date(d.date).toDateString() === day.toDateString());
