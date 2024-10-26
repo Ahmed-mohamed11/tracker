@@ -11,11 +11,14 @@ export const AuthProvider = ({ children }) => {
     // دالة تسجيل الدخول (أنت هتعدلها بناءً على الـ API)
     const login = (userData) => {
         setUser(userData); // حفظ بيانات المستخدم
+        localStorage.setItem('user', JSON.stringify(userData)); // حفظ بيانات المستخدم في اللوكل استوردج
+
     };
 
     // دالة تسجيل الخروج
     const logout = () => {
         setUser(null); // حذف بيانات المستخدم
+        localStorage.removeItem('user'); // حذف بيانات المستخدم من اللوكل استوردج
     };
 
     return (
