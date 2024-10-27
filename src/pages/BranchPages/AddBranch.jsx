@@ -5,8 +5,9 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
 import FormSelect from "../../components/form/FormSelect";
+import { toast } from "react-toastify";
 
-const AddBranch = ({ closeModal, modal }) => {
+const AddBranch = ({ closeModal, modal, onAddBranch }) => {
     const [formData, setFormData] = useState({
         branch_name: "",
     });
@@ -43,13 +44,33 @@ const AddBranch = ({ closeModal, modal }) => {
                     'Content-Type': 'application/json',
                 },
             });
-
-            console.log('تمت إضافة الفرع بنجاح:', response.data);
             closeModal();
+
+            toast.success('تم إضافة الفرع بنجاح', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+
+            onAddBranch(response.data); // Use the actual response data
+
         } catch (error) {
-            console.error('خطأ في إضافة الفرع:', error.response?.data || error.message);
+            toast.error('حدث خطأ أثناء إضافة الفرع', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
+
 
     return (
         <div

@@ -17,12 +17,11 @@ const Entities = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
 
-
-
     const toggleOpenCreateModal = useCallback(
         () => setOpenCreate((prev) => !prev),
         [],
     );
+
     const toggleOpenPreviewModal = useCallback(
         () => setOpenPreview((prev) => !prev),
         [],

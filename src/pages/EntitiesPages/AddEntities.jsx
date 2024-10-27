@@ -82,12 +82,12 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
                     'Authorization': `Token ${token}`,  // إرسال التوكن في الهيدر
                 },
             });
+            closeModal();
 
-            // عرض النتيجة أو تحديث الجداول
             const newEntity = response.data;
             console.log('Entity added successfully:', newEntity);
             onClientAdded(newEntity);
-            closeModal();  // إغلاق النموذج بعد الإرسال
+
 
         } catch (error) {
             console.error('Error adding entity:', error.response?.data || error.message);

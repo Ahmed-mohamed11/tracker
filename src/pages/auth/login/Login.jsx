@@ -69,7 +69,7 @@ export default function Login() {
       const token = data.token;
 
       // حفظ الـ token في الكوكيز
-      Cookies.set("token", token, { expires: 7, path: "/" }); // يخزن token مع انتهاء الصلاحية بعد 7 أيام
+      Cookies.set("token", token, { expires: 1 / 24, path: "/" });
 
       // حفظ بيانات المستخدم في localStorage
       localStorage.setItem(

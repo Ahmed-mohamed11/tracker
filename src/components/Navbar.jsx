@@ -129,7 +129,11 @@ export default function Navbar() {
     if (token && storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  }, []);
+    if (!token || !storedUser) {
+      navigate("/login");
+    }
+
+  }, [navigate]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

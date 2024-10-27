@@ -1,22 +1,12 @@
-import { Check, Eye, PackagePlus, Play, Replace, X } from 'lucide-react';
-import { Fragment, useEffect, useState, useCallback } from 'react';
+import { FaArrowCircleDown, FaPlus } from 'react-icons/fa';
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { IoSearch } from 'react-icons/io5';
-import { FaArrowCircleDown, FaPlus } from 'react-icons/fa';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 import Table from '../../components/Table';
-// import ReviewRequest from './ReviewRequest';
-// import ChangePlan from './ChangePlan';
-
-const MySwal = withReactContent(Swal);
-
-
+import * as XLSX from 'xlsx';
 
 const BranchTable = ({ openCreate }) => {
-    const [showReviewRequest, setShowReviewRequest] = useState(false);
-    const [requestData, setRequestData] = useState(null);
     const [tableData, setTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -39,13 +29,12 @@ const BranchTable = ({ openCreate }) => {
             const branches = response.data;
 
             setTableHeaders([
-
                 { key: 'branch_name', label: 'اسم الفرع' },
                 { key: 'created', label: 'تاريخ الإنشاء' },
             ]);
 
             const formattedData = branches.map(branch => ({
-                created: new Date(branch.created).toLocaleDateString('en-US'), // Format date in English
+                created: new Date(branch.created).toLocaleDateString('en-US'),
                 branch_name: branch.branch_name || 'مجهول',
             }));
 
@@ -56,44 +45,30 @@ const BranchTable = ({ openCreate }) => {
         }
     }, []);
 
-    const [showChangePlan, setShowChangePlan] = useState(false);
-    const changePlan = (row) => {
-        setRequestData(row);
-        setShowChangePlan(true);
-    };
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const handleSearch = (event) => {
         const query = event.target.value.toLowerCase();
         setSearchQuery(query);
 
         const filtered = tableData.filter(item =>
-            item.company.toLowerCase().includes(query)
+            item.branch_name.toLowerCase().includes(query)
         );
         setFilteredData(filtered);
     };
 
+    const handleSaveToExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Branches');
 
+        // Create a file name
+        const fileName = 'branches_data.xlsx';
 
-
-
-    const exportTableToExcel = () => {
-        const table = document.getElementById('table');
-        const rows = table.rows;
-        const csv = [];
-        for (let i = 0; i < rows.length; i++) {
-            const row = [];
-            for (let j = 0; j < rows[i].cells.length; j++) {
-                row.push(rows[i].cells[j].innerHTML);
-            }
-            csv.push(row.join(','));
-        }
-        const csvString = csv.join('\n');
-        const a = document.createElement('a');
-        a.href = 'data:attachment/csv,' + encodeURIComponent(csvString);
-        a.target = '_blank';
-        a.download = 'branches.csv';
-        document.body.appendChild(a);
-        a.click();
+        // Generate Excel file and trigger download
+        XLSX.writeFile(workbook, fileName);
     };
 
     useEffect(() => {
@@ -126,14 +101,8 @@ const BranchTable = ({ openCreate }) => {
                             <IoSearch size={20} />
                         </div>
                     </div>
-                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                        <option value="">حالة الطلب</option>
-                        <option value="pending">قيد الانتظار</option>
-                        <option value="approved">موافقة</option>
-                        <option value="rejected">مرفوض</option>
-                    </select>
                     <button
-                        onClick={exportTableToExcel}
+                        onClick={handleSaveToExcel}
                         className="w-1/2 bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
                     >
                         تصدير
@@ -146,12 +115,7 @@ const BranchTable = ({ openCreate }) => {
             <Table
                 data={filteredData}
                 headers={tableHeaders}
-
             />
-            {/*
-            {showChangePlan && <ChangePlan requestData={requestData} onClose={() => setShowChangePlan(false)} />}
-            {showReviewRequest && <ReviewRequest requestData={requestData} onClose={() => setShowReviewRequest(false)} />}
-*/}
         </div>
     );
 };

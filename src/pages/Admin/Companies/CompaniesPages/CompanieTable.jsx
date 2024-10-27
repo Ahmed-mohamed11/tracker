@@ -144,8 +144,8 @@ const CompaniesTable = ({ openCreate }) => {
                     title: 'تمت تجديد الطلب بنجاح',
                 });
 
-                fetchData(); // Reload data after approval
             }
+            fetchData(); // Reload data after approval
         } catch (error) {
             console.error('Error approving the request:', error.response?.data || error.message);
             MySwal.fire({
