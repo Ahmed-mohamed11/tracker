@@ -76,6 +76,7 @@ const Sites = ({ role }) => {
 
       const locations = response.data;
       setData(locations);
+      console.log(locations);
     } catch (error) {
       console.error(
         "Error fetching locations:",
@@ -112,13 +113,12 @@ const Sites = ({ role }) => {
               )} */}
               {openEdit && (
                 <EditSite
-                closeModal={toggleOpenEditModal}
-                site={selectedSite}
-                fetchData={fetchData}
-                open={openEdit}
-              />
+                  closeModal={toggleOpenEditModal}
+                  site={selectedSite}
+                  fetchData={fetchData}
+                  open={openEdit}
+                />
               )}
-              
             </Suspense>
           </section>
         </main>

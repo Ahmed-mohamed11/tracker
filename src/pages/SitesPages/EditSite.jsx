@@ -87,6 +87,7 @@ const EditSite = ({ closeModal, open, site, fetchData }) => {
       mapRef.current.flyTo([formData.latitude, formData.longitude], 8);
     }
   }, [open, formData.latitude, formData.longitude]);
+  
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
     const newValue =

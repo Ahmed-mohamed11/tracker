@@ -34,6 +34,8 @@ const SitesTable = ({ openCreate, data, fetchData, openEdit }) => {
   const [branchesList, setBranchesList] = useState([]);
   const [dataList, setDataList] = useState(data);
 
+  console.log(data);
+
   const fetchBranches = async () => {
     try {
       const token = Cookies.get("token");
