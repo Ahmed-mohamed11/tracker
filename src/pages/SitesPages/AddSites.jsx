@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { X } from "@phosphor-icons/react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { ToastContainer, toast } from "react-toastify"; // استيراد toast
+import "react-toastify/dist/ReactToastify.css";
 import FormText from "../../components/form/FormText";
 import FormNumber from "./../../components/form/FormNumber";
 import { useI18nContext } from "../../context/i18n-context";
@@ -79,12 +81,9 @@ const AddSites = ({ closeModal, open, fetchData }) => {
         longitude: lng,
       }));
 
-      console.log(lat, lng);
-
       if (mapRef.current) {
         mapRef.current.setView([lat, lng], 10);
       }
-      console.log("Extracted coordinates:", lat, lng);
     } else {
       setFormData((prevData) => ({
         ...prevData,
@@ -99,7 +98,7 @@ const AddSites = ({ closeModal, open, fetchData }) => {
     if (
       formData.latitude !== 0 &&
       formData.longitude !== 0 &&
-      googleMapLink != null
+      googleMapLink !== ""
     ) {
       setIsFormDataReady(true);
     } else {
@@ -117,6 +116,16 @@ const AddSites = ({ closeModal, open, fetchData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      !formData.ar_name ||
+      !formData.en_name ||
+      !formData.branch ||
+      !googleMapLink
+    ) {
+      toast.error("يرجى ملء جميع الحقول المطلوبة", { pauseOnHover: false });
+      return;
+    }
 
     try {
       const token = Cookies.get("token");
@@ -137,15 +146,19 @@ const AddSites = ({ closeModal, open, fetchData }) => {
 
       const newLocation = response.data;
       console.log("Location added successfully:", newLocation);
-      setFormData(() => ({
+
+      setFormData({
         ar_name: "",
         en_name: "",
         max_distance: 0,
         latitude: 0,
         longitude: 0,
         branch: 0,
-      }));
+      });
       setGoogleMapLink("");
+
+      toast.success("تم الإنشاء بنجاح", { pauseOnHover: false });
+
       fetchData();
       closeModal();
     } catch (error) {
@@ -246,7 +259,7 @@ const AddSites = ({ closeModal, open, fetchData }) => {
                 label="رابط جوجل ماب"
                 name="googleMapLink"
                 placeholder="ادخل رابط جوجل ماب"
-                value={formData.googleMapLink}
+                value={googleMapLink}
                 onChange={(e) => setGoogleMapLink(e.target.value)}
                 onBlur={extractLatLng}
               />
@@ -291,6 +304,7 @@ const AddSites = ({ closeModal, open, fetchData }) => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
