@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { X } from "@phosphor-icons/react";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { ToastContainer, toast } from "react-toastify"; // استيراد toast
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FormText from "../../components/form/FormText";
 import FormNumber from "./../../components/form/FormNumber";
@@ -90,7 +90,8 @@ const AddSites = ({ closeModal, open, fetchData }) => {
         latitude: 0,
         longitude: 0,
       }));
-      console.error("Invalid Google Maps link format.");
+      setGoogleMapLink("");
+      toast.error("يرجى وضع لينك موقع صالح", { pauseOnHover: false });
     }
   }, [googleMapLink]);
 
@@ -304,7 +305,6 @@ const AddSites = ({ closeModal, open, fetchData }) => {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

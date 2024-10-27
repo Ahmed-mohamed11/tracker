@@ -11,6 +11,7 @@ import gsap from "gsap";
 import SitesTable from "./SitesTable";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { ToastContainer } from "react-toastify";
 
 // const PreviewProjects = lazy(() => import("./PreviewProjects"));
 
@@ -121,6 +122,7 @@ const Sites = ({ role }) => {
               )}
             </Suspense>
           </section>
+          <ToastContainer />
         </main>
       </div>
     </>
