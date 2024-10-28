@@ -76,8 +76,9 @@ const NavbarItem = ({
         {name}
         {subItems && (
           <div
-            className={`transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
-              }`}
+            className={`transform duration-300 ${
+              isOpen ? "rotate-180" : "rotate-0"
+            }`}
           >
             <CaretDown size={20} />
           </div>
@@ -129,10 +130,13 @@ export default function Navbar() {
     if (token && storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    if (!token || !storedUser) {
+    if (!token && !storedUser) {
+      navigate("/login");
+    } else if (!token || !storedUser) {
+      Cookies.remove("token");
+      localStorage.removeItem("user");
       navigate("/login");
     }
-
   }, [navigate]);
 
   useEffect(() => {
@@ -165,19 +169,11 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    // إزالة التوكن من الكوكيز
-    Cookies.remove("token", { path: "/" }); // حذف التوكن مع تحديد نفس المسار
+    Cookies.remove("token", { path: "/" });
     localStorage.removeItem("user");
 
-    // إعادة التوجيه إلى صفحة تسجيل الدخول بعد تسجيل الخروج
     navigate("/login");
   };
-
-
-
-
-
-
 
   const [userData, setUserData] = useState(null);
   useEffect(() => {
@@ -188,20 +184,21 @@ export default function Navbar() {
   }, []);
 
   const navigationAdmin = [
-    userData && userData.isAdmin && {
-      icon: <UserCircleGear size={25} />,
-      name: t("sideBar.admin"),
-      subItems: [
-        {
-          name: t("sideBar.companies"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
-        },
-        {
-          name: t("sideBar.plans"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
-        },
-      ],
-    },
+    userData &&
+      userData.isAdmin && {
+        icon: <UserCircleGear size={25} />,
+        name: t("sideBar.admin"),
+        subItems: [
+          {
+            name: t("sideBar.companies"),
+            link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
+          },
+          {
+            name: t("sideBar.plans"),
+            link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
+          },
+        ],
+      },
     {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
@@ -362,10 +359,11 @@ export default function Navbar() {
                   alt={userData.companyName}
                   className="w-10 h-10 border-2 border-orange-500 rounded-full"
                 />
-                <span className="text-sm font-semibold">{userData && userData.companyName}</span>
+                <span className="text-sm font-semibold">
+                  {userData && userData.companyName}
+                </span>
               </div>
             )}
-
           </div>
 
           {isUserMenuOpen && (

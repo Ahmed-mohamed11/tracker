@@ -15,11 +15,7 @@ export const I18nProvider = ({ children }) => {
     const browserLang = navigator.language.split("-")[0];
     const storedLang = localStorage.getItem("language");
 
-    if (storedLang && supportedLanguages.includes(storedLang)) {
-      setLanguage(storedLang);
-    } else if (supportedLanguages.includes(browserLang)) {
-      setLanguage(browserLang);
-    } else {
+    if (storedLang === "en" && supportedLanguages.includes(storedLang)) {
       setLanguage(defaultLanguage);
     }
   }, []);
