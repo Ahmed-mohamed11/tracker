@@ -1,4 +1,4 @@
-import { Check, Eye, PackagePlus, Play, Replace, X } from 'lucide-react';
+import { Check, Delete, Edit, Eye, PackagePlus, Play, Replace, Trash, X } from 'lucide-react';
 import { Fragment, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -7,28 +7,26 @@ import { FaArrowCircleDown, FaPlus } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Table from '../../../../components/Table';
+import EditPlaneForm from './EditPlane';
 // import ReviewRequest from './ReviewRequest';
 import * as XLSX from 'xlsx';
 
 
 const MySwal = withReactContent(Swal);
 
-const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest }) => {
+const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest, openEditForm }) => {
     return (
-        <div className="flex gap-4">
-            <button onClick={() => refuseRequest(row.id)} className="text-gray-500">
-                <Replace size={22} />
-            </button>
-            <button onClick={() => approveRequest(row.id)} className="text-gray-500">
-                <PackagePlus size={22} />
+        <div className="flex justify-center items-center gap-2">
+            <button onClick={() => openEditForm(row)} className="text-gray-500">
+                <Edit size={22} />
             </button>
         </div>
     );
 };
-
-const PlansTable = ({ openCreate }) => {
+const PlansTable = ({ openCreate, openEdit }) => {
     const [showReviewRequest, setShowReviewRequest] = useState(false);
     const [requestData, setRequestData] = useState(null);
+    const [EditPlane, setEditPlane] = useState(false);
     const [tableData, setTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -62,7 +60,6 @@ const PlansTable = ({ openCreate }) => {
             });
 
             const plans = response.data;
-
             setTableHeaders([
                 { key: 'name', label: 'اسم الخطة' },
                 { key: 'price', label: 'السعر' },
@@ -97,6 +94,15 @@ const PlansTable = ({ openCreate }) => {
             item.type.toLowerCase().includes(query)
         );
         setFilteredData(filtered);
+    };
+
+    // const openEditForm = (row) => {
+    //     setEditPlane(row);
+    //     setEditPlane(true);
+    // };
+
+    const openEditForm = (row) => {
+        openEdit(row); // Pass the row data to openEdit in the parent component
     };
 
     const openReviewRequest = (row) => {
@@ -147,6 +153,16 @@ const PlansTable = ({ openCreate }) => {
     };
 
 
+    const handleClientUpdated = (updatedPlan) => {
+        // تحديث الجدول ببيانات الخطة المعدلة
+        setTableData((prevData) => {
+            return prevData.map((plan) => (plan.id === updatedPlan.id ? updatedPlan : plan));
+        });
+        setFilteredData((prevData) => {
+            return prevData.map((plan) => (plan.id === updatedPlan.id ? updatedPlan : plan));
+        });
+    };
+
 
     useEffect(() => {
         fetchData();
@@ -165,25 +181,20 @@ const PlansTable = ({ openCreate }) => {
             </div>
 
             <div className="flex justify-between items-center mb-6 gap-14">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                     <div className="relative flex items-center justify-center">
                         <input
                             type="text"
                             placeholder="بحث"
                             value={searchQuery}
                             onChange={handleSearch}
-                            className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
+                            className="w-full bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
                         />
                         <div className="h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center">
                             <IoSearch size={20} />
                         </div>
                     </div>
-                    <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                        <option value="">حالة الطلب</option>
-                        <option value="pending">قيد الانتظار</option>
-                        <option value="approved">موافقة</option>
-                        <option value="rejected">مرفوض</option>
-                    </select>
+
                     <button
                         onClick={handleSaveToExcel}
                         className="w-1/2 bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
@@ -202,7 +213,7 @@ const PlansTable = ({ openCreate }) => {
                     <TableActions
                         openPreview={() => console.log('Preview function')}
                         row={row}
-                        approveRequest={approveRequest}
+                        openEditForm={openEditForm} approveRequest={approveRequest}
                         refuseRequest={refuseRequest}
                         openReviewRequest={openReviewRequest}
                     />
@@ -210,6 +221,12 @@ const PlansTable = ({ openCreate }) => {
                 currentPage={currentPage}
                 totalPages={Math.ceil(filteredData.length / itemsPerPage)}
                 setCurrentPage={setCurrentPage}
+            />
+            <EditPlaneForm
+                // show={showEditForm}
+                // onClose={() => setShowEditForm(false)}
+                // plan={selectedPlan}
+                handleClientUpdated={fetchData}
             />
         </div>
     );
