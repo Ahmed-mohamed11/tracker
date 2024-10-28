@@ -11,6 +11,7 @@ import gsap from "gsap";
 import SitesTable from "./SitesTable";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { ToastContainer } from "react-toastify";
 
 // const PreviewProjects = lazy(() => import("./PreviewProjects"));
 
@@ -76,6 +77,7 @@ const Sites = ({ role }) => {
 
       const locations = response.data;
       setData(locations);
+      console.log(locations);
     } catch (error) {
       console.error(
         "Error fetching locations:",
@@ -112,15 +114,15 @@ const Sites = ({ role }) => {
               )} */}
               {openEdit && (
                 <EditSite
-                closeModal={toggleOpenEditModal}
-                site={selectedSite}
-                fetchData={fetchData}
-                open={openEdit}
-              />
+                  closeModal={toggleOpenEditModal}
+                  site={selectedSite}
+                  fetchData={fetchData}
+                  open={openEdit}
+                />
               )}
-              
             </Suspense>
           </section>
+          <ToastContainer />
         </main>
       </div>
     </>

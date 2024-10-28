@@ -1,8 +1,9 @@
-"use client";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { X } from "@phosphor-icons/react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import FormText from "../../components/form/FormText";
 import FormNumber from "./../../components/form/FormNumber";
 import { useI18nContext } from "../../context/i18n-context";
@@ -25,6 +26,8 @@ const AddSites = ({ closeModal, open, fetchData }) => {
     branch: 0,
   });
 
+  const [isFormDataReady, setIsFormDataReady] = useState(false);
+  const [googleMapLink, setGoogleMapLink] = useState("");
   const [branchesList, setBranchesList] = useState([]);
   const mapRef = useRef();
 
@@ -43,8 +46,6 @@ const AddSites = ({ closeModal, open, fetchData }) => {
         }
       );
 
-      // console.log("Fetched branches data:", response.data);
-
       const transformedOptions = response.data.map((branch) => ({
         label: branch.branch_name,
         value: branch.id,
@@ -54,34 +55,78 @@ const AddSites = ({ closeModal, open, fetchData }) => {
     } catch (error) {
       console.error("Error fetching branches:", error);
     }
-    // console.log("hay",branchesList);
   };
 
   useEffect(() => {
     fetchBranches();
   }, []);
 
-  const center = [24.647017162630366, 46.66992187500001];
-
   const handleChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-    const newValue =
-      type === "number" && value < 0
-        ? 0
-        : type === "checkbox"
-        ? checked
-        : value;
-
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: newValue,
+      [name]: value,
     }));
   }, []);
+
+  const extractLatLng = useCallback(() => {
+    const match = googleMapLink.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (match) {
+      const lat = parseFloat(match[1]);
+      const lng = parseFloat(match[2]);
+
+      setFormData((prevData) => ({
+        ...prevData,
+        latitude: lat,
+        longitude: lng,
+      }));
+
+      if (mapRef.current) {
+        mapRef.current.setView([lat, lng], 10);
+      }
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        latitude: 0,
+        longitude: 0,
+      }));
+      setGoogleMapLink("");
+      toast.error("يرجى وضع لينك موقع صالح", { pauseOnHover: false });
+    }
+  }, [googleMapLink]);
+
+  useEffect(() => {
+    if (
+      formData.latitude !== 0 &&
+      formData.longitude !== 0 &&
+      googleMapLink !== ""
+    ) {
+      setIsFormDataReady(true);
+    } else {
+      setIsFormDataReady(false);
+    }
+  }, [formData, googleMapLink]);
+
+  useEffect(() => {
+    if (open && formData.latitude && formData.longitude && mapRef.current) {
+      mapRef.current.flyTo([formData.latitude, formData.longitude], 8);
+    }
+  }, [open, formData.latitude, formData.longitude]);
 
   const { t } = useI18nContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      !formData.ar_name ||
+      !formData.en_name ||
+      !formData.branch ||
+      !googleMapLink
+    ) {
+      toast.error("يرجى ملء جميع الحقول المطلوبة", { pauseOnHover: false });
+      return;
+    }
 
     try {
       const token = Cookies.get("token");
@@ -102,6 +147,19 @@ const AddSites = ({ closeModal, open, fetchData }) => {
 
       const newLocation = response.data;
       console.log("Location added successfully:", newLocation);
+
+      setFormData({
+        ar_name: "",
+        en_name: "",
+        max_distance: 0,
+        latitude: 0,
+        longitude: 0,
+        branch: 0,
+      });
+      setGoogleMapLink("");
+
+      toast.success("تم الإنشاء بنجاح", { pauseOnHover: false });
+
       fetchData();
       closeModal();
     } catch (error) {
@@ -112,22 +170,20 @@ const AddSites = ({ closeModal, open, fetchData }) => {
     }
   };
 
-  // خريطة لتسجيل النقاط
-  function MapEvents() {
+  const MapEvents = () => {
     const map = useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
-        console.log(e.latlng);
         setFormData((prevData) => ({
           ...prevData,
           latitude: lat,
           longitude: lng,
         }));
+        map.setView([lat, lng], map.getZoom());
       },
     });
-
     return null;
-  }
+  };
 
   return (
     <div
@@ -176,7 +232,6 @@ const AddSites = ({ closeModal, open, fetchData }) => {
                   placeholder="الاسم بالعربي"
                   value={formData.ar_name}
                   onChange={handleChange}
-                  className="w-full"
                 />
                 <FormText
                   label="الاسم بالانجليزي"
@@ -184,7 +239,6 @@ const AddSites = ({ closeModal, open, fetchData }) => {
                   name="en_name"
                   value={formData.en_name}
                   onChange={handleChange}
-                  className="w-full"
                 />
                 <FormSelect
                   label="الفرع"
@@ -200,37 +254,17 @@ const AddSites = ({ closeModal, open, fetchData }) => {
                   value={formData.max_distance}
                   onChange={handleChange}
                   min="0"
-                  className="w-full"
                 />
               </div>
-              {open && (
-                <MapContainer
-                  center={center}
-                  zoom={8}
-                  style={{ height: "300px", width: "100%" }}
-                  key={formData.latitude}
-                  whenCreated={(map) => (mapRef.current = map)}
-                >
-                  <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
-                  <MapEvents />
-                  {formData.latitude && formData.longitude && (
-                    <Marker position={[formData.latitude, formData.longitude]}>
-                      <Popup>
-                        Current location:{" "}
-                        <pre>
-                          {JSON.stringify(
-                            { lat: formData.latitude, lng: formData.longitude },
-                            null,
-                            2
-                          )}
-                        </pre>
-                      </Popup>
-                    </Marker>
-                  )}
-                </MapContainer>
-              )}
-
-              {open && isFormDataReady && !mapInitialized && (
+              <FormText
+                label="رابط جوجل ماب"
+                name="googleMapLink"
+                placeholder="ادخل رابط جوجل ماب"
+                value={googleMapLink}
+                onChange={(e) => setGoogleMapLink(e.target.value)}
+                onBlur={extractLatLng}
+              />
+              {open && isFormDataReady && (
                 <MapContainer
                   center={[formData.latitude, formData.longitude]}
                   zoom={8}
@@ -239,10 +273,11 @@ const AddSites = ({ closeModal, open, fetchData }) => {
                 >
                   <TileLayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
                   <MapEvents />
+
                   {formData.latitude && formData.longitude && (
                     <Marker position={[formData.latitude, formData.longitude]}>
                       <Popup>
-                        Current location:
+                        Current location:{" "}
                         <pre>
                           {JSON.stringify(
                             { lat: formData.latitude, lng: formData.longitude },
@@ -264,7 +299,7 @@ const AddSites = ({ closeModal, open, fetchData }) => {
                  hover:text-white hover:bg-themeColor-700 border-themeColor-700 transition flex items-center"
                 type="submit"
               >
-                {t("registrationForm.submitButton")}
+                اضف
               </button>
             </form>
           </div>

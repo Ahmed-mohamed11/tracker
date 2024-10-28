@@ -1,5 +1,5 @@
  
-function FormText({ label, name, value, placeholder, required, onChange }) {
+function FormText({ label, name, value, placeholder, required, onChange, onBlur, onInput }) {
   return (
     <div>
       <label
@@ -23,6 +23,8 @@ function FormText({ label, name, value, placeholder, required, onChange }) {
         placeholder={placeholder}
         required={required}
         onChange={onChange}
+        onBlur={onBlur}
+        onInput={onInput}
       />
     </div>
   );
