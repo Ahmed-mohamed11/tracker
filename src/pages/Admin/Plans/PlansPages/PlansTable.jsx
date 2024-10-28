@@ -7,7 +7,9 @@ import { FaArrowCircleDown, FaPlus } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Table from '../../../../components/Table';
-import ReviewRequest from './ReviewRequest';
+// import ReviewRequest from './ReviewRequest';
+import * as XLSX from 'xlsx';
+
 
 const MySwal = withReactContent(Swal);
 
@@ -33,6 +35,19 @@ const PlansTable = ({ openCreate }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
+
+
+    const handleSaveToExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Branches');
+
+        // Create a file name
+        const fileName = 'Plans_data.xlsx';
+
+        // Generate Excel file and trigger download
+        XLSX.writeFile(workbook, fileName);
+    };
 
     const fetchData = useCallback(async () => {
         try {
@@ -131,25 +146,7 @@ const PlansTable = ({ openCreate }) => {
         }
     };
 
-    const exportTableToExcel = () => {
-        const table = document.getElementById('table');
-        const rows = table.rows;
-        const csv = [];
-        for (let i = 0; i < rows.length; i++) {
-            const row = [];
-            for (let j = 0; j < rows[i].cells.length; j++) {
-                row.push(rows[i].cells[j].innerHTML);
-            }
-            csv.push(row.join(','));
-        }
-        const csvString = csv.join('\n');
-        const a = document.createElement('a');
-        a.href = 'data:attachment/csv,' + encodeURIComponent(csvString);
-        a.target = '_blank';
-        a.download = 'plans.csv';
-        document.body.appendChild(a);
-        a.click();
-    };
+
 
     useEffect(() => {
         fetchData();
@@ -188,7 +185,7 @@ const PlansTable = ({ openCreate }) => {
                         <option value="rejected">مرفوض</option>
                     </select>
                     <button
-                        onClick={exportTableToExcel}
+                        onClick={handleSaveToExcel}
                         className="w-1/2 bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
                     >
                         تصدير

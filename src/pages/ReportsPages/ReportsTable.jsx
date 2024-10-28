@@ -7,10 +7,9 @@ import { FaArrowCircleDown, FaPlus } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Table from '../../components/Table';
-import ReviewRequest from './ReviewRequest';
 import * as XLSX from 'xlsx';
 
-
+// import ReviewRequest from './Re  viewRequest';
 const MySwal = withReactContent(Swal);
 
 const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest }) => {
@@ -54,7 +53,7 @@ const TableUser = ({ row, openReviewRequest }) => {
     );
 };
 
-const EmployeeTable = ({ openCreate }) => {
+const ReportsTable = ({ openCreate }) => {
 
     const [showReviewRequest, setShowReviewRequest] = useState(false);
     const [requestData, setRequestData] = useState(null); // بيانات الطلب
@@ -65,14 +64,13 @@ const EmployeeTable = ({ openCreate }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
 
-
     const handleSaveToExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(filteredData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Branches');
 
         // Create a file name
-        const fileName = 'employees_register_data.xlsx';
+        const fileName = 'reports_data.xlsx';
 
         // Generate Excel file and trigger download
         XLSX.writeFile(workbook, fileName);
@@ -239,13 +237,15 @@ const EmployeeTable = ({ openCreate }) => {
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
             <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
-                <h2 className="text-2xl font-bold">طلبات تسجيل الموظفين</h2>
+                <h2 className="text-2xl font-bold">حركات التحضير</h2>
+                {/*
                 <button
                     className="flex border-2 items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
                     onClick={() => openCreate()}
                 >
                     <FaPlus className="h-6 w-6" />
                 </button>
+                */}
             </div>
 
             <div className="flex justify-between items-center mb-6 gap-14">
@@ -312,4 +312,4 @@ const EmployeeTable = ({ openCreate }) => {
 
 };
 
-export default EmployeeTable;
+export default ReportsTable;

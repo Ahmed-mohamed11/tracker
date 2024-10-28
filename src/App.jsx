@@ -3,6 +3,8 @@ import { Routes, Route, useLocation } from "react-router-dom";
 
 import "./App.css";
 import "./App.scss";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -44,7 +46,7 @@ function App() {
       className={`light`}
       dir={language === "ar" ? "rtl" : "rtl"}
     >
-      {!hideNavbar && <Navbar  />}
+      {!hideNavbar && <Navbar />}
 
       <div className="dark:bg-gray-900 bg-white overflow-x-hidden">
         <div className="h-screen w-full items-center justify-center bg-cover bg-no-repeat">

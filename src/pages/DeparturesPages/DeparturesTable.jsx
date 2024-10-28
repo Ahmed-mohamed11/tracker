@@ -4,7 +4,6 @@ import Cookies from 'js-cookie';
 import AddDepartures from './AddDepartures';
 import PreviewProjects from './PreviewProjects';
 import Table from '../../components/Table';
-
 import { FaPlus } from "react-icons/fa";
 import FormText from "../../components/form/FormText";
 import FormSelect from '../../components/form/FormSelect';

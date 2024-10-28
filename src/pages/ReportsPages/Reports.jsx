@@ -8,15 +8,14 @@ import {
     useMemo,
 } from "react";
 import gsap from "gsap";
-import PlansTable from "./PlansTable";
-import { ToastContainer } from "react-toastify";
+import ReportsTable from "./ReportsTable";
 
 // const PreviewProjects = lazy(() => import("./PreviewProjects"));
 
 const PreviewProject = lazy(() => import("./PreviewProjects"));
-const AddPlans = lazy(() => import("./AddPlans"));
+const RegisterEmployee = lazy(() => import("./RegisterEmployee"));
 
-const Plans = ({ role }) => {
+const Reports = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
 
@@ -56,14 +55,15 @@ const Plans = ({ role }) => {
                 <main className="-mt-5 flex w-full flex-col lg:flex-row">
                     <section className="flex-1">
 
-
-                        <PlansTable
+                        <ReportsTable
                             openPreview={toggleOpenPreviewModal}
                             openCreate={toggleOpenCreateModal}
                         />
+
+                        {/*
                         <Suspense fallback={<div>Loading...</div>}>
                             {openCreate && (
-                                <AddPlans
+                                <RegisterEmployee
                                     closeModal={toggleOpenCreateModal}
                                     modal={openCreate}
                                     role={role}
@@ -73,12 +73,12 @@ const Plans = ({ role }) => {
                                 <PreviewProject closeModal={toggleOpenPreviewModal} />
                             )}
                         </Suspense>
+                        */}
                     </section>
-                    <ToastContainer />
                 </main>
             </div>
         </>
     );
 };
 
-export default Plans;
+export default Reports;

@@ -4,18 +4,18 @@ import { X } from "@phosphor-icons/react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../../../components/form/FormText";
-import FormSelect from "../../../../components/form/FormSelect";
+import FormNumber from "../../../../components/form/FormNumber";
+import { toast } from 'react-toastify';
 
 const AddPlans = ({ closeModal, modal, onClientAdded }) => {
     const [formData, setFormData] = useState({
         name: "",
         price: "",
-        type: "monthly", // القيمة الافتراضية
-        max_branches: 3, // القيمة الافتراضية
-        max_employees: 10 // القيمة الافتراضية
+        type: "monthly",
+        max_branches: 3,
+        max_employees: 10
     });
 
-    const [entities, setEntities] = useState([]); // الحالة لتخزين الجهات
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
@@ -23,55 +23,30 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
         setFormData(prevData => ({
             ...prevData,
             [name]: (name === 'max_branches' || name === 'max_employees')
-                ? (value === '' ? '' : parseInt(value, 10)) // إذا كانت القيمة فارغة، لا نحاول تحويلها
+                ? (value === '' ? 0 : parseInt(value, 10))
                 : value,
         }));
     }, []);
-
-
-    // get entity type
-    const getEntities = useCallback(async () => {
-        try {
-            const response = await axios.get('https://bio.skyrsys.com/api/entity/', {
-                headers: {
-                    'Authorization': `Token ${Cookies.get('token')}`,
-                },
-            });
-            setEntities(response.data);
-        } catch (error) {
-            console.error('Error getting entities:', error.response?.data || error.message);
-            setEntities([]);
-        }
-    }, []);
-
-    useEffect(() => {
-        getEntities();
-    }, [getEntities]);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             const token = Cookies.get('token');
             if (!token) {
-                console.error('لم يتم العثور على الرمز في الكوكيز');
+                console.error('Token not found in cookies');
                 return;
             }
 
             const response = await axios.post('https://bio.skyrsys.com/api/plan/plans/', formData, {
-                headers: {
-                    'Authorization': `Token ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Authorization': `Token ${token}` },
             });
 
-            const newPlan = response.data;
-            console.log('تمت إضافة الخطة بنجاح:', newPlan);
-            onClientAdded(newPlan);  // Call the callback to add the new plan
+            toast.success('تمت إضافة الخطة بنجاح');
             closeModal();
-
+            onClientAdded(response.data);
         } catch (error) {
-            console.error('خطأ في إضافة الخطة:', error.response?.data || error.message);
+            toast.error('خطأ في إضافة الخطة');
+            console.error('Error adding plan:', error.response?.data || error.message);
         }
     };
 
@@ -96,7 +71,7 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
             >
                 <div className="relative p-4 bg-white dark:bg-gray-800 sm:p-5">
                     <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600 shadow-md shadow-gray-300/10">
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">اضافة خطة جديدة</h2>
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">إضافة خطة جديدة</h2>
                         <button
                             type="button"
                             onClick={closeModal}
@@ -126,9 +101,8 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
                                     onChange={handleChange}
                                 />
                             </div>
-
                             <div className="grid grid-cols-2 gap-5 mb-3">
-                                <FormText
+                                <FormNumber
                                     label="عدد الفروع القصوى"
                                     type="number"
                                     name="max_branches"
@@ -136,7 +110,7 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
                                     value={formData.max_branches}
                                     onChange={handleChange}
                                 />
-                                <FormText
+                                <FormNumber
                                     label="عدد الموظفين الأقصى"
                                     type="number"
                                     name="max_employees"
@@ -145,7 +119,6 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
                                     onChange={handleChange}
                                 />
                             </div>
-
                             <button
                                 className="bg-themeColor-600 text-white px-4 py-2 rounded-md hover:bg-themeColor-700 transition duration-200 flex items-center"
                                 type="submit"

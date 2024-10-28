@@ -77,6 +77,9 @@ const ar = {
     departures: "  المغادرة",
     Administrative: "  الهيكل الاداري",
     Entities: " الجهات",
+    reports: "التقارير",
+    Preparation: " التحضير",
+    commitments: " الالتزامات ",
     branches: "الفروع",
     Employee: "الموظفين", // Employee
     clients: "العملاء",
@@ -462,7 +465,6 @@ const ar = {
     arName: "الاسم بالعربي",
     enName: "الاسم بالانجليزي",
     edit: "تعديل",
-
   },
 };
 

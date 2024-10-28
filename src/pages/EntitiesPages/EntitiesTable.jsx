@@ -6,6 +6,7 @@ import { FaPlus } from "react-icons/fa"; // أيقونة إضافة
 import { DotsThreeVertical, MagnifyingGlass, Network, Plus, Trash } from '@phosphor-icons/react';
 import { BiEdit } from 'react-icons/bi';
 
+
 const EntitiesTable = ({ openCreate }) => {
     const [tableData, setTableData] = useState([]);
     const [isFormOpen, setIsFormOpen] = useState(false); // حالة إدارة إظهار الفورم

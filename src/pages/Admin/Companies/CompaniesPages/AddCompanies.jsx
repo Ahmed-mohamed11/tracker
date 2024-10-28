@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import FormText from "../../../../components/form/FormText";
 import FormSelect from "../../../../components/form/FormSelect";
 import FormPic from "../../../../components/form/FormPic";
+import { toast } from 'react-toastify';
 
 const AddCompanies = ({ closeModal, modal }) => {
     const [formData, setFormData] = useState({
@@ -20,29 +21,21 @@ const AddCompanies = ({ closeModal, modal }) => {
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
-
-        // Check if the field is "plan" which is a numeric field, otherwise just update with the value as is
         setFormData(prevData => ({
             ...prevData,
             [name]: name === 'plan' ? parseInt(value, 10) : value,
         }));
     }, []);
 
-
     const handleFileChange = useCallback((e) => {
         const file = e.target.files[0];
-        setFormData(prevData => ({
-            ...prevData,
-            company_logo: file
-        }));
+        setFormData(prevData => ({ ...prevData, company_logo: file }));
     }, []);
 
     const getPlans = useCallback(async () => {
         try {
             const response = await axios.get('https://bio.skyrsys.com/api/plan/plans/', {
-                headers: {
-                    'Authorization': `Token ${Cookies.get('token')}`,
-                },
+                headers: { 'Authorization': `Token ${Cookies.get('token')}` },
             });
             setPlans(response.data);
         } catch (error) {
@@ -66,23 +59,19 @@ const AddCompanies = ({ closeModal, modal }) => {
             }
 
             const data = new FormData();
-            data.append('email', formData.email);
-            data.append('company_name', formData.company_name);
-            data.append('company_code', formData.company_code);
-            if (formData.company_logo) {
-                data.append('company_logo', formData.company_logo);
-            }
-            data.append('plan', formData.plan);
-
-            const response = await axios.post('https://bio.skyrsys.com/api/superadmin/companies/', data, {
-                headers: {
-                    'Authorization': `Token ${token}`,
-                },
+            Object.entries(formData).forEach(([key, value]) => {
+                if (value) data.append(key, value);
             });
 
+            const response = await axios.post('https://bio.skyrsys.com/api/superadmin/companies/', data, {
+                headers: { 'Authorization': `Token ${token}` },
+            });
+
+            toast.success('تمت إضافة طلب التسجيل بنجاح');
             console.log('تمت إضافة طلب التسجيل بنجاح:', response.data);
             closeModal();
         } catch (error) {
+            toast.error('خطأ في إضافة طلب التسجيل');
             console.error('خطأ في إضافة طلب التسجيل:', error.response?.data || error.message);
         }
     };
@@ -164,7 +153,7 @@ const AddCompanies = ({ closeModal, modal }) => {
                                         label: `${plan.type} - ${plan.name}`,
                                     }))}
                                     onChange={handleChange}
-                                    value={formData.plan_id}
+                                    value={formData.plan}
                                 />
                             </div>
 

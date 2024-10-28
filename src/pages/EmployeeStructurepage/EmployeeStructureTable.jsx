@@ -7,6 +7,8 @@ import { FaArrowCircleDown, FaPlus } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Table from '../../components/Table';
+import * as XLSX from 'xlsx';
+
 
 const MySwal = withReactContent(Swal);
 
@@ -31,6 +33,18 @@ const EmployeeStructureTable = ({ openCreate }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
+
+    const handleSaveToExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Branches');
+
+        // Create a file name
+        const fileName = 'employees_data.xlsx';
+
+        // Generate Excel file and trigger download
+        XLSX.writeFile(workbook, fileName);
+    };
 
     const fetchData = useCallback(async () => {
         try {
@@ -199,7 +213,7 @@ const EmployeeStructureTable = ({ openCreate }) => {
                     </div>
 
                     <button
-                        onClick={() => console.log('Export function')}
+                        onClick={handleSaveToExcel}
                         className="w-1/3 bg-themeColor-500 text-white text-center hover:bg-themeColor-600 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
                     >
                         تصدير

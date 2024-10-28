@@ -15,7 +15,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
 import Cookies from "js-cookie"; // استيراد مكتبة js-cookie
-import { ListChecks } from "lucide-react";
+import { Flag, ListChecks } from "lucide-react";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -241,6 +241,22 @@ export default function Navbar() {
       name: t("sideBar.Shifts"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/shifts`,
     },
+    {
+      icon: <Flag size={25} />,
+      name: t("sideBar.reports"),
+      subItems: [
+        {
+          name: t("sideBar.Preparation"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/reports`,
+        },
+
+        {
+          name: t("sideBar.commitments"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
+        },
+      ],
+    },
+
     {
       icon: <Gear size={25} />,
       name: t("sideBar.setting"),
