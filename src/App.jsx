@@ -44,7 +44,7 @@ function App() {
   return (
     <div
       className={`light`}
-      dir={language === "ar" ? "rtl" : "rtl"}
+      dir={"rtl"}
     >
       {!hideNavbar && <Navbar />}
 

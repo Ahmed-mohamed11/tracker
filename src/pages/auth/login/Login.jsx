@@ -76,16 +76,15 @@ export default function Login() {
         "user",
         JSON.stringify({
           email: data.company.email,
-          isAdmin: data.is_admin, // حالة الأدمن
-          companyName: data.company.company_name, // اسم الشركة
-          companyLogo: data.company.company_logo, // شعار الشركة
-          companyCode: data.company.company_code, // كود الشركة
+          isAdmin: data.is_admin,
+          companyName: data.company.company_name, 
+          companyLogo: data.company.company_logo,
+          companyCode: data.company.company_code,
         })
       );
 
       setLoading(false);
 
-      // توجيه المستخدم إلى لوحة التحكم
       navigate(`${import.meta.env.VITE_PUBLIC_URL}/`);
     } catch (error) {
       console.error("Login Error:", error);
@@ -98,11 +97,12 @@ export default function Login() {
     }
   };
 
-  // التحقق من وجود token لتحديد ما إذا كان المستخدم قد سجل الدخول بالفعل
   useEffect(() => {
-    const token = Cookies.get("token"); // استرجاع token من الكوكيز
+    const token = Cookies.get("token");
     if (token) {
-      navigate(`${import.meta.env.VITE_PUBLIC_URL}/`); // توجيه إذا كان المستخدم مسجلاً الدخول
+      navigate(`${import.meta.env.VITE_PUBLIC_URL}/`);
+    } else {
+      Cookies.remove("token");
     }
   }, [navigate]);
 
