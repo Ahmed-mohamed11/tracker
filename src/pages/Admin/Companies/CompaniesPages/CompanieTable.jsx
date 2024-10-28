@@ -30,7 +30,7 @@ const TableActions = ({ changePlan, row, approveRequest }) => (
     </div>
 );
 
-const CompaniesTable = ({ openCreate }) => {
+const CompaniesTable = ({ openCreate, refreshData }) => {
     const [showReviewRequest, setShowReviewRequest] = useState(false);
     const [requestData, setRequestData] = useState(null);
     const [tableData, setTableData] = useState([]);
@@ -154,7 +154,8 @@ const CompaniesTable = ({ openCreate }) => {
 
     useEffect(() => {
         fetchData();
-    }, [fetchData]);
+    }, [fetchData, refreshData]); // Add refreshData as a dependency
+
 
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl px-4 w-full mx-auto">

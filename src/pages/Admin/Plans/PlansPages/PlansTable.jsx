@@ -23,7 +23,7 @@ const TableActions = ({ row, approveRequest, refuseRequest, openReviewRequest, o
         </div>
     );
 };
-const PlansTable = ({ openCreate, openEdit }) => {
+const PlansTable = ({ openCreate, openEdit, refreshData }) => {
     const [showReviewRequest, setShowReviewRequest] = useState(false);
     const [requestData, setRequestData] = useState(null);
     const [EditPlane, setEditPlane] = useState(false);
@@ -153,20 +153,9 @@ const PlansTable = ({ openCreate, openEdit }) => {
     };
 
 
-    const handleClientUpdated = (updatedPlan) => {
-        // تحديث الجدول ببيانات الخطة المعدلة
-        setTableData((prevData) => {
-            return prevData.map((plan) => (plan.id === updatedPlan.id ? updatedPlan : plan));
-        });
-        setFilteredData((prevData) => {
-            return prevData.map((plan) => (plan.id === updatedPlan.id ? updatedPlan : plan));
-        });
-    };
-
-
     useEffect(() => {
         fetchData();
-    }, [fetchData]);
+    }, [fetchData, refreshData]);
 
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">

@@ -8,7 +8,7 @@ import FormNumber from "../../../../components/form/FormNumber";
 import FormSelect from "../../../../components/form/FormSelect";
 import { toast } from 'react-toastify';
 
-const EditPlane = ({ closeModal, modal, onClientUpdated, planId }) => {
+const EditPlane = ({ closeModal, modal, onPlanUpdated, planId }) => {
     const [formData, setFormData] = useState({
         name: '',
         price: '',
@@ -59,11 +59,11 @@ const EditPlane = ({ closeModal, modal, onClientUpdated, planId }) => {
             });
 
             toast.success('تم تحديث الخطة بنجاح');
+            onPlanUpdated(); // تحديث الجدول ببيانات الخطة المعدلة
             closeModal();
-            onClientUpdated(response.data); // تحديث الجدول ببيانات الخطة المعدلة
         } catch (error) {
-            toast.error('خطأ في تحديث الخطة');
             console.error('Error updating plan:', error.response?.data || error.message);
+            toast.error('خطأ في تحديث الخطة');
         }
     };
 

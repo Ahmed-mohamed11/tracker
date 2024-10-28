@@ -8,7 +8,7 @@ import FormSelect from "../../../../components/form/FormSelect";
 import FormPic from "../../../../components/form/FormPic";
 import { toast } from 'react-toastify';
 
-const AddCompanies = ({ closeModal, modal }) => {
+const AddCompanies = ({ closeModal, modal, onAddCompany }) => {
     const [formData, setFormData] = useState({
         email: "",
         company_code: "",
@@ -57,7 +57,6 @@ const AddCompanies = ({ closeModal, modal }) => {
                 console.error('لم يتم العثور على الرمز في الكوكيز');
                 return;
             }
-
             const data = new FormData();
             Object.entries(formData).forEach(([key, value]) => {
                 if (value) data.append(key, value);
@@ -66,15 +65,16 @@ const AddCompanies = ({ closeModal, modal }) => {
             const response = await axios.post('https://bio.skyrsys.com/api/superadmin/companies/', data, {
                 headers: { 'Authorization': `Token ${token}` },
             });
-
             toast.success('تمت إضافة طلب التسجيل بنجاح');
             console.log('تمت إضافة طلب التسجيل بنجاح:', response.data);
+            onAddCompany(); // Call the function to refresh data
             closeModal();
         } catch (error) {
             toast.error('خطأ في إضافة طلب التسجيل');
             console.error('خطأ في إضافة طلب التسجيل:', error.response?.data || error.message);
         }
     };
+
 
     return (
         <div

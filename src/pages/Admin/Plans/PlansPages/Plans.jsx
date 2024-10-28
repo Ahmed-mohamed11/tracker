@@ -21,6 +21,8 @@ const Plans = ({ role }) => {
     const [openEdit, setOpenEdit] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [plansData, setPlansData] = useState([]); // لتخزين بيانات الخطط وعرضها في الجدول
+    const [refreshData, setRefreshData] = useState(false);
+
 
     const toggleOpenCreateModal = useCallback(
         () => setOpenCreate((prev) => !prev),
@@ -39,6 +41,20 @@ const Plans = ({ role }) => {
         []
     );
 
+
+
+    const handlePlanUpdated = (updatedPlan) => {
+        setPlansData((prevData) =>
+            prevData.map((plan) => (plan.id === updatedPlan.id ? updatedPlan : plan))
+        );
+        setOpenEdit(false); // إغلاق نافذة التعديل بعد تحديث البيانات
+        setRefreshData(prev => !prev);
+    };
+
+    const handleAddPlan = () => {
+        setRefreshData(prev => !prev); // تحديث refreshData عند إضافة شركة جديدة
+    };
+
     // دالة لجلب البيانات من الخادم
     const fetchPlansData = useCallback(async () => {
         try {
@@ -49,39 +65,16 @@ const Plans = ({ role }) => {
         }
     }, []);
 
+
+
     // جلب البيانات عند تحميل الصفحة
     useEffect(() => {
         fetchPlansData();
     }, [fetchPlansData]);
 
     // تحديث الجدول بعد التعديل على الخطة
-    const handleClientUpdated = (updatedPlan) => {
-        setPlansData((prevData) =>
-            prevData.map((plan) => (plan.id === updatedPlan.id ? updatedPlan : plan))
-        );
-        setOpenEdit(false); // إغلاق نافذة التعديل بعد تحديث البيانات
-    };
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const ctx = gsap.context(() => {
-                gsap.fromTo(
-                    ".chart-container",
-                    { opacity: 0, y: 50 },
-                    { opacity: 1, y: 0, duration: 1, stagger: 0.2 }
-                );
-            });
 
-            return () => ctx.revert();
-        }
-    }, []);
-
-    const chartSection = useMemo(
-        () => (
-            <div className="flex flex-col flex-wrap items-center justify-between gap-4 md:flex-row lg:flex-row xl:flex-row"></div>
-        ),
-        []
-    );
 
     return (
         <>
@@ -93,6 +86,8 @@ const Plans = ({ role }) => {
                             openPreview={toggleOpenPreviewModal}
                             openCreate={toggleOpenCreateModal}
                             openEdit={toggleOpenEditModal} // تمرير toggleOpenEditModal كخاصية
+                            refreshData={refreshData} // تمرير refreshData هنا
+
                         />
 
                         <Suspense fallback={<div>Loading...</div>}>
@@ -101,7 +96,7 @@ const Plans = ({ role }) => {
                                     closeModal={toggleOpenCreateModal}
                                     modal={openCreate}
                                     role={role}
-                                    onClientUpdated={fetchPlansData} // تحديث الجدول بعد إضافة خطة جديدة
+                                    onAddPlan={handleAddPlan} // تمرير دالة handleAddPlan
                                 />
                             )}
                             {openPreview && (
@@ -114,7 +109,7 @@ const Plans = ({ role }) => {
                                     modal={openEdit}
                                     planId={selectedPlan.id}
                                     planData={selectedPlan}
-                                    onClientUpdated={handleClientUpdated}
+                                    onPlanUpdated={handlePlanUpdated}
                                 />
                             )}
                         </Suspense>

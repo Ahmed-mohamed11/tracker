@@ -7,7 +7,7 @@ import FormText from "../../../../components/form/FormText";
 import FormNumber from "../../../../components/form/FormNumber";
 import { toast } from 'react-toastify';
 
-const AddPlans = ({ closeModal, modal, onClientAdded }) => {
+const AddPlans = ({ closeModal, modal, onAddPlan }) => {
     const [formData, setFormData] = useState({
         name: "",
         price: "",
@@ -43,7 +43,7 @@ const AddPlans = ({ closeModal, modal, onClientAdded }) => {
 
             toast.success('تمت إضافة الخطة بنجاح');
             closeModal();
-            onClientAdded(response.data);
+            onAddPlan(response.data);
         } catch (error) {
             toast.error('خطأ في إضافة الخطة');
             console.error('Error adding plan:', error.response?.data || error.message);

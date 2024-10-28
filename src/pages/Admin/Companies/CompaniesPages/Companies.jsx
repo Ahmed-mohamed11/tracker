@@ -11,27 +11,19 @@ const AddCompanies = lazy(() => import("./AddCompanies"));
 const Companies = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
+    const [refreshData, setRefreshData] = useState(false);
 
     const toggleOpenCreateModal = useCallback(() => setOpenCreate((prev) => !prev), []);
     const toggleOpenPreviewModal = useCallback(() => setOpenPreview((prev) => !prev), []);
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const ctx = gsap.context(() => {
-                gsap.fromTo(
-                    ".chart-container",
-                    { opacity: 0, y: 50 },
-                    { opacity: 1, y: 0, duration: 1, stagger: 0.2 }
-                );
-            });
+    // Function to be called when a new company is added
+    // const handleDataRefresh = () => {
+    //     setRefreshData(prev => !prev); // Toggle refresh state
+    // };
 
-            return () => ctx.revert();
-        }
-    }, []);
-
-    const chartSection = useMemo(() => (
-        <div className="flex flex-col flex-wrap items-center justify-between gap-4 md:flex-row lg:flex-row xl:flex-row"></div>
-    ), []);
+    const handleAddCompany = () => {
+        setRefreshData(prev => !prev); // تحديث refreshData عند إضافة شركة جديدة
+    };
 
     return (
         <div className="flex items-center">
@@ -40,6 +32,7 @@ const Companies = ({ role }) => {
                     <CompaniesTable
                         openPreview={toggleOpenPreviewModal}
                         openCreate={toggleOpenCreateModal}
+                        refreshData={refreshData} // تمرير refreshData هنا
                     />
                     <Suspense fallback={<div>Loading...</div>}>
                         {openCreate && (
@@ -47,6 +40,7 @@ const Companies = ({ role }) => {
                                 closeModal={toggleOpenCreateModal}
                                 modal={openCreate}
                                 role={role}
+                                onAddCompany={handleAddCompany} // تمرير دالة handleAddCompany
                             />
                         )}
                         {openPreview && (
@@ -59,5 +53,6 @@ const Companies = ({ role }) => {
         </div>
     );
 };
+
 
 export default Companies;
