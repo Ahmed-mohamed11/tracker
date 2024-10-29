@@ -5,8 +5,9 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import FormText from "../../components/form/FormText";
 import FormSelect from "../../components/form/FormSelect";
+import { toast } from 'react-toastify';
 
-const AddEmployee = ({ closeModal, modal, handleSubmit}) => {
+const AddEmployee = ({ closeModal, modal, onAddEmployee }) => {
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -18,7 +19,7 @@ const AddEmployee = ({ closeModal, modal, handleSubmit}) => {
         entity: 1,
     });
 
-    const [entities, setEntities] = useState([]);
+    const [entities, setEntities] = useState([]); // الحالة لتخزين الجهات
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
@@ -47,6 +48,35 @@ const AddEmployee = ({ closeModal, modal, handleSubmit}) => {
     useEffect(() => {
         getEntities();
     }, [getEntities]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const token = Cookies.get('token');
+            if (!token) {
+                console.error('لم يتم العثور على الرمز في الكوكيز');
+                return;
+            }
+
+            const response = await axios.post('https://bio.skyrsys.com/api/registration-requests/', formData, {
+                headers: {
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            });
+            toast.success('تمت إضافة طلب التسجيل بنجاح');
+            onAddEmployee(response.data);
+            const newRegistration = response.data;
+            console.log('تمت إضافة طلب التسجيل بنجاح:', newRegistration);
+            // onClientAdded(newRegistration);  // Call the callback to add the new client
+            closeModal();
+
+        } catch (error) {
+            toast.error('خطأ في أضافة طلب التسجيل');
+            console.error('خطأ في إضافة طلب التسجيل:', error.response?.data || error.message);
+        }
+    };
 
     return (
         <div
@@ -80,7 +110,7 @@ const AddEmployee = ({ closeModal, modal, handleSubmit}) => {
                         </button>
                     </div>
                     <div className="main-content-wrap mt-5" >
-                        <form className="form-add-product text-right" onSubmit={(e) => handleSubmit(e, formData)} >
+                        <form className="form-add-product text-right" onSubmit={handleSubmit} >
                             <div className="grid grid-cols-2 gap-5 mb-3">
                                 <FormText
                                     label="الاسم الأول"

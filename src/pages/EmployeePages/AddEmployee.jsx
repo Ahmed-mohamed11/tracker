@@ -188,4 +188,3 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
         </div>
     );
 }
-
