@@ -6,8 +6,10 @@ import FormText from "../../components/form/FormText";
 import { useI18nContext } from "../../context/i18n-context";
 import Select from 'react-select';
 import FormSelect from "../../components/form/FormSelect";
+import { toast } from "react-toastify";
 
-const AddEntities = ({ closeModal, modal, onClientAdded }) => {
+
+const AddEntities = ({ closeModal, modal, onAddEntity }) => {
     const [formData, setFormData] = useState({
         ar_name: "",
         en_name: "",
@@ -83,13 +85,14 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
                 },
             });
             closeModal();
-
+            toast.success('تمت إضافة الجهة بنجاح');
             const newEntity = response.data;
             console.log('Entity added successfully:', newEntity);
-            onClientAdded(newEntity);
+            onAddEntity(newEntity);
 
 
         } catch (error) {
+            toast.error('خطاء في إضافة الجهة');
             console.error('Error adding entity:', error.response?.data || error.message);
         }
     };

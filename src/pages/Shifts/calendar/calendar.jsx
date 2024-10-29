@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ShiftForm from './AddShift';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { ToastContainer } from 'react-toastify';
 
 const daysOfWeek = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 const months = [
@@ -16,11 +17,14 @@ export default function Calendar() {
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedData, setSelectedData] = useState({});
     const [daysData, setDaysData] = useState([]);
+    const [refreshData, setRefreshData] = useState(false);
 
-    useEffect(() => {
-        setCurrentDate(new Date());
-        fetchData();
-    }, []);
+
+    const handleAddShiftEmployee = () => {
+        setRefreshData(prev => !prev);
+    };
+
+
 
     const fetchData = async () => {
         const token = Cookies.get('token');
@@ -38,6 +42,10 @@ export default function Calendar() {
         }
     };
 
+    useEffect(() => {
+        setCurrentDate(new Date());
+        fetchData();
+    }, [refreshData]);
     const getDaysInMonth = (date) => {
         const year = date.getFullYear();
         const month = date.getMonth();
@@ -128,7 +136,9 @@ export default function Calendar() {
                         </div>
                     ))}
                     {renderDays()}
+
                 </div>
+                <ToastContainer />
             </div>
 
             {showForm && (
@@ -143,6 +153,7 @@ export default function Calendar() {
                             handleCancel={() => setShowForm(false)}
                             selectedDate={selectedDay}
                             selectedData={selectedData}
+                            onAddShift={handleAddShiftEmployee}
                         />
                     </div>
                 </div>

@@ -20,13 +20,13 @@ const TableActions = ({
 }) => {
   return (
     <div className="flex gap-2">
-      <button onClick={() => refuseRequest(row.id)} className="text-gray-500">
+      <button onClick={() => refuseRequest(row.id)} className="p-1 rounded-full bg-primary-100 text-primary-600 hover:bg-primary-200" >
         <X size={22} />
       </button>
-      <button onClick={() => approveRequest(row.id)} className="text-gray-500">
+      <button onClick={() => approveRequest(row.id)} className="p-1 rounded-full bg-themeColor-100 text-themeColor-600 hover:bg-themeColor-200">
         <Check size={22} />
       </button>
-    </div>
+    </div >
   );
 };
 
@@ -117,7 +117,7 @@ const EmployeeTable = ({ openCreate, data }) => {
           error.response?.data || error.message
         );
       }
-    } 
+    }
   }, [data]);
 
   const handleSearch = (event) => {
@@ -149,7 +149,6 @@ const EmployeeTable = ({ openCreate, data }) => {
         console.error("No token found in cookies");
         return;
       }
-
       const response = await axios.post(
         `https://bio.skyrsys.com/api/registration-requests/${id}/approve/`,
         {},

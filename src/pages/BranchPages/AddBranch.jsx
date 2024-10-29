@@ -39,10 +39,9 @@ const AddBranch = ({ closeModal, modal, onAddBranch }) => {
                     },
                 }
             );
-            closeModal();
             toast.success("تمت إضافة الخطة بنجاح");
-
             onAddBranch(response.data); // Use the actual response data
+            closeModal();
         } catch (error) {
             toast.error("حدث خطأ أثناء إضافة الفرع");
             console.error(

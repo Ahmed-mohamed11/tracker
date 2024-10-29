@@ -225,14 +225,14 @@ const EmployeeStructureTable = ({ openCreate }) => {
             <Table
                 data={filteredData}
                 headers={tableHeaders}
-                actions={(row) => (
-                    <TableActions
-                        row={row}
-                        deleteEmployee={deleteEmployee}
-                        openEditForm={openEditForm}
-                        openReviewRequest={openReviewRequest}
-                    />
-                )}
+                // actions={(row) => (
+                //     <TableActions
+                //         row={row}
+                //         deleteEmployee={deleteEmployee}
+                //         openEditForm={openEditForm}
+                //         openReviewRequest={openReviewRequest}
+                //     />
+                // )}
                 itemsPerPage={itemsPerPage}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}

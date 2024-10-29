@@ -9,6 +9,8 @@ import {
 } from "react";
 import gsap from "gsap";
 import EntitiesTable from "./EntitiesTable";
+import { ToastContainer } from "react-toastify";
+
 
 const PreviewProject = lazy(() => import("./PreviewProjects"));
 const AddEntities = lazy(() => import("./AddEntities"));
@@ -16,6 +18,8 @@ const AddEntities = lazy(() => import("./AddEntities"));
 const Entities = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
+    const [refreshData, setRefreshData] = useState(false);
+
 
     const toggleOpenCreateModal = useCallback(
         () => setOpenCreate((prev) => !prev),
@@ -27,26 +31,13 @@ const Entities = ({ role }) => {
         [],
     );
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const ctx = gsap.context(() => {
-                gsap.fromTo(
-                    ".chart-container",
-                    { opacity: 0, y: 50 },
-                    { opacity: 1, y: 0, duration: 1, stagger: 0.2 },
-                );
-            });
 
-            return () => ctx.revert();
-        }
-    }, []);
+    const handleAddEntity = () => {
+        console.log('handleAddEntity', handleAddEntity);
+        setRefreshData(prev => !prev); // تحديث refreshData عند إضافة شركة جديدة
+    };
 
-    const chartSection = useMemo(
-        () => (
-            <div className="flex flex-col flex-wrap items-center justify-between gap-4 md:flex-row lg:flex-row xl:flex-row"></div>
-        ),
-        [],
-    );
+
 
     return (
         <>
@@ -55,7 +46,9 @@ const Entities = ({ role }) => {
                     <section className="flex-1">
 
 
-                        <EntitiesTable openCreate={toggleOpenCreateModal} />
+                        <EntitiesTable
+                            openCreate={toggleOpenCreateModal}
+                            refreshData={refreshData} />
                         {openCreate && <AddEntities closeModal={toggleOpenCreateModal} />}
 
                         <Suspense fallback={<div>Loading...</div>}>
@@ -64,6 +57,7 @@ const Entities = ({ role }) => {
                                     closeModal={toggleOpenCreateModal}
                                     modal={openCreate}
                                     role={role}
+                                    onAddEntity={handleAddEntity} // تمرير دالة handleAddCompany
                                 />
                             )}
                             {openPreview && (
@@ -71,6 +65,7 @@ const Entities = ({ role }) => {
                             )}
                         </Suspense>
                     </section>
+                    <ToastContainer />
                 </main>
             </div>
         </>

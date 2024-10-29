@@ -3,8 +3,9 @@ import { Trash, X, UserPlus } from "lucide-react";
 import axios from "axios"; // استيراد مكتبة Axios
 import Cookies from "js-cookie";
 import AddEmployeeForm from "../../EmployeePages/AddEmployee";
+import { toast } from "react-toastify";
 
-export default function ShiftForm({ handleSave, handleCancel, selectedDate, selectedData }) {
+export default function ShiftForm({ handleSave, handleCancel, selectedDate, selectedData, onAddShift }) {
     const [title, setTitle] = useState("");
     const [date, setDate] = useState("");
     const [checkInTime, setCheckInTime] = useState("17:20");
@@ -79,17 +80,15 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                     },
                 }
             );
+            toast.success("تمت إضافة المناوبة بنجاح");
             console.log("Data sent successfully:", response.data);
-            handleSave(payload);
+            onAddShift(response.data);  // Call the onAddShift function
             handleCancel();
         } catch (error) {
+            toast.error(" حدث خطأ أثناء إضافة المناوبة");
             console.error("Error sending data:", error);
         }
     };
-
-
-
-
 
     return (
         <>
@@ -222,20 +221,27 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                     {/* عرض قائمة الموظفين المضافين */}
                     <div>
                         <h3 className="text-lg font-semibold mb-2">الموظفين المضافين:</h3>
-                        {employees.map((employee, index) => (
-                            <div
-                                key={employee.id || index} // Use employee.id if available, or index as fallback
-                                className="flex items-center justify-between mb-2"
-                            >
-                                <span>{employee.ar_name || employee.en_name}</span> {/* Display ar_name or en_name */}
-                                <button
-                                    onClick={() => handleRemoveEmployee(index)}
-                                    className="text-red-500 hover:text-red-700 focus:outline-none"
+                        <div
+                            className="mb-2 grid grid-cols-1 md:grid-cols-2 overflow-hidden gap-x-3"
+                        >
+                            {employees.map((employee, index) => (
+                                <div
+                                    key={employee.id || index}
+                                    // Use employee.id if available, or index as fallback
+                                    className=" flex items-center justify-between mb-3 border-2 shadow-md border-gray-200 p-2 rounded-md hover:bg-gray-100"
                                 >
-                                    <Trash className="w-4 h-4" />
-                                </button>
-                            </div>
-                        ))}
+                                    <span
+                                        className="overflow-hidden flex items-center"
+                                    >{employee.ar_name || employee.en_name}</span> {/* Display ar_name or en_name */}
+                                    <button
+                                        onClick={() => handleRemoveEmployee(index)}
+                                        className="text-red-500 hover:text-red-700 focus:outline-none"
+                                    >
+                                        <Trash className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="flex justify-between">

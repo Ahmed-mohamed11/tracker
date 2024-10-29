@@ -15,6 +15,9 @@ const AddBranches = lazy(() => import("./AddBranch"));
 const Branches = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
+    const [refreshData, setRefreshData] = useState(false);
+
+
 
     const toggleOpenCreateModal = useCallback(
         () => setOpenCreate((prev) => !prev),
@@ -26,6 +29,10 @@ const Branches = ({ role }) => {
         []
     );
 
+    const handleAddBranch = () => {
+        setRefreshData(prev => !prev);
+    }
+
     return (
         <div className="flex items-center">
             <main className="-mt-5 flex w-full flex-col lg:flex-row">
@@ -33,6 +40,7 @@ const Branches = ({ role }) => {
                     <BranchesTable
                         openPreview={toggleOpenPreviewModal}
                         openCreate={toggleOpenCreateModal}
+                        refreshData={refreshData}
                     />
                     <Suspense fallback={<div>Loading...</div>}>
                         {openCreate && (
@@ -40,6 +48,9 @@ const Branches = ({ role }) => {
                                 closeModal={toggleOpenCreateModal}
                                 modal={openCreate}
                                 role={role}
+                                onAddBranch={handleAddBranch}
+
+
                             />
                         )}
                         {openPreview && (

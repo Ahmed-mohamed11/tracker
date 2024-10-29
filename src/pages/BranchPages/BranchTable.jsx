@@ -6,7 +6,7 @@ import { IoSearch } from 'react-icons/io5';
 import Table from '../../components/Table';
 import * as XLSX from 'xlsx';
 
-const BranchTable = ({ openCreate }) => {
+const BranchTable = ({ openCreate, refreshData }) => {
     const [tableData, setTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -47,7 +47,7 @@ const BranchTable = ({ openCreate }) => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [fetchData, refreshData]);
 
     const handleSearch = (event) => {
         const query = event.target.value.toLowerCase();

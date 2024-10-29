@@ -7,7 +7,7 @@ import { DotsThreeVertical, MagnifyingGlass, Network, Plus, Trash } from '@phosp
 import { BiEdit } from 'react-icons/bi';
 
 
-const EntitiesTable = ({ openCreate }) => {
+const EntitiesTable = ({ openCreate, refreshData }) => {
     const [tableData, setTableData] = useState([]);
     const [isFormOpen, setIsFormOpen] = useState(false); // حالة إدارة إظهار الفورم
     const [isMenuOpen, setIsMenuOpen] = useState(null); // لتتبع الزر الذي تم النقر عليه لفتح القائمة
@@ -40,7 +40,7 @@ const EntitiesTable = ({ openCreate }) => {
 
     useEffect(() => {
         fetchData();
-    }, [fetchData]);
+    }, [fetchData, refreshData]);
 
     useEffect(() => {
         // إضافة مستمع للنقر خارج القائمة
