@@ -3,7 +3,7 @@ import { X } from 'lucide-react'
 
 import AccountInfo from './accountInfo'
 import VerificationSettings from './verificationSettings'
-// import AttendanceSettings from './AttendanceSettings'
+import AttendanceSettings from './AttendanceSettings'
 
 export default function AccountSettings({ onClose }) {
     const [activeTab, setActiveTab] = useState('accountInfo')
@@ -34,7 +34,7 @@ export default function AccountSettings({ onClose }) {
         isVisible && (
             <div
                 id="modalOverlay"
-                className={`fixed inset-0 bg-black mt-20 bg-opacity-50 flex items-center justify-center transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                className={`fixed z-50 inset-0 bg-black mt-20 bg-opacity-50 flex items-center justify-center transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
                 onClick={handleOverlayClick}
             >
                 <div
@@ -65,7 +65,7 @@ export default function AccountSettings({ onClose }) {
                     <div className="p-4">
                         {activeTab === 'accountInfo' && <AccountInfo />}
                         {activeTab === 'verificationSettings' && <VerificationSettings />}
-                        {/* {activeTab === 'attendanceSettings' && <AttendanceSettings />} */}
+                        {activeTab === 'attendanceSettings' && <AttendanceSettings />}
                     </div>
 
                     {/* أزرار التحكم في أسفل النموذج */}
