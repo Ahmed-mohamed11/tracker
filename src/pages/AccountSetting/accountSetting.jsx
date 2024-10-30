@@ -38,7 +38,7 @@ export default function AccountSettings({ onClose }) {
                 onClick={handleOverlayClick}
             >
                 <div
-                    className={`bg-white rounded-lg shadow-lg w-full max-w-3xl transform transition-transform duration-300 ${isVisible ? 'scale-100' : 'scale-95'}`}
+                    className={`bg-white rounded-lg shadow-lg w-full max-w-5xl transform transition-transform duration-300 ${isVisible ? 'scale-100' : 'scale-95'}`}
                     onClick={(e) => e.stopPropagation()} // منع إغلاق النافذة عند النقر داخل الصندوق
                 >
                     <div className="flex justify-between items-center p-4 border-b">

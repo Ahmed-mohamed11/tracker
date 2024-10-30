@@ -76,9 +76,8 @@ const NavbarItem = ({
         {name}
         {subItems && (
           <div
-            className={`transform duration-300 ${
-              isOpen ? "rotate-180" : "rotate-0"
-            }`}
+            className={`transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
+              }`}
           >
             <CaretDown size={20} />
           </div>
@@ -185,20 +184,20 @@ export default function Navbar() {
 
   const navigationAdmin = [
     userData &&
-      userData.isAdmin && {
-        icon: <UserCircleGear size={25} />,
-        name: t("sideBar.admin"),
-        subItems: [
-          {
-            name: t("sideBar.companies"),
-            link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
-          },
-          {
-            name: t("sideBar.plans"),
-            link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
-          },
-        ],
-      },
+    userData.isAdmin && {
+      icon: <UserCircleGear size={25} />,
+      name: t("sideBar.admin"),
+      subItems: [
+        {
+          name: t("sideBar.companies"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
+        },
+        {
+          name: t("sideBar.plans"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
+        },
+      ],
+    },
     {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
@@ -274,10 +273,7 @@ export default function Navbar() {
           name: t("sideBar.changeSetting"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/account`,
         },
-        {
-          name: t("sideBar.ComeSetting"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
-        },
+
       ],
     },
   ].filter(Boolean);

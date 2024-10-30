@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function ToggleButton({ titel, label, isChecked, handleToggle }) {
     return (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
 
             <div className="flex items-center justify-start ">
                 <label className="inline-flex items-center cursor-pointer">
