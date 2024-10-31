@@ -7,20 +7,6 @@ import FormSelect from "../../components/form/FormSelect";
 export default function AttendanceSettings() {
     const PageData = [
         {
-            title: "احتساب تأخير الحضور",
-            sub_title: [
-                "التاخير بعد الفتره المرنه",
-
-            ],
-        },
-        {
-            title: "العمل عن بعد",
-            sub_title: [
-                "التاخير بعد الفتره المرنه",
-
-            ],
-        },
-        {
             title: "اعدادات العمل الاضافي",
             sub_title: [
                 "العمل الاضافي",
