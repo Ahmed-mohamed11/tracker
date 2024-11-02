@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Trash, X } from "lucide-react";
+import { Trash, UserPlus, X } from "lucide-react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import AddEmployeeForm from "../../EmployeePages/AddEmployee";
@@ -134,7 +134,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                                 onChange={(e) => setTitle(e.target.value)}
                                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
                                 placeholder="أدخل عنوان المناوبة"
-                             />
+                            />
                         </div>
                         <div className="w-1/2 ">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -213,52 +213,55 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                         </select>
                     </div>
 
-                    <div className="flex justify-end space-x-4">
-                        <button
-                            type="button"
-                            onClick={handleCancel}
-                            className="px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600"
-                        >
-                            إلغاء
-                        </button>
+                    <button
+                        type="button"
+                        onClick={() => setShowAddEmployeeForm(true)}
+                        className="flex items-center px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none"
+                    >
+                        <UserPlus className="w-4 h-4 mx-2" />
+                        إضافة جهة
+                    </button>
+
+                    <div>
+                        <h3 className="mt-4 mb-2 font-semibold text-gray-700">
+                            الجهات الحالية
+                        </h3>
+                        {employees.length === 0 && <p> لم يتم إضافة جهة بعد.</p>}
+                        <ul>
+                            {employees.map((employee, index) => (
+                                <li key={index} className="flex items-center justify-between p-2 border-b border-gray-300">
+                                    <span>{employee.name || "اسم غير متوفر"}</span>
+                                    <button onClick={() => handleRemoveEmployee(index)}>
+                                        <Trash className="w-4 h-4 text-red-600 hover:text-red-800" />
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className="flex justify-between mt-6">
                         <button
                             type="button"
                             onClick={handleSubmit}
-                            className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                            className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
                         >
-                            حفظ
+                            حفظ المناوبة
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleCancel}
+                            className="px-4 py-2 text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none"
+                        >
+                            إلغاء
                         </button>
                     </div>
                 </form>
 
-                 {showAddEmployeeForm && (
+                {showAddEmployeeForm && (
                     <AddEmployeeForm onAddEmployee={handleAddEmployee} />
                 )}
 
-                <div className="mt-6">
-                    <h3 className="text-lg font-semibold">الموظفين:</h3>
-                    {employees.length > 0 ? (
-                        employees.map((emp, index) => (
-                            <div key={index} className="flex items-center justify-between p-2 border-b">
-                                <span>{emp.name}</span>
-                                <button
-                                    onClick={() => handleRemoveEmployee(index)}
-                                    className="text-red-500 hover:text-red-700"
-                                >
-                                    <Trash className="w-4 h-4" />
-                                </button>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-gray-500">لا توجد موظفين مضافين.</p>
-                    )}
-                    <button
-                        onClick={() => setShowAddEmployeeForm(true)}
-                        className="mt-2 text-blue-500 hover:underline"
-                    >
-                        إضافة موظف
-                    </button>
-                </div>
+                 
             </div>
         </>
     );
