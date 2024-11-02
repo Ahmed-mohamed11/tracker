@@ -66,8 +66,7 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
 
             setBranchesList(response.data);
 
-            // إضافة سجل للتحقق من هيكل البيانات
-            console.log("Fetched branches data:", response.data);
+             console.log("Fetched branches data:", response.data);
 
             const transformedOptions = response.data.map(branch => ({
                 name: branch.branch_name,
