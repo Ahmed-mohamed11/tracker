@@ -134,8 +134,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                                 onChange={(e) => setTitle(e.target.value)}
                                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
                                 placeholder="أدخل عنوان المناوبة"
-                                disabled={isChecked} // Disable if it's a vacation day
-                            />
+                             />
                         </div>
                         <div className="w-1/2 ">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -232,8 +231,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                     </div>
                 </form>
 
-                {/* Add employee form */}
-                {showAddEmployeeForm && (
+                 {showAddEmployeeForm && (
                     <AddEmployeeForm onAddEmployee={handleAddEmployee} />
                 )}
 
