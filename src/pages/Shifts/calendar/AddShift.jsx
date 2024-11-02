@@ -51,24 +51,28 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
             ? new Date(selectedDate).toLocaleDateString("en-CA")
             : null;
 
-        const checkInDate = new Date(`1970-01-01T${checkInTime}:00`);
-        const maxCheckInDate = new Date(`1970-01-01T${maxCheckInTime}:00`);
-        const flexibleMinutes = Math.max(0, (maxCheckInDate - checkInDate) / (1000 * 60));
-
         const entitiesIds = employees.map((emp) => emp.id).filter(Boolean);
 
-        // Build the payload conditionally based on the repeat value
+        // Build the payload conditionally based on the repeat value and vacation status
         const payload = {
             title,
             date: formattedDate,
             is_vacation: isChecked,
             entities_ids: entitiesIds,
-            ...(repeat === "يومي" && {
+            ...(isChecked ? {} : {  // Only include these fields if not on vacation
                 start_hour: checkInTime,
                 end_hour: shiftEndTime,
-                flexible_minutes: flexibleMinutes,
+                flexible_minutes: maxCheckInTime ? Math.max(0, (new Date(`1970-01-01T${maxCheckInTime}:00`) - new Date(`1970-01-01T${checkInTime}:00`)) / (1000 * 60)) : 0,
             }),
         };
+
+        // If vacation is checked, add default data
+        if (isChecked) {
+            // Set default data for vacation; for example:
+            payload.start_hour = "09:00"; // Default check-in time for vacation
+            payload.end_hour = "17:00";    // Default end time for vacation
+            payload.flexible_minutes = 60;  // Default flexible minutes for vacation
+        }
 
         try {
             const token = Cookies.get("token");
