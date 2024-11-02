@@ -11,6 +11,8 @@ import {
   Gear,
   SignOut,
   User,
+  ListBullets,
+  ListDashes,
 } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
@@ -181,7 +183,7 @@ export default function Navbar() {
       setUserData(JSON.parse(user));
     }
   }, []);
-
+  console.log('43', userData)
   const navigationAdmin = [
     userData &&
     userData.isAdmin && {
@@ -202,6 +204,11 @@ export default function Navbar() {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/`,
+    },
+    {
+      icon: <ListDashes size={25} />,
+      name: t("sideBar.AllEmployees"),
+      link: `${import.meta.env.VITE_PUBLIC_URL}/AllEmployees`,
     },
     {
       icon: <ListChecks size={25} />,
@@ -324,7 +331,7 @@ export default function Navbar() {
         {/* روابط القائمة الكبيرة */}
         <div
           className={classNames(
-            "mt-3 lg:flex items-center space-x-6 transition-all duration-300 ease-in-out hidden "
+            "mt-3 lg:flex items-center space-x-2 transition-all duration-300 ease-in-out hidden "
           )}
         >
           {selectedNavigation.map((item, index) => (
@@ -380,13 +387,7 @@ export default function Navbar() {
                   {userData && userData.email}
                 </Link>
               )}
-              <Link
-                to="/settings"
-                className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
-              >
-                <Gear size={20} className=" mx-2" />
-                إعدادات
-              </Link>
+             
               <button
                 onClick={handleLogout}
                 className="flex items-center w-full px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500 text-left"

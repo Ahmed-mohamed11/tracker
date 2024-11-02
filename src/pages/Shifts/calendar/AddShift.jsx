@@ -30,8 +30,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
     const handleToggle = () => {
         setIsChecked(!isChecked);
         if (!isChecked) {
-            // Clear fields when marked as vacation
-            setTitle("");
+             setTitle("");
             setCheckInTime("");
             setShiftEndTime("");
             setMaxCheckInTime("");
@@ -197,6 +196,8 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                                 />
                             </div>
 
+                        </>
+                    )}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     التكرار
@@ -216,15 +217,15 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                                 onClick={() => setShowAddEmployeeForm(true)}
                                 className="flex items-center px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none"
                             >
-                                <UserPlus className="w-4 h-4 mr-2" />
-                                إضافة موظف
+                                <UserPlus className="w-4 h-4 mx-2" />
+                        إضافة جهة
                             </button>
 
                             <div>
                                 <h3 className="mt-4 mb-2 font-semibold text-gray-700">
-                                    الموظفين الحاليين
+                                    الجهات الحالية 
                                 </h3>
-                                {employees.length === 0 && <p>لم يتم إضافة موظفين بعد.</p>}
+                        {employees.length === 0 && <p> لم يتم إضافة جهة بعد.</p>}
                                 <ul>
                                     {employees.map((employee, index) => (
                                         <li key={index} className="flex items-center justify-between p-2 border-b border-gray-300">
@@ -236,8 +237,6 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                                     ))}
                                 </ul>
                             </div>
-                        </>
-                    )}
 
                     <div className="flex justify-between mt-6">
                         <button
