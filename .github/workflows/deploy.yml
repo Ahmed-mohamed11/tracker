@@ -3,7 +3,7 @@ name: Deploy Vite Project
 on:
   push:
     branches:
-      - main  # Adjust this to the branch you want to trigger deployment from
+      - master  # Adjust this to the branch you want to trigger deployment from
 
 jobs:
   deploy:
