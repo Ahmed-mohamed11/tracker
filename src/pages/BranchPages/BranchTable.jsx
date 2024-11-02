@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import { IoSearch } from 'react-icons/io5';
 import Table from '../../components/Table';
 import * as XLSX from 'xlsx';
+import FormSelect from '../../components/form/FormSelect';
 
 const BranchTable = ({ openCreate, refreshData }) => {
     const [tableData, setTableData] = useState([]);
@@ -89,6 +90,51 @@ const BranchTable = ({ openCreate, refreshData }) => {
 
             <div className="flex justify-between items-center mb-6 gap-14">
                 <div className="grid grid-cols-3 gap-4">
+                    <div className='flex items-center gap-4'>
+                        <div>
+                            <FormSelect
+                                label="الفرع"
+                                options={[
+                                    { label: 'الفرع 1', value: '1' },
+                                    { label: 'الفرع 2', value: '2' },
+                                    { label: 'الفرع 3', value: '3' },
+                                ]}
+                            />
+                        </div>
+                        <div>
+                            <FormSelect
+                                label="الجهه"
+                                options={[
+                                    { label: 'الجهه 1', value: '1' },
+                                    { label: 'الجهه 2', value: '2' },
+                                    { label: 'الجهه 3', value: '3' },
+                                ]}
+                            />
+                        </div>
+                        <div>
+                            <FormSelect
+                                label="الموظف"
+                                options={[
+                                    { label: 'الموظف 1', value: '1' },
+                                    { label: 'الموظف 2', value: '2' },
+                                    { label: 'الموظف 3', value: '3' },
+                                ]}
+                            />
+                        </div>
+
+                        <div className='flex flex-col'>
+                            <label className='block text-sm font-medium text-gray-900 dark:text-white' htmlFor="start-date">تاريخ البداية</label>
+                            <input
+                                className="bg-gray-50 border border-gray-300 text-gray-900 px-4 py-2 rounded-md transition duration-200"
+                                type="date" id="start-date" name="start-date" />
+                        </div>
+
+                        <div className='flex flex-col'>
+                            <label className='block text-sm font-medium text-gray-900 dark:text-white' htmlFor="end-date">تاريخ الانتهاء</label>
+                            <input
+                                className="bg-gray-50 border border-gray-300 text-gray-900 px-4 py-2 rounded-md transition duration-200"
+                                type="date" id="end-date" name="end-date" />
+                        </div>
                     <div className="relative flex items-center justify-center">
                         <input
                             type="text"
@@ -101,13 +147,8 @@ const BranchTable = ({ openCreate, refreshData }) => {
                             <IoSearch size={20} />
                         </div>
                     </div>
-                    <button
-                        onClick={handleSaveToExcel}
-                        className="w-1/2 bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
-                    >
-                        تصدير
-                        <FaArrowCircleDown size={20} className="mr-2" />
-                    </button>
+                    </div>
+                   
                 </div>
             </div>
 

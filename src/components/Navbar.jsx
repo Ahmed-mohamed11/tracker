@@ -183,8 +183,7 @@ export default function Navbar() {
       setUserData(JSON.parse(user));
     }
   }, []);
-  console.log('43', userData)
-  const navigationAdmin = [
+   const navigationAdmin = [
     userData &&
     userData.isAdmin && {
       icon: <UserCircleGear size={25} />,
@@ -284,7 +283,6 @@ export default function Navbar() {
       ],
     },
   ].filter(Boolean);
-
   const navigationError = [
     {
       icon: <Warning size={25} />,
@@ -358,8 +356,7 @@ export default function Navbar() {
             {userData && userData.companyLogo && (
               <div>
                 <img
-                  src={userData.companyLogo}
-                  alt={userData.companyName}
+                  src={`https://bio.skyrsys.com/${userData.companyLogo}`} alt={userData.companyName}
                   className="w-10 h-10 border-2 border-orange-500 rounded-full"
                 />
                 <span className="text-sm font-semibold">
