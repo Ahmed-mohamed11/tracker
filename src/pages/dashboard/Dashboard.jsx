@@ -151,14 +151,7 @@ export default function Dashboard() {
                                 </div>
 
                                 {/* Actions */}
-                                <div className="flex justify-end space-x-4 space-x-reverse">
-                                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                                        تجديد الاشتراك
-                                    </button>
-                                    <button className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors duration-200">
-                                        تعديل البيانات
-                                    </button>
-                                </div>
+                            
                             </div>
                         </div>
                     </div>

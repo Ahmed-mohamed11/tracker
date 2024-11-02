@@ -45,7 +45,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
     const handleRemoveEmployee = (index) => {
         setEmployees(employees.filter((_, i) => i !== index));
     };
-
+    console.log('4', selectedData)
     const handleSubmit = async () => {
         const formattedDate = selectedDate
             ? new Date(selectedDate).toLocaleDateString("en-CA")

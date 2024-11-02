@@ -249,90 +249,60 @@ const ReportsTable = ({ openCreate }) => {
                 */}
             </div>
 
-            <div className="flex items-end mb-6 gap-4 justify-between">
-                <div className='flex items-center gap-4'>
-                    <div>
-                        <FormSelect
-                            label="الفرع"
-                            options={[
-                                { label: 'الفرع 1', value: '1' },
-                                { label: 'الفرع 2', value: '2' },
-                                { label: 'الفرع 3', value: '3' },
-                            ]}
-                        />
-                    </div>
-                    <div>
-                        <FormSelect
-                            label="الجهه"
-                            options={[
-                                { label: 'الجهه 1', value: '1' },
-                                { label: 'الجهه 2', value: '2' },
-                                { label: 'الجهه 3', value: '3' },
-                            ]}
-                        />
-                    </div>
-                    <div>
-                        <FormSelect
-                            label="الموظف"
-                            options={[
-                                { label: 'الموظف 1', value: '1' },
-                                { label: 'الموظف 2', value: '2' },
-                                { label: 'الموظف 3', value: '3' },
-                            ]}
-                        />
-                    </div>
-
-                    <div className='flex flex-col'>
-                        <label className='block text-sm font-medium text-gray-900 dark:text-white' htmlFor="start-date">تاريخ البداية</label>
-                        <input
-                            className="bg-gray-50 border border-gray-300 text-gray-900 px-4 py-2 rounded-md transition duration-200"
-                            type="date" id="start-date" name="start-date" />
-                    </div>
-
-                    <div className='flex flex-col'>
-                        <label className='block text-sm font-medium text-gray-900 dark:text-white' htmlFor="end-date">تاريخ الانتهاء</label>
-                        <input
-                            className="bg-gray-50 border border-gray-300 text-gray-900 px-4 py-2 rounded-md transition duration-200"
-                            type="date" id="end-date" name="end-date" />
-                    </div>
+            <div className='items-end grid grid-cols-1 mb-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
+                <div>
+                    <FormSelect
+                        label="الفرع"
+                        options={[
+                            { label: 'الفرع 1', value: '1' },
+                            { label: 'الفرع 2', value: '2' },
+                            { label: 'الفرع 3', value: '3' },
+                        ]}
+                    />
+                </div>
+                <div>
+                    <FormSelect
+                        label="الجهه"
+                        options={[
+                            { label: 'الجهه 1', value: '1' },
+                            { label: 'الجهه 2', value: '2' },
+                            { label: 'الجهه 3', value: '3' },
+                        ]}
+                    />
+                </div>
+                <div>
+                    <FormSelect
+                        label="الموظف"
+                        options={[
+                            { label: 'الجهه 1', value: '1' },
+                            { label: 'الجهه 2', value: '2' },
+                            { label: 'الجهه 3', value: '3' },
+                        ]}
+                    />
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="relative flex items-center">
-                        <input
-                            type="text"
-                            placeholder="بحث"
-                            value={searchQuery}
-                            onChange={handleSearch}
-                            className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
-                        />
-                        <div className="absolute right-0 top-0 h-full px-2 flex items-center justify-center text-gray-400">
-                            <IoSearch size={20} />
-                        </div>
-                    </div>
 
-                    <select className="bg-gray-200 text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                        <option value="">حالة الطلب</option>
-                        <option value="pending">قيد الانتظار</option>
-                        <option value="approved">موافقة</option>
-                        <option value="rejected">مرفوض</option>
-                    </select>
+                <div className='flex flex-col'>
+                    <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear' htmlFor="date">تاريخ البداية</label>
+                    <input
+                        className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200 "
+                        type="date" id="date" name="date" />
+                </div>
 
+
+                <div className='flex flex-col'>
+                    <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear' htmlFor="date">تاريخ الانتهاء</label>
+                    <input
+                        className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200 "
+                        type="date" id="date" name="date" />
+                </div>
+
+                <div>
                     <button
-                        onClick={handleSaveToExcel}
-                        className="bg-themeColor-500 text-white flex items-center px-4 py-2 rounded-md transition duration-200 hover:bg-themeColor-700"
-                    >
-                        تصدير
-                        <FaArrowCircleDown size={20} className="mr-2" />
-                    </button>
-
+                        className="bg-themeColor-400 border border-gray-300 w-full text-white px-4 py-2 rounded-md transition duration-200 "
+                    >عرض البيانات </button>
                 </div>
             </div>
-                    <button
-                        className="bg-themeColor-400 border mb-2 border-gray-300 text-white px-4 py-2 rounded-md transition duration-200"
-                    >
-                        عرض البيانات
-                    </button>
 
 
             {/* Table */}
