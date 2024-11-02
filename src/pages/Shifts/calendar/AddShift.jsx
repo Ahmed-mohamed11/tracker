@@ -258,10 +258,12 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                 </form>
 
                 {showAddEmployeeForm && (
-                    <AddEmployeeForm onAddEmployee={handleAddEmployee} />
+                    <AddEmployeeForm
+                        handleAddEmployee={handleAddEmployee}
+                        handleClose={() => setShowAddEmployeeForm(false)}
+                    />
                 )}
 
-                 
             </div>
         </>
     );
