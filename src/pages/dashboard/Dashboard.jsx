@@ -16,8 +16,9 @@ export default function Dashboard() {
     const [selectedEmployee, setSelectedEmployee] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-
-
+    const [totalAttendancePercentage, setTotalAttendancePercentage] = useState(0);
+    const [totalHoursOfAttendance, setTotalHoursOfAttendance] = useState(0);
+    const [chartData, setChartData] = useState(null);
 
     useEffect(() => {
         const fetchBranches = async () => {
@@ -58,9 +59,6 @@ export default function Dashboard() {
         fetchEmployees();
     }, []);
 
-    // داخل دالة Dashboard
-    const [chartData, setChartData] = useState(null);
-
     const handleDataDisplay = () => {
         const params = new URLSearchParams({
             employee: selectedEmployee,
@@ -78,41 +76,33 @@ export default function Dashboard() {
             }
         })
             .then(response => {
-                console.log('Response from API:', response.data); // تحقق من بيانات API
+                console.log('Response from API:', response.data);
 
-                // Extracting data for the first chart
                 const firstChartData = response.data.first_chart.attendance_absent_counts;
-                const attendanceCounts = firstChartData.map(entry => entry.count); // Extract count values
-                const dates = firstChartData.map(entry => entry.date); // Extract corresponding dates
+                const attendanceCounts = firstChartData.map(entry => entry.count);
+                const dates = firstChartData.map(entry => entry.date);
 
-                // استخدم attendance_intime_counts و attendance_late_counts
                 const attendanceIntimeCounts = response.data.first_chart.attendance_intime_counts.map(entry => entry.count);
                 const attendanceLateCounts = response.data.first_chart.attendance_late_counts.map(entry => entry.count);
 
                 setChartData({
                     series: [
-                        {
-                            name: 'الغياب',
-                            data: attendanceCounts,
-                        },
-                        {
-                            name: 'الحضور',
-                            data: attendanceIntimeCounts,
-                        },
-                        {
-                            name: 'التأخير',
-                            data: attendanceLateCounts,
-                        },
+                        { name: 'الغياب', data: attendanceCounts },
+                        { name: 'الحضور', data: attendanceIntimeCounts },
+                        { name: 'التأخير', data: attendanceLateCounts },
                     ],
                     categories: dates,
                 });
+
+                // Set the data for Chart 3
+                setTotalAttendancePercentage(response.data.section_employees.total_attendance_percentage);
+                setTotalHoursOfAttendance(response.data.section_employees.total_hours_of_attendance);
             })
+            console.log('44',totalAttendancePercentage)
             .catch(error => {
                 console.error('Error fetching data from API:', error);
             });
     };
-
-
 
     return (
         <div className='mx-10'>
@@ -121,30 +111,21 @@ export default function Dashboard() {
                 <div>
                     <FormSelect
                         label="الفرع"
-                        options={branches.map(branch => ({
-                            label: branch.branch_name,
-                            value: branch.id,
-                        }))}
+                        options={branches.map(branch => ({ label: branch.branch_name, value: branch.id }))}
                         onChange={e => setSelectedBranch(e.target.value)}
                     />
                 </div>
                 <div>
                     <FormSelect
                         label="الجهه"
-                        options={entities.map(entity => ({
-                            label: entity.ar_name,
-                            value: entity.id,
-                        }))}
+                        options={entities.map(entity => ({ label: entity.ar_name, value: entity.id }))}
                         onChange={e => setSelectedEntity(e.target.value)}
                     />
                 </div>
                 <div>
                     <FormSelect
                         label="الموظف"
-                        options={employees.map(employee => ({
-                            label: employee.first_name,
-                            value: employee.id,
-                        }))}
+                        options={employees.map(employee => ({ label: employee.first_name, value: employee.id }))}
                         onChange={e => setSelectedEmployee(e.target.value)}
                     />
                 </div>
@@ -153,7 +134,7 @@ export default function Dashboard() {
                     <input
                         className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md"
                         type="date" id="startDate" name="startDate"
-                        onChange={e => setStartDate(e.target.value)} // تحديث التاريخ
+                        onChange={e => setStartDate(e.target.value)}
                     />
                 </div>
                 <div className='flex flex-col'>
@@ -161,7 +142,7 @@ export default function Dashboard() {
                     <input
                         className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md"
                         type="date" id="endDate" name="endDate"
-                        onChange={e => setEndDate(e.target.value)} // تحديث التاريخ
+                        onChange={e => setEndDate(e.target.value)}
                     />
                 </div>
                 <div>
@@ -181,10 +162,9 @@ export default function Dashboard() {
                     <Chart2 />
                 </div>
                 <div className='md:grid md:grid-cols-2 xl:grid-cols-2 lg:grid-cols-1 gap-4 my-5 p-5 border-2 border-gray-300 rounded-md'>
-                    <Chart3 className="w-full" />
-                    <Chart4 className="w-full" />
+                    <Chart3 totalAttendancePercentage={totalAttendancePercentage} />
+                    <Chart4 totalHoursOfAttendance={totalHoursOfAttendance} />
                 </div>
-
                 <div className=" py-4 px-4 sm:px-6 lg:px-8" dir="rtl">
                     <div className="max-w-3xl mx-auto">
                         <div className="bg-white shadow-xl rounded-2xl overflow-hidden">

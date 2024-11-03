@@ -1,21 +1,11 @@
-// مكون Chart1
 import ReactApexChart from "react-apexcharts";
 
 const Chart1 = ({ chartData }) => {
     const defaultData = {
         series: [
-            {
-                name: 'الحضور',
-                data: [],
-            },
-            {
-                name: 'الغياب',
-                data: [],
-            },
-            {
-                name: 'التأخير',
-                data: [],
-            },
+            { name: 'الحضور', data: [] },
+            { name: 'الغياب', data: [] },
+            { name: 'التأخير', data: [] },
         ],
         options: {
             chart: {
@@ -27,17 +17,21 @@ const Chart1 = ({ chartData }) => {
             stroke: { curve: 'smooth' },
             xaxis: {
                 type: 'datetime',
-                categories: [], // تواريخ فارغة
+                categories: [],
+                labels: { format: 'yyyy-MM-dd' },
             },
             tooltip: {
-                x: { format: 'yyyy-MM-dd' }, // تنسيق التاريخ
+                x: { format: 'yyyy-MM-dd' },
             },
         },
     };
 
     const options = {
         ...defaultData.options,
-        xaxis: { categories: chartData ? chartData.categories : defaultData.options.xaxis.categories },
+        xaxis: {
+            ...defaultData.options.xaxis,
+            categories: chartData ? chartData.categories : defaultData.options.xaxis.categories,
+        },
     };
 
     const series = chartData ? chartData.series : defaultData.series;

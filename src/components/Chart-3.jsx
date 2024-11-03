@@ -1,50 +1,26 @@
-import React, { useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
-
-const ApexChart = () => {
-    const [series] = useState([100]);
-    const [options] = useState({
-        chart: {
-            width: 380,
-            type: 'pie',
-        },
-        labels: ['Team A'],
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200,
-                },
-                legend: {
-                    position: 'bottom',
-                },
-            },
-        }],
-        colors: ['#808080'], // تعيين اللون الرمادي
-        dataLabels: {
-            enabled: true, // تفعيل تسميات البيانات
-            formatter: function (val) {
-                return `${val}%`; // عرض النسبة المئوية
-            },
-            style: {
-                fontSize: '18px',
-                fontWeight: 'bold',
-                colors: ['#000'], // لون النص
-            },
-        },
-        legend: {
-            show: false, // إخفاء اسم الإحصائية
-        },
-    });
-
-    return (
-        <div>
-            <div id="chart">
-                <ReactApexChart options={options} series={series} type="pie" width={350} />
-            </div>
-            <div className='text-center' id="html-dist">اجمالي نسبه الحضور</div>
+ import ReactApexChart from 'react-apexcharts';
+ 
+const Chart3 = ({ totalAttendancePercentage }) => (
+    <div>
+        <div id="chart">
+            <ReactApexChart 
+                options={{
+                    chart: { width: 380, type: 'pie' },
+                    labels: ['اجمالي نسبه الحضور'],
+                    colors: ['#808080'],
+                    dataLabels: {
+                        enabled: true,
+                        formatter: (val) => `${val}%`,
+                        style: { fontSize: '18px', fontWeight: 'bold', colors: ['#000'] },
+                    },
+                    legend: { show: false },
+                }} 
+                series={[totalAttendancePercentage]} 
+                type="pie" 
+                width={350} 
+            />
         </div>
-    );
-};
-
-export default ApexChart;
+        <div className='text-center'>اجمالي نسبه الحضور</div>
+    </div>
+);
+export default Chart3;
