@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Chart1 from "../../components/Chart-1";
@@ -15,8 +15,13 @@ export default function Dashboard() {
     const [selectedEntity, setSelectedEntity] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState('');
     const [startDate, setStartDate] = useState('');
+    const [executeDate, setExecuteDate] = useState('');
+    const [finishDate, setFinishDate] = useState('');
+    const [lastLogin, setLastLogin] = useState('');
+    const [currentPlan, setCurrentPlan] = useState('');
     const [endDate, setEndDate] = useState('');
     const [totalAttendancePercentage, setTotalAttendancePercentage] = useState(0);
+    const [id, setId] = useState(0);
     const [totalHoursOfAttendance, setTotalHoursOfAttendance] = useState(0);
     const [chartData, setChartData] = useState(null);
 
@@ -97,6 +102,11 @@ export default function Dashboard() {
                 // Set the data for Chart 3
                 setTotalAttendancePercentage(response.data.section_employees.total_attendance_percentage);
                 setTotalHoursOfAttendance(response.data.section_employees.total_hours_of_attendance);
+                setId(response.data.account_informations.account_id);
+                setExecuteDate(response.data.account_informations.start_date);
+                setFinishDate(response.data.account_informations.end_date);
+                setCurrentPlan(response.data.account_informations.current_plan);
+                setLastLogin(response.data.account_informations.last_login);
             })
             console.log('44',totalAttendancePercentage)
             .catch(error => {
@@ -185,32 +195,32 @@ export default function Dashboard() {
                                 <div className="space-y-4 ">
                                     {/* Activation Date */}
                                     <div className="flex justify-between gap-12 items-center border-b pb-3">
-                                        <div className="flex gap-5 items-center w-1/2 ">
+                                        <div className="flex gap-2  w-1/2 ">
                                             <span className="font-medium text-gray-900">تاريخ التفعيل</span>
-                                            <span className="text-gray-600">2023/06/15</span>
+                                            <span className="text-gray-600">{executeDate}</span>
                                         </div>
                                         {/* Expiry Date */}
-                                        <div className="flex gap-5 items-center">
+                                        <div className="flex gap-2 w-1/2">
                                             <span className="font-medium text-gray-900">تاريخ الانتهاء</span>
-                                            <span className="text-gray-600">2024/06/15</span>
+                                            <span className="text-gray-600">{finishDate}</span>
                                         </div>
                                     </div>
                                     <div className="flex justify-between gap-12 items-center border-b pb-3">
                                         {/* Subscription Type */}
                                         <div className="flex gap-5 items-center">
                                             <span className="font-medium text-gray-900">نوع الاشتراك</span>
-                                            <span className="text-gray-600">الباقة الذهبية</span>
+                                            <span className="text-gray-600"> {currentPlan}</span>
                                         </div>
                                         {/* Account Number */}
                                         <div className="flex gap-5 items-center ">
                                             <span className="font-medium text-gray-900">رقم الحساب</span>
-                                            <span className="text-gray-600">AC-123456789</span>
+                                            <span className="text-gray-600">{id}</span>
                                         </div>
                                     </div>
                                     {/* Last Login */}
                                     <div className="flex justify-center gap-5 items-center border-b pb-3">
                                         <span className="font-medium text-gray-900">آخر تسجيل دخول</span>
-                                        <span className="text-gray-600">2023/12/25 12:30 PM</span>
+                                        <span className="text-gray-600">{lastLogin}</span>
                                     </div>
                                 </div>
                                 {/* Usage Statistics */}
