@@ -1,10 +1,119 @@
- import Chart1 from "../../components/Chart-1"
-import Chart2 from "../../components/Chart-2"
-import Chart3 from "../../components/Chart-3"
-import Chart4 from "../../components/Chart-4"
-import FormSelect from '../../components/form/FormSelect'
- 
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import Chart1 from "../../components/Chart-1";
+import Chart2 from "../../components/Chart-2";
+import Chart3 from "../../components/Chart-3";
+import Chart4 from "../../components/Chart-4";
+import FormSelect from '../../components/form/FormSelect';
+
 export default function Dashboard() {
+    const [branches, setBranches] = useState([]);
+    const [entities, setEntities] = useState([]);
+    const [employees, setEmployees] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [selectedEntity, setSelectedEntity] = useState('');
+    const [selectedEmployee, setSelectedEmployee] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+
+
+    useEffect(() => {
+        const fetchBranches = async () => {
+            try {
+                const response = await axios.get('https://bio.skyrsys.com/api/branch/branches/', {
+                    headers: { 'Authorization': `Token ${Cookies.get('token')}` },
+                });
+                setBranches(response.data);
+            } catch (error) {
+                console.error('Error fetching branches:', error);
+            }
+        };
+
+        const fetchEntities = async () => {
+            try {
+                const response = await axios.get('https://bio.skyrsys.com/api/entity/', {
+                    headers: { 'Authorization': `Token ${Cookies.get('token')}` },
+                });
+                setEntities(response.data);
+            } catch (error) {
+                console.error('Error fetching entities:', error);
+            }
+        };
+
+        const fetchEmployees = async () => {
+            try {
+                const response = await axios.get('https://bio.skyrsys.com/api/employee/', {
+                    headers: { 'Authorization': `Token ${Cookies.get('token')}` },
+                });
+                setEmployees(response.data);
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+            }
+        };
+
+        fetchBranches();
+        fetchEntities();
+        fetchEmployees();
+    }, []);
+
+    // داخل دالة Dashboard
+    const [chartData, setChartData] = useState(null);
+
+    const handleDataDisplay = () => {
+        const params = new URLSearchParams({
+            employee: selectedEmployee,
+            branch: selectedBranch,
+            entity: selectedEntity,
+            start_date: startDate,
+            end_date: endDate,
+        });
+
+        const url = `https://bio.skyrsys.com/api/dashboard/?${params.toString()}`;
+
+        axios.get(url, {
+            headers: {
+                'Authorization': `Token ${Cookies.get('token')}`,
+            }
+        })
+            .then(response => {
+                console.log('Response from API:', response.data); // تحقق من بيانات API
+
+                // Extracting data for the first chart
+                const firstChartData = response.data.first_chart.attendance_absent_counts;
+                const attendanceCounts = firstChartData.map(entry => entry.count); // Extract count values
+                const dates = firstChartData.map(entry => entry.date); // Extract corresponding dates
+
+                // استخدم attendance_intime_counts و attendance_late_counts
+                const attendanceIntimeCounts = response.data.first_chart.attendance_intime_counts.map(entry => entry.count);
+                const attendanceLateCounts = response.data.first_chart.attendance_late_counts.map(entry => entry.count);
+
+                setChartData({
+                    series: [
+                        {
+                            name: 'الغياب',
+                            data: attendanceCounts,
+                        },
+                        {
+                            name: 'الحضور',
+                            data: attendanceIntimeCounts,
+                        },
+                        {
+                            name: 'التأخير',
+                            data: attendanceLateCounts,
+                        },
+                    ],
+                    categories: dates,
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data from API:', error);
+            });
+    };
+
+
+
     return (
         <div className='mx-10'>
             <h2 className='text-2xl font-bold text-gray-800 py-5'>لوحه الاداء</h2>
@@ -12,65 +121,65 @@ export default function Dashboard() {
                 <div>
                     <FormSelect
                         label="الفرع"
-                        options={[
-                            { label: 'الفرع 1', value: '1' },
-                            { label: 'الفرع 2', value: '2' },
-                            { label: 'الفرع 3', value: '3' },
-                        ]}
+                        options={branches.map(branch => ({
+                            label: branch.branch_name,
+                            value: branch.id,
+                        }))}
+                        onChange={e => setSelectedBranch(e.target.value)}
                     />
                 </div>
                 <div>
                     <FormSelect
                         label="الجهه"
-                        options={[
-                            { label: 'الجهه 1', value: '1' },
-                            { label: 'الجهه 2', value: '2' },
-                            { label: 'الجهه 3', value: '3' },
-                        ]}
+                        options={entities.map(entity => ({
+                            label: entity.ar_name,
+                            value: entity.id,
+                        }))}
+                        onChange={e => setSelectedEntity(e.target.value)}
                     />
                 </div>
                 <div>
                     <FormSelect
                         label="الموظف"
-                        options={[
-                            { label: 'الجهه 1', value: '1' },
-                            { label: 'الجهه 2', value: '2' },
-                            { label: 'الجهه 3', value: '3' },
-                        ]}
+                        options={employees.map(employee => ({
+                            label: employee.first_name,
+                            value: employee.id,
+                        }))}
+                        onChange={e => setSelectedEmployee(e.target.value)}
                     />
                 </div>
-
-
                 <div className='flex flex-col'>
-                    <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear' htmlFor="date">تاريخ البداية</label>
+                    <label className='block mb-2 text-sm font-medium text-gray-900' htmlFor="startDate">تاريخ البداية</label>
                     <input
-                        className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200 "
-                        type="date" id="date" name="date" />
+                        className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md"
+                        type="date" id="startDate" name="startDate"
+                        onChange={e => setStartDate(e.target.value)} // تحديث التاريخ
+                    />
                 </div>
-
-
                 <div className='flex flex-col'>
-                    <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear' htmlFor="date">تاريخ الانتهاء</label>
+                    <label className='block mb-2 text-sm font-medium text-gray-900' htmlFor="endDate">تاريخ الانتهاء</label>
                     <input
-                        className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200 "
-                        type="date" id="date" name="date" />
+                        className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md"
+                        type="date" id="endDate" name="endDate"
+                        onChange={e => setEndDate(e.target.value)} // تحديث التاريخ
+                    />
                 </div>
-
                 <div>
                     <button
-                        className="bg-themeColor-400 border border-gray-300 w-full text-white px-4 py-2 rounded-md transition duration-200 "
-                    >عرض البيانات </button>
+                        className="bg-themeColor-400 border border-gray-300 w-full text-white px-4 py-2 rounded-md"
+                        onClick={handleDataDisplay}
+                    >
+                        عرض البيانات
+                    </button>
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className='my-5 p-5 border-2 border-gray-300 rounded-md'>
-                    <Chart1 />
+                    <Chart1 chartData={chartData} />
                 </div>
-
                 <div className='my-5 p-5 border-2 border-gray-300 rounded-md'>
                     <Chart2 />
                 </div>
-
                 <div className='md:grid md:grid-cols-2 xl:grid-cols-2 lg:grid-cols-1 gap-4 my-5 p-5 border-2 border-gray-300 rounded-md'>
                     <Chart3 className="w-full" />
                     <Chart4 className="w-full" />
@@ -83,7 +192,6 @@ export default function Dashboard() {
                             <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
                                 <h1 className="text-2xl font-bold text-white text-right">معلومات الحساب</h1>
                             </div>
-
                             {/* Content */}
                             <div className="p-6 space-y-6">
                                 {/* Account Status Card */}
@@ -93,35 +201,31 @@ export default function Dashboard() {
                                         <span className="font-semibold text-blue-900">حساب نشط</span>
                                     </div>
                                 </div>
-
                                 {/* Account Details */}
                                 <div className="space-y-4 ">
                                     {/* Activation Date */}
                                     <div className="flex justify-between gap-12 items-center border-b pb-3">
-                                    <div className="flex gap-5 items-center w-1/2 ">
-                                        <span className="font-medium text-gray-900">تاريخ التفعيل</span>
-                                        <span className="text-gray-600">2023/06/15</span>
-                                    </div>
-
-                                    {/* Expiry Date */}
-                                    <div className="flex gap-5 items-center">
-                                        <span className="font-medium text-gray-900">تاريخ الانتهاء</span>
-                                        <span className="text-gray-600">2024/06/15</span>
-                                    </div>
+                                        <div className="flex gap-5 items-center w-1/2 ">
+                                            <span className="font-medium text-gray-900">تاريخ التفعيل</span>
+                                            <span className="text-gray-600">2023/06/15</span>
+                                        </div>
+                                        {/* Expiry Date */}
+                                        <div className="flex gap-5 items-center">
+                                            <span className="font-medium text-gray-900">تاريخ الانتهاء</span>
+                                            <span className="text-gray-600">2024/06/15</span>
+                                        </div>
                                     </div>
                                     <div className="flex justify-between gap-12 items-center border-b pb-3">
-
-                                    {/* Subscription Type */}
-                                    <div className="flex gap-5 items-center">
-                                        <span className="font-medium text-gray-900">نوع الاشتراك</span>
-                                        <span className="text-gray-600">الباقة الذهبية</span>
-                                    </div>
-
-                                    {/* Account Number */}
-                                    <div className="flex gap-5 items-center ">
-                                        <span className="font-medium text-gray-900">رقم الحساب</span>
-                                        <span className="text-gray-600">AC-123456789</span>
-                                    </div>
+                                        {/* Subscription Type */}
+                                        <div className="flex gap-5 items-center">
+                                            <span className="font-medium text-gray-900">نوع الاشتراك</span>
+                                            <span className="text-gray-600">الباقة الذهبية</span>
+                                        </div>
+                                        {/* Account Number */}
+                                        <div className="flex gap-5 items-center ">
+                                            <span className="font-medium text-gray-900">رقم الحساب</span>
+                                            <span className="text-gray-600">AC-123456789</span>
+                                        </div>
                                     </div>
                                     {/* Last Login */}
                                     <div className="flex justify-center gap-5 items-center border-b pb-3">
@@ -129,7 +233,6 @@ export default function Dashboard() {
                                         <span className="text-gray-600">2023/12/25 12:30 PM</span>
                                     </div>
                                 </div>
-
                                 {/* Usage Statistics */}
                                 <div className="bg-gray-50 rounded-xl p-4">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4 text-right">إحصائيات الاستخدام</h3>
@@ -149,15 +252,13 @@ export default function Dashboard() {
                                         </div>
                                     </div>
                                 </div>
-
                                 {/* Actions */}
-                            
+
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-    )
+    );
 }

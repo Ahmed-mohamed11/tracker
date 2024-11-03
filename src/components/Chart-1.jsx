@@ -1,71 +1,57 @@
-import React, { useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
+// مكون Chart1
+import ReactApexChart from "react-apexcharts";
 
-const ApexChart = () => {
-    const [chartData] = useState({
+const Chart1 = ({ chartData }) => {
+    const defaultData = {
         series: [
             {
                 name: 'الحضور',
-                data: [31, 40, 28, 51, 42, 109, 100],
+                data: [],
             },
             {
-                name: ' الغياب',
-                data: [11, 32, 45, 32, 34, 52, 41],
+                name: 'الغياب',
+                data: [],
             },
-
             {
-                name: ' التأخير',
-                data: [11, 32, 45, 32, 34, 52, 41],
+                name: 'التأخير',
+                data: [],
             },
         ],
         options: {
             chart: {
                 height: 350,
                 type: 'area',
-                toolbar: {
-                    show: false, // إخفاء أدوات التحكم في الرسم
-                },
+                toolbar: { show: false },
             },
-
-            dataLabels: {
-                enabled: false,
-            },
-            stroke: {
-                curve: 'smooth',
-            },
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth' },
             xaxis: {
                 type: 'datetime',
-                categories: [
-                    '2018-09-19T00:00:00.000Z',
-                    '2018-09-19T01:30:00.000Z',
-                    '2018-09-19T02:30:00.000Z',
-                    '2018-09-19T03:30:00.000Z',
-                    '2018-09-19T04:30:00.000Z',
-                    '2018-09-19T05:30:00.000Z',
-                    '2018-09-19T06:30:00.000Z',
-                ],
+                categories: [], // تواريخ فارغة
             },
             tooltip: {
-                x: {
-                    format: 'dd/MM/yy HH:mm',
-                },
+                x: { format: 'yyyy-MM-dd' }, // تنسيق التاريخ
             },
         },
-    });
+    };
+
+    const options = {
+        ...defaultData.options,
+        xaxis: { categories: chartData ? chartData.categories : defaultData.options.xaxis.categories },
+    };
+
+    const series = chartData ? chartData.series : defaultData.series;
 
     return (
         <div>
-            <div id="chart">
-                <ReactApexChart
-                    options={chartData.options}
-                    series={chartData.series}
-                    type="area"
-                    height={350}
-                />
-            </div>
-            <div id="html-dist"></div>
+            <ReactApexChart
+                options={options}
+                series={series}
+                type="area"
+                height={350}
+            />
         </div>
     );
 };
 
-export default ApexChart;
+export default Chart1;
