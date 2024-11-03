@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import AddEmployeeForm from "../../EmployeePages/AddEmployee";
 import { toast } from "react-toastify";
 
-export default function ShiftForm({ handleSave, handleCancel, selectedDate, selectedData, onAddShift }) {
+export default function ShiftForm({ handleCancel, selectedDate, selectedData, onAddShift, selectedEntities }) {
     const [title, setTitle] = useState("");
     const [date, setDate] = useState("");
     const [checkInTime, setCheckInTime] = useState("17:20");
@@ -99,6 +99,9 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
             toast.error("حدث خطأ أثناء إضافة المناوبة");
             console.error("Error sending data:", error);
         }
+
+        console.log("employees", employees);
+        console.log("selectedDate", selectedDate);
     };
 
     return (
@@ -233,8 +236,9 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                         {employees.length === 0 && <p> لم يتم إضافة جهة بعد.</p>}
                         <ul>
                             {employees.map((employee, index) => (
-                                <li key={index} className="flex items-center justify-between p-2 border-b border-gray-300">
-                                    <span>{employee.name || "اسم غير متوفر"}</span>
+                                <li key={employee.id} className="flex items-center justify-between p-2 border-b border-gray-300">
+                                    <span>{employee.id || "الرقم غير متوفر"}</span>
+                                    <span>{employee.ar_name || "اسم غير متوفر"}</span>
                                     <button onClick={() => handleRemoveEmployee(index)}>
                                         <Trash className="w-4 h-4 text-red-600 hover:text-red-800" />
                                     </button>
