@@ -17,6 +17,8 @@ export default function Dashboard() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
+
+
     useEffect(() => {
         const fetchBranches = async () => {
             try {
@@ -56,8 +58,10 @@ export default function Dashboard() {
         fetchEmployees();
     }, []);
 
+    // داخل دالة Dashboard
+    const [chartData, setChartData] = useState(null);
+
     const handleDataDisplay = () => {
-        // إنشاء المعلمات GET
         const params = new URLSearchParams({
             employee: selectedEmployee,
             branch: selectedBranch,
@@ -66,23 +70,49 @@ export default function Dashboard() {
             end_date: endDate,
         });
 
-        // رابط API مع المعلمات
         const url = `https://bio.skyrsys.com/api/dashboard/?${params.toString()}`;
 
-        // تنفيذ الطلب GET
         axios.get(url, {
             headers: {
                 'Authorization': `Token ${Cookies.get('token')}`,
             }
         })
             .then(response => {
-                console.log('Response from API:', response.data);
-                // التعامل مع البيانات المستلمة هنا
+                console.log('Response from API:', response.data); // تحقق من بيانات API
+
+                // Extracting data for the first chart
+                const firstChartData = response.data.first_chart.attendance_absent_counts;
+                const attendanceCounts = firstChartData.map(entry => entry.count); // Extract count values
+                const dates = firstChartData.map(entry => entry.date); // Extract corresponding dates
+
+                // استخدم attendance_intime_counts و attendance_late_counts
+                const attendanceIntimeCounts = response.data.first_chart.attendance_intime_counts.map(entry => entry.count);
+                const attendanceLateCounts = response.data.first_chart.attendance_late_counts.map(entry => entry.count);
+
+                setChartData({
+                    series: [
+                        {
+                            name: 'الغياب',
+                            data: attendanceCounts,
+                        },
+                        {
+                            name: 'الحضور',
+                            data: attendanceIntimeCounts,
+                        },
+                        {
+                            name: 'التأخير',
+                            data: attendanceLateCounts,
+                        },
+                    ],
+                    categories: dates,
+                });
             })
             .catch(error => {
                 console.error('Error fetching data from API:', error);
             });
     };
+
+
 
     return (
         <div className='mx-10'>
@@ -145,7 +175,7 @@ export default function Dashboard() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className='my-5 p-5 border-2 border-gray-300 rounded-md'>
-                    <Chart1 />
+                    <Chart1 chartData={chartData} />
                 </div>
                 <div className='my-5 p-5 border-2 border-gray-300 rounded-md'>
                     <Chart2 />
