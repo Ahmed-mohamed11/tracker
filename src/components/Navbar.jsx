@@ -11,6 +11,8 @@ import {
   Gear,
   SignOut,
   User,
+  ListBullets,
+  ListDashes,
 } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
@@ -181,8 +183,7 @@ export default function Navbar() {
       setUserData(JSON.parse(user));
     }
   }, []);
-
-  const navigationAdmin = [
+   const navigationAdmin = [
     userData &&
     userData.isAdmin && {
       icon: <UserCircleGear size={25} />,
@@ -202,6 +203,11 @@ export default function Navbar() {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/`,
+    },
+    {
+      icon: <ListDashes size={25} />,
+      name: t("sideBar.AllEmployees"),
+      link: `${import.meta.env.VITE_PUBLIC_URL}/AllEmployees`,
     },
     {
       icon: <ListChecks size={25} />,
@@ -277,7 +283,6 @@ export default function Navbar() {
       ],
     },
   ].filter(Boolean);
-
   const navigationError = [
     {
       icon: <Warning size={25} />,
@@ -324,7 +329,7 @@ export default function Navbar() {
         {/* روابط القائمة الكبيرة */}
         <div
           className={classNames(
-            "mt-3 lg:flex items-center space-x-6 transition-all duration-300 ease-in-out hidden "
+            "mt-3 lg:flex items-center space-x-2 transition-all duration-300 ease-in-out hidden "
           )}
         >
           {selectedNavigation.map((item, index) => (
@@ -351,8 +356,7 @@ export default function Navbar() {
             {userData && userData.companyLogo && (
               <div>
                 <img
-                  src={userData.companyLogo}
-                  alt={userData.companyName}
+                  src={`https://bio.skyrsys.com/${userData.companyLogo}`} alt={userData.companyName}
                   className="w-10 h-10 border-2 border-orange-500 rounded-full"
                 />
                 <span className="text-sm font-semibold">
@@ -371,22 +375,8 @@ export default function Navbar() {
                   : "opacity-0 invisible animate-slide-up"
               )}
             >
-              {userData && userData.email && (
-                <Link
-                  to="/profile"
-                  className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
-                >
-                  <User size={25} className="mx-2" />
-                  {userData && userData.email}
-                </Link>
-              )}
-              <Link
-                to="/settings"
-                className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
-              >
-                <Gear size={20} className=" mx-2" />
-                إعدادات
-              </Link>
+              
+             
               <button
                 onClick={handleLogout}
                 className="flex items-center w-full px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500 text-left"

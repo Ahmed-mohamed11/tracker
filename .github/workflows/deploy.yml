@@ -1,0 +1,41 @@
+name: Deploy Vite Project
+
+on:
+  push:
+    branches:
+      - master  # Adjust this to the branch you want to trigger deployment from
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Use the version compatible with your project
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Transfer built files to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          # Set up SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # Add the server to known hosts to avoid confirmation prompts
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+
+          # Transfer the built files using rsync
+          rsync -avz --delete dist/ $SSH_USER@$SSH_HOST:$DEPLOY_PATH

@@ -82,6 +82,7 @@ const ar = {
     commitments: " الالتزامات ",
     branches: "الفروع",
     Employee: "الموظفين", // Employee
+    AllEmployees: "الموظفين", // Employee
     clients: "العملاء",
     Shifts: "مواعيد العمل",
     registration: "تسجيل الطلبات",

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Trash, X, UserPlus } from "lucide-react";
-import axios from "axios"; // استيراد مكتبة Axios
+import { Trash, UserPlus, X } from "lucide-react";
+import axios from "axios";
 import Cookies from "js-cookie";
 import AddEmployeeForm from "../../EmployeePages/AddEmployee";
 import { toast } from "react-toastify";
@@ -11,58 +11,68 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
     const [checkInTime, setCheckInTime] = useState("17:20");
     const [maxCheckInTime, setMaxCheckInTime] = useState("");
     const [shiftEndTime, setShiftEndTime] = useState("");
-    const [repeat, setRepeat] = useState("");
+    const [repeat, setRepeat] = useState("يومي");  // Default to daily
     const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
     const [employees, setEmployees] = useState([]);
     const [isChecked, setIsChecked] = useState(false);
 
     useEffect(() => {
         if (selectedData) {
-            setDate(selectedDate ? new Date(selectedDate) : null); // تعيين التاريخ
-            setTitle(selectedData.title || ''); // تعيين العنوان
-            setCheckInTime(selectedData.start_hour || ''); // تعيين وقت البداية
-            setShiftEndTime(selectedData.end_hour || ''); // تعيين وقت النهاية
-            setIsChecked(selectedData.is_vacation || false); // تعيين حالة العطلة
-            setEmployees(selectedData.entities || []); // تعيين قائمة الموظفين
+            setDate(selectedDate ? new Date(selectedDate) : null);
+            setTitle(selectedData.title || '');
+            setCheckInTime(selectedData.start_hour || '');
+            setShiftEndTime(selectedData.end_hour || '');
+            setIsChecked(selectedData.is_vacation || false);
+            setEmployees(selectedData.entities || []);
         }
     }, [selectedData]);
 
-
     const handleToggle = () => {
         setIsChecked(!isChecked);
+        if (!isChecked) {
+            setTitle("");
+            setCheckInTime("");
+            setShiftEndTime("");
+            setMaxCheckInTime("");
+            setEmployees([]);
+        }
     };
 
-    const handleAddEmployee = (newEmployeesIds) => {
-        setEmployees((prevEmployees) => [...prevEmployees, ...newEmployeesIds]);
+    const handleAddEmployee = (newEmployees) => {
+        setEmployees((prevEmployees) => [...prevEmployees, ...newEmployees]);
     };
-
-
 
     const handleRemoveEmployee = (index) => {
         setEmployees(employees.filter((_, i) => i !== index));
     };
-
+    console.log('4', selectedData)
     const handleSubmit = async () => {
-        const checkInDate = new Date(`1970-01-01T${checkInTime}:00`);
-        const maxCheckInDate = new Date(`1970-01-01T${maxCheckInTime}:00`);
-        const flexibleMinutes = Math.max(0, (maxCheckInDate - checkInDate) / (1000 * 60)); // حساب الفارق بالدقائق
-
         const formattedDate = selectedDate
-            ? new Date(selectedDate).toLocaleDateString("en-CA") // تنسيق yyyy-mm-dd
+            ? new Date(selectedDate).toLocaleDateString("en-CA")
             : null;
 
-        // Extract only the IDs from the employees array
-        const entitiesIds = employees.filter(id => id != null); // تأكد من أن جميع القيم صالحة
+        const entitiesIds = employees.map((emp) => emp.id).filter(Boolean);
 
+        // Build the payload conditionally based on the repeat value and vacation status
         const payload = {
             title,
             date: formattedDate,
-            start_hour: checkInTime,
-            end_hour: shiftEndTime,
-            flexible_minutes: flexibleMinutes,
             is_vacation: isChecked,
-            entities_ids: entitiesIds
+            entities_ids: entitiesIds,
+            ...(isChecked ? {} : {  // Only include these fields if not on vacation
+                start_hour: checkInTime,
+                end_hour: shiftEndTime,
+                flexible_minutes: maxCheckInTime ? Math.max(0, (new Date(`1970-01-01T${maxCheckInTime}:00`) - new Date(`1970-01-01T${checkInTime}:00`)) / (1000 * 60)) : 0,
+            }),
         };
+
+        // If vacation is checked, add default data
+        if (isChecked) {
+            // Set default data for vacation; for example:
+            payload.start_hour = "09:00"; // Default check-in time for vacation
+            payload.end_hour = "17:00";    // Default end time for vacation
+            payload.flexible_minutes = 60;  // Default flexible minutes for vacation
+        }
 
         try {
             const token = Cookies.get("token");
@@ -71,21 +81,22 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                 return;
             }
 
-            const response = await axios.post(
-                "https://bio.skyrsys.com/api/working-hours/",
-                payload,
-                {
-                    headers: {
-                        Authorization: `Token ${token}`,
-                    },
-                }
-            );
+            const endpoint =
+                repeat === "يومي"
+                    ? "https://bio.skyrsys.com/api/working-hours/"
+                    : "https://bio.skyrsys.com/api/working-hours/add-weekly/";
+
+            const response = await axios.post(endpoint, payload, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                },
+            });
+
             toast.success("تمت إضافة المناوبة بنجاح");
-            console.log("Data sent successfully:", response.data);
-            onAddShift(response.data);  // Call the onAddShift function
+            onAddShift(response.data);
             handleCancel();
         } catch (error) {
-            toast.error(" حدث خطأ أثناء إضافة المناوبة");
+            toast.error("حدث خطأ أثناء إضافة المناوبة");
             console.error("Error sending data:", error);
         }
     };
@@ -97,10 +108,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                     <h2 className="text-2xl font-semibold text-themeColor-600">
                         إضافة مناوبة
                     </h2>
-                    <button
-                        onClick={handleCancel}
-                        className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                    >
+                    <button onClick={handleCancel} className="text-gray-500 hover:text-gray-700 focus:outline-none">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
@@ -119,7 +127,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                 </div>
 
                 <form className="space-y-6">
-                    <div className=" flex justify-between  grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="flex justify-between grid-cols-1 gap-6 md:grid-cols-2">
                         <div className="w-1/2">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 عنوان المناوبة
@@ -140,12 +148,11 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                                 <label className="inline-flex items-center cursor-pointer">
                                     <input
                                         type="checkbox"
-                                        value=""
                                         className="sr-only peer"
                                         checked={isChecked}
                                         onChange={handleToggle}
                                     />
-                                    <div className="relative w-11 h-6 bg-gray-200 rounded-full peer   dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <div className="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                                     <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                                         {isChecked ? "يوم عطله" : "يوم مناوبه"}
                                     </span>
@@ -154,46 +161,47 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6">
-                        {/* وقت تسجيل الدخول للمناوبة */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                وقت تسجيل الدخول
-                            </label>
-                            <input
-                                type="time"
-                                value={checkInTime}
-                                onChange={(e) => setCheckInTime(e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                            />
-                        </div>
-                        {/* أقصى وقت تسجيل الدخول */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                أقصى وقت تسجيل الدخول
-                            </label>
-                            <input
-                                type="time"
-                                value={maxCheckInTime}
-                                onChange={(e) => setMaxCheckInTime(e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                                min={checkInTime} // تعيين الحد الأدنى لوقت تسجيل الدخول
-                            />
-                        </div>
-                    </div>
+                    {!isChecked && (
+                        <>
+                            <div className="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        وقت تسجيل الدخول
+                                    </label>
+                                    <input
+                                        type="time"
+                                        value={checkInTime}
+                                        onChange={(e) => setCheckInTime(e.target.value)}
+                                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        أقصى وقت تسجيل الدخول
+                                    </label>
+                                    <input
+                                        type="time"
+                                        value={maxCheckInTime}
+                                        onChange={(e) => setMaxCheckInTime(e.target.value)}
+                                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                                        min={checkInTime}
+                                    />
+                                </div>
+                            </div>
 
-                    {/* وقت الانصراف */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            وقت الانصراف
-                        </label>
-                        <input
-                            type="time"
-                            value={shiftEndTime}
-                            onChange={(e) => setShiftEndTime(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                        />
-                    </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    وقت الانصراف
+                                </label>
+                                <input
+                                    type="time"
+                                    value={shiftEndTime}
+                                    onChange={(e) => setShiftEndTime(e.target.value)}
+                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                                />
+                            </div>
+                        </>
+                    )}
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -204,7 +212,7 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                             onChange={(e) => setRepeat(e.target.value)}
                             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
                         >
-                            <option value="يومي">ليوم</option>
+                            <option value="يومي">اليوم</option>
                             <option value="أسبوعي">أسبوعي</option>
                         </select>
                     </div>
@@ -214,61 +222,53 @@ export default function ShiftForm({ handleSave, handleCancel, selectedDate, sele
                         onClick={() => setShowAddEmployeeForm(true)}
                         className="flex items-center px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none"
                     >
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        إضافة موظف
+                        <UserPlus className="w-4 h-4 mx-2" />
+                        إضافة جهة
                     </button>
 
-                    {/* عرض قائمة الموظفين المضافين */}
                     <div>
-                        <h3 className="text-lg font-semibold mb-2">الموظفين المضافين:</h3>
-                        <div
-                            className="mb-2 grid grid-cols-1 md:grid-cols-2 overflow-hidden gap-x-3"
-                        >
+                        <h3 className="mt-4 mb-2 font-semibold text-gray-700">
+                            الجهات الحالية
+                        </h3>
+                        {employees.length === 0 && <p> لم يتم إضافة جهة بعد.</p>}
+                        <ul>
                             {employees.map((employee, index) => (
-                                <div
-                                    key={employee.id || index}
-                                    // Use employee.id if available, or index as fallback
-                                    className=" flex items-center justify-between mb-3 border-2 shadow-md border-gray-200 p-2 rounded-md hover:bg-gray-100"
-                                >
-                                    <span
-                                        className="overflow-hidden flex items-center"
-                                    >{employee.ar_name || employee.en_name}</span> {/* Display ar_name or en_name */}
-                                    <button
-                                        onClick={() => handleRemoveEmployee(index)}
-                                        className="text-red-500 hover:text-red-700 focus:outline-none"
-                                    >
-                                        <Trash className="w-4 h-4" />
+                                <li key={index} className="flex items-center justify-between p-2 border-b border-gray-300">
+                                    <span>{employee.name || "اسم غير متوفر"}</span>
+                                    <button onClick={() => handleRemoveEmployee(index)}>
+                                        <Trash className="w-4 h-4 text-red-600 hover:text-red-800" />
                                     </button>
-                                </div>
+                                </li>
                             ))}
-                        </div>
+                        </ul>
                     </div>
 
-                    <div className="flex justify-between">
-                        <button
-                            type="button"
-                            onClick={handleCancel}
-                            className="px-4 py-2 text-white bg-gray-400 rounded-md hover:bg-gray-500 focus:outline-none"
-                        >
-                            إلغاء
-                        </button>
+                    <div className="flex justify-between mt-6">
                         <button
                             type="button"
                             onClick={handleSubmit}
                             className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
                         >
-                            حفظ
+                            حفظ المناوبة
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleCancel}
+                            className="px-4 py-2 text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none"
+                        >
+                            إلغاء
                         </button>
                     </div>
                 </form>
-            </div>
 
-            {showAddEmployeeForm && (
-                <AddEmployeeForm
-                    handleAddEmployee={handleAddEmployee}
-                    handleClose={() => setShowAddEmployeeForm(false)}
-                />
-            )}
+                {showAddEmployeeForm && (
+                    <AddEmployeeForm
+                        handleAddEmployee={handleAddEmployee}
+                        handleClose={() => setShowAddEmployeeForm(false)}
+                    />
+                )}
+
+            </div>
         </>
     );
 }

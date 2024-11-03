@@ -76,6 +76,7 @@ const en = {
     profile: "Profile",
     departures: "departures",
     users: "Users",
+    AllEmployees: "AllEmployees",
     registration: "Registration",
     clients: "Clients",
     rooms: "Rooms",
