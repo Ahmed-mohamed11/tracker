@@ -375,7 +375,15 @@ export default function Navbar() {
                   : "opacity-0 invisible animate-slide-up"
               )}
             >
-              
+              {userData && userData.email && (
+                <Link
+                  to="/profile"
+                  className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
+                >
+                  <User size={25} className="mx-2" />
+                  {userData && userData.email}
+                </Link>
+              )}
              
               <button
                 onClick={handleLogout}
