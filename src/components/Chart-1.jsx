@@ -9,12 +9,11 @@ const ApexChart = () => {
                 data: [31, 40, 28, 51, 42, 109, 100],
             },
             {
-                name: ' الغياب',
+                name: 'الغياب',
                 data: [11, 32, 45, 32, 34, 52, 41],
             },
-
             {
-                name: ' التأخير',
+                name: 'التأخير',
                 data: [11, 32, 45, 32, 34, 52, 41],
             },
         ],
@@ -26,7 +25,6 @@ const ApexChart = () => {
                     show: false, // إخفاء أدوات التحكم في الرسم
                 },
             },
-
             dataLabels: {
                 enabled: false,
             },
@@ -34,20 +32,20 @@ const ApexChart = () => {
                 curve: 'smooth',
             },
             xaxis: {
-                type: 'datetime',
+                type: 'category', // Use 'category' type for dates
                 categories: [
-                    '2018-09-19T00:00:00.000Z',
-                    '2018-09-19T01:30:00.000Z',
-                    '2018-09-19T02:30:00.000Z',
-                    '2018-09-19T03:30:00.000Z',
-                    '2018-09-19T04:30:00.000Z',
-                    '2018-09-19T05:30:00.000Z',
-                    '2018-09-19T06:30:00.000Z',
+                    '2018-09-19',
+                    '2018-09-20',
+                    '2018-09-21',
+                    '2018-09-22',
+                    '2018-09-23',
+                    '2018-09-24',
+                    '2018-09-25',
                 ],
             },
             tooltip: {
                 x: {
-                    format: 'dd/MM/yy HH:mm',
+                    format: 'dd/MM/yy', // Adjust the tooltip format for dates
                 },
             },
         },
