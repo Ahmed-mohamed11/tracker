@@ -34,7 +34,7 @@ export default function AccountSettings({ onClose }) {
         isVisible && (
             <div
                 id="modalOverlay"
-                className={`fixed z-50 inset-0 bg-black mt-20 bg-opacity-50 flex items-center justify-center transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                className={`fixed z-50 inset-0 -mb-12  bg-black mt-20 bg-opacity-50 flex items-center justify-center transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
                 onClick={handleOverlayClick}
             >
                 <div
