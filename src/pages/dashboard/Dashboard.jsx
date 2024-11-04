@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Chart1 from "../../components/Chart-1";
@@ -15,53 +15,39 @@ export default function Dashboard() {
     const [selectedEntity, setSelectedEntity] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState('');
     const [startDate, setStartDate] = useState('');
-    const [executeDate, setExecuteDate] = useState('');
-    const [finishDate, setFinishDate] = useState('');
+    const [endDate, setEndDate] = useState('');
     const [lastLogin, setLastLogin] = useState('');
     const [currentPlan, setCurrentPlan] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [executeDate, setExecuteDate] = useState('');
+    const [finishDate, setFinishDate] = useState('');
     const [totalAttendancePercentage, setTotalAttendancePercentage] = useState(0);
-    const [id, setId] = useState(0);
     const [totalHoursOfAttendance, setTotalHoursOfAttendance] = useState(0);
     const [chartData, setChartData] = useState(null);
+    const [id, setId] = useState(0);
 
     useEffect(() => {
-        const fetchBranches = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.get('https://bio.skyrsys.com/api/branch/branches/', {
+                const branchesResponse = await axios.get('https://bio.skyrsys.com/api/branch/branches/', {
                     headers: { 'Authorization': `Token ${Cookies.get('token')}` },
                 });
-                setBranches(response.data);
+                setBranches(branchesResponse.data);
+
+                const entitiesResponse = await axios.get('https://bio.skyrsys.com/api/entity/', {
+                    headers: { 'Authorization': `Token ${Cookies.get('token')}` },
+                });
+                setEntities(entitiesResponse.data);
+
+                const employeesResponse = await axios.get('https://bio.skyrsys.com/api/employee/', {
+                    headers: { 'Authorization': `Token ${Cookies.get('token')}` },
+                });
+                setEmployees(employeesResponse.data);
             } catch (error) {
-                console.error('Error fetching branches:', error);
+                console.error('Error fetching data:', error);
             }
         };
 
-        const fetchEntities = async () => {
-            try {
-                const response = await axios.get('https://bio.skyrsys.com/api/entity/', {
-                    headers: { 'Authorization': `Token ${Cookies.get('token')}` },
-                });
-                setEntities(response.data);
-            } catch (error) {
-                console.error('Error fetching entities:', error);
-            }
-        };
-
-        const fetchEmployees = async () => {
-            try {
-                const response = await axios.get('https://bio.skyrsys.com/api/employee/', {
-                    headers: { 'Authorization': `Token ${Cookies.get('token')}` },
-                });
-                setEmployees(response.data);
-            } catch (error) {
-                console.error('Error fetching employees:', error);
-            }
-        };
-
-        fetchBranches();
-        fetchEntities();
-        fetchEmployees();
+        fetchData();
     }, []);
 
     const handleDataDisplay = () => {
@@ -73,46 +59,52 @@ export default function Dashboard() {
             end_date: endDate,
         });
 
-        const url = `https://bio.skyrsys.com/api/dashboard/?${params.toString()}`;
-
-        axios.get(url, {
-            headers: {
-                'Authorization': `Token ${Cookies.get('token')}`,
-            }
+        axios.get(`https://bio.skyrsys.com/api/dashboard/?${params.toString()}`, {
+            headers: { 'Authorization': `Token ${Cookies.get('token')}` },
         })
             .then(response => {
-                console.log('Response from API:', response.data);
+                const { first_chart, section_employees, account_informations } = response.data;
 
-                const firstChartData = response.data.first_chart.attendance_absent_counts;
-                const attendanceCounts = firstChartData.map(entry => entry.count);
-                const dates = firstChartData.map(entry => entry.date);
+                // Prepare Chart1 data
+                const attendanceCounts = first_chart.attendance_absent_counts.map(entry => entry.count);
+                const attendanceIntimeCounts = first_chart.attendance_intime_counts.map(entry => entry.count);
+                const attendanceLateCounts = first_chart.attendance_late_counts.map(entry => entry.count);
 
-                const attendanceIntimeCounts = response.data.first_chart.attendance_intime_counts.map(entry => entry.count);
-                const attendanceLateCounts = response.data.first_chart.attendance_late_counts.map(entry => entry.count);
+                // Use the date from attendance_absent_counts for x-axis categories
+                const dates = first_chart.attendance_absent_counts.map(entry => entry.date);
 
+                // Update chartData with new structure
                 setChartData({
-                    series: [
-                        { name: 'الغياب', data: attendanceCounts },
-                        { name: 'الحضور', data: attendanceIntimeCounts },
-                        { name: 'التأخير', data: attendanceLateCounts },
-                    ],
-                    categories: dates,
+                    first_chart: {
+                        attendance_absent_counts: attendanceCounts.map((count, index) => ({
+                            date: dates[index],
+                            count: count,
+                        })),
+                        attendance_intime_counts: attendanceIntimeCounts,
+                        attendance_late_counts: attendanceLateCounts,
+                    },
+
                 });
 
-                // Set the data for Chart 3
-                setTotalAttendancePercentage(response.data.section_employees.total_attendance_percentage);
-                setTotalHoursOfAttendance(response.data.section_employees.total_hours_of_attendance);
-                setId(response.data.account_informations.account_id);
-                setExecuteDate(response.data.account_informations.start_date);
-                setFinishDate(response.data.account_informations.end_date);
-                setCurrentPlan(response.data.account_informations.current_plan);
-                setLastLogin(response.data.account_informations.last_login);
+                console.log("chartData", chartData);
+
+                // Update Chart3 and Chart4 data
+                setTotalAttendancePercentage(section_employees.total_attendance_percentage);
+                setTotalHoursOfAttendance(section_employees.total_hours_of_attendance);
+
+                // Account information
+                setId(account_informations.account_id);
+                setExecuteDate(account_informations.start_date);
+                setFinishDate(account_informations.end_date);
+                setCurrentPlan(account_informations.current_plan);
+                setLastLogin(account_informations.last_login);
             })
-            console.log('44',totalAttendancePercentage)
             .catch(error => {
                 console.error('Error fetching data from API:', error);
             });
     };
+
+
 
     return (
         <div className='mx-10'>
@@ -140,25 +132,29 @@ export default function Dashboard() {
                     />
                 </div>
                 <div className='flex flex-col'>
-                    <label className='block mb-2 text-sm font-medium text-gray-900' htmlFor="startDate">تاريخ البداية</label>
+                    <label htmlFor="startDate" className='block mb-2 text-sm font-medium text-gray-900'>تاريخ البداية</label>
                     <input
+                        type="date"
+                        id="startDate"
+                        name="startDate"
                         className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md"
-                        type="date" id="startDate" name="startDate"
                         onChange={e => setStartDate(e.target.value)}
                     />
                 </div>
                 <div className='flex flex-col'>
-                    <label className='block mb-2 text-sm font-medium text-gray-900' htmlFor="endDate">تاريخ الانتهاء</label>
+                    <label htmlFor="endDate" className='block mb-2 text-sm font-medium text-gray-900'>تاريخ الانتهاء</label>
                     <input
+                        type="date"
+                        id="endDate"
+                        name="endDate"
                         className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md"
-                        type="date" id="endDate" name="endDate"
                         onChange={e => setEndDate(e.target.value)}
                     />
                 </div>
                 <div>
                     <button
-                        className="bg-themeColor-400 border border-gray-300 w-full text-white px-4 py-2 rounded-md"
                         onClick={handleDataDisplay}
+                        className="bg-themeColor-400 border border-gray-300 w-full text-white px-4 py-2 rounded-md"
                     >
                         عرض البيانات
                     </button>
@@ -169,10 +165,12 @@ export default function Dashboard() {
                     <Chart1 chartData={chartData} />
                 </div>
                 <div className='my-5 p-5 border-2 border-gray-300 rounded-md'>
-                    <Chart2 />
+                    <Chart2 chartData={chartData} />
                 </div>
                 <div className='md:grid md:grid-cols-2 xl:grid-cols-2 lg:grid-cols-1 gap-4 my-5 p-5 border-2 border-gray-300 rounded-md'>
-                    <Chart3 totalAttendancePercentage={totalAttendancePercentage} />
+                    <Chart3
+                        totalHoursOfAttendance={totalHoursOfAttendance}
+                        totalAttendancePercentage={totalAttendancePercentage} />
                     <Chart4 totalHoursOfAttendance={totalHoursOfAttendance} />
                 </div>
                 <div className=" py-4 px-4 sm:px-6 lg:px-8" dir="rtl">
@@ -220,8 +218,7 @@ export default function Dashboard() {
                                     {/* Last Login */}
                                     <div className="flex justify-center gap-5 items-center border-b pb-3">
                                         <span className="font-medium text-gray-900">آخر تسجيل دخول</span>
-                                        <span className="text-gray-600">{lastLogin}</span>
-                                    </div>
+                                        <span className="text-gray-600">{lastLogin}</span>                                   </div>
                                 </div>
                                 {/* Usage Statistics */}
                                 <div className="bg-gray-50 rounded-xl p-4">
