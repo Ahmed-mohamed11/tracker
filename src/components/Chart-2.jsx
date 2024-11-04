@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 const generateDayWiseTimeSeries = (baseval, count, yrange) => {
@@ -31,13 +31,7 @@ const ApexChart = () => {
                     max: 60,
                 }),
             },
-            {
-                name: 'التأخير', // تغيير الاسم إلى "الغياب"
-                data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
-                    min: 10,
-                    max: 20,
-                }),
-            },
+
             {
                 name: 'الإنصراف المبكر', // تغيير الاسم إلى "التأخير"
                 data: generateDayWiseTimeSeries(new Date('11 Feb 2017 GMT').getTime(), 20, {
