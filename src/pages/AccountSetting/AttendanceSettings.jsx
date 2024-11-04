@@ -5,12 +5,12 @@ import FormSelect from "../../components/form/FormSelect";
 export default function AttendanceSettings() {
     const PageData = [
         {
-            title: "اعدادات الموقع الجغرافي",
-            sub_title: ["التحقق من الوقت الحالي"],
-        },
-        {
             title: "إحتساب تأخير الحضور",
             sub_title: ["التأخر بعد الفترة المرنة"],
+        },
+        {
+            title: "اعدادات الموقع الجغرافي",
+            sub_title: ["التحقق من الوقت الحالي"],
         },
         {
             title: "اعدادات العمل الاضافي",
@@ -48,7 +48,7 @@ export default function AttendanceSettings() {
     ];
 
     return (
-        <div className=" h-screen overflow-y-auto p-6 bg-gray-100">
+        <div className=" h-screen overflow-y-auto z-50 p-6 bg-gray-100">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">إعدادات الحضور</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {PageData.map((item, index) => (

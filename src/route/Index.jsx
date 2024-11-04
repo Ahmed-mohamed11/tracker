@@ -42,7 +42,6 @@ const AdminPages = ({ loading }) => {
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/sites`} element={<Sites />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/records`} element={<Records />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/rejected`} element={<RejectedMovements />} />
-        <Route path={`${import.meta.env.VITE_PUBLIC_URL}/account`} element={<AccountSetting />} />
 
 
         <Route
