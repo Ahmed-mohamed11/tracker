@@ -18,6 +18,7 @@ import { useI18nContext } from "../context/i18n-context";
 import Cookies from "js-cookie";
 import { Flag, ListChecks } from "lucide-react";
 import AccountSettings from "../pages/AccountSetting/accountSetting";
+import axios from "axios";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -105,7 +106,7 @@ const NavbarItem = ({
   );
 };
 
-export default function Navbar() {
+export default function Navbar({ companyLogo, companyName }) {
   const { t } = useI18nContext();
   const [role, setRole] = useState("admin");
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -166,106 +167,132 @@ export default function Navbar() {
           name: t("sideBar.companies"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
         },
-    {
-      name: t("sideBar.plans"),
-      link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
+        {
+          name: t("sideBar.plans"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
         },
       ],
     },
-{
-  icon: <House size={25} />,
-    name: t("sideBar.dashboard"),
+    {
+      icon: <House size={25} />,
+      name: t("sideBar.dashboard"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/`,
-},
-{
-  icon: <ListDashes size={25} />,
-    name: t("sideBar.AllEmployees"),
+    },
+    {
+      icon: <ListDashes size={25} />,
+      name: t("sideBar.AllEmployees"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/AllEmployees`,
-},
-{
-  icon: <ListChecks size={25} />,
-    name: t("sideBar.registration"),
+    },
+    {
+      icon: <ListChecks size={25} />,
+      name: t("sideBar.registration"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/registration`,
-},
-{
-  icon: <UserCircleGear size={25} />,
-    name: t("sideBar.departures"),
+    },
+    {
+      icon: <UserCircleGear size={25} />,
+      name: t("sideBar.departures"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/departures`,
-},
-{
-  icon: <Network size={25} />,
-    name: t("sideBar.Administrative"),
+    },
+    {
+      icon: <Network size={25} />,
+      name: t("sideBar.Administrative"),
       subItems: [
         {
           name: t("sideBar.Entities"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
         },
 
-{
-  name: t("sideBar.branches"),
-    link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
-},
-{
-  name: t("sideBar.Employee"),
-    link: `${import.meta.env.VITE_PUBLIC_URL}/employee`,
-},
+        {
+          name: t("sideBar.branches"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
+        },
+        {
+          name: t("sideBar.Employee"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/employee`,
+        },
       ],
     },
-{
-  icon: <Clock size={25} />,
-    name: t("sideBar.Shifts"),
+    {
+      icon: <Clock size={25} />,
+      name: t("sideBar.Shifts"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/shifts`,
-},
-{
-  icon: <Flag size={25} />,
-    name: t("sideBar.reports"),
+    },
+    {
+      icon: <Flag size={25} />,
+      name: t("sideBar.reports"),
       subItems: [
         {
           name: t("sideBar.Preparation"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/reports`,
         },
 
-{
-  name: t("sideBar.commitments"),
-    link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
-},
+        {
+          name: t("sideBar.commitments"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
+        },
       ],
     },
 
-{
-  icon: <Gear size={25} />,
-    name: t("sideBar.setting"),
+    {
+      icon: <Gear size={25} />,
+      name: t("sideBar.setting"),
       subItems: [
         {
           name: t("sideBar.site"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/sites`,
         },
-{
-  name: t("sideBar.audio"),
-    link:` ${import.meta.env.VITE_PUBLIC_URL}/records`,
-},
-{
-  name: t("sideBar.reject"),
-    link: `${import.meta.env.VITE_PUBLIC_URL}/rejected`,
-},
-{
-  name: t("sideBar.changeSetting"),
-    onClick: () => setShowSettingsPopup(true),
+        {
+          name: t("sideBar.audio"),
+          link: ` ${import.meta.env.VITE_PUBLIC_URL}/records`,
+        },
+        {
+          name: t("sideBar.reject"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/rejected`,
+        },
+        {
+          name: t("sideBar.changeSetting"),
+          onClick: () => setShowSettingsPopup(true),
         },
 
       ],
     },
   ].filter(Boolean);
-const navigationError = [
-  {
-    icon: <Warning size={25} />,
-    name: t("sideBar.error"),
-    link: "/*",
-  },
-];
+  const navigationError = [
+    {
+      icon: <Warning size={25} />,
+      name: t("sideBar.error"),
+      link: "/*",
+    },
+  ];
+  const [previewImage, setPreviewImage] = useState(null);
+  const [originalLogo, setOriginalLogo] = useState(""); // Store the original logo
 
   const selectedNavigation = role === "admin" ? navigationAdmin : navigationError;
+  useEffect(() => {
+    const fetchCompanyData = async () => {
+      try {
+        const token = Cookies.get('token');
+        if (!token) {
+          console.error('No token found in cookies');
+          return;
+        }
+        const response = await axios.get("https://bio.skyrsys.com/api/company/company-data/", {
+          headers: {
+            'Authorization': `Token ${token}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        });
+        const companyData = response.data;
+        const { company_logo } = companyData;
 
+        setPreviewImage(`https://bio.skyrsys.com${company_logo}`); // Set preview image
+      } catch (error) {
+        console.error("Error fetching company data", error);
+      }
+    };
+
+    fetchCompanyData();
+  }, []);
   return (
     <div className="w-full text-white shadow-lg sticky top-0 z-50 bg-gradient-to-r from-themeColor-700 via-themeColor-600 to-themeColor-500">
       <nav className="flex items-center justify-around p-4">
@@ -295,16 +322,15 @@ const navigationError = [
         </div>
 
         <div className="relative" ref={userMenuRef}>
-          <div className="p-2 rounded-full flex items-center gap-3 cursor-pointer" onClick={toggleUserMenu}>
-            {user && user.companyLogo && (
-              <div>
-                <img
-                  src={`https://bio.skyrsys.com/${user.companyLogo}`}
-                  alt={user.companyName}
-                  className="w-10 h-10 border-2 border-orange-500 rounded-full"
-                />
-                <span className="text-sm font-semibold">{user.companyName}</span>
-              </div>
+          <div className=" rounded-full border-2 border-orange-500 flex items-center gap-3 cursor-pointer" onClick={toggleUserMenu}>
+            {previewImage ? (
+              <img
+                src={previewImage}
+                alt="Company Logo" className="w-12 h-12  rounded-full" />
+            ) : (
+              <img
+                src={`https://bio.skyrsys.com${originalLogo}`}
+                alt="Company Logo" className="w-12 h-12  rounded-full" />
             )}
           </div>
 

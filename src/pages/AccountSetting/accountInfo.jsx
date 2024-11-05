@@ -8,8 +8,8 @@ export default function AccountInfo() {
     const [companyCode, setCompanyCode] = useState("");
     const [companyLogo, setCompanyLogo] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
-    const [initialCompanyCode, setInitialCompanyCode] = useState(""); // Store initial code for comparison
     const [originalLogo, setOriginalLogo] = useState(""); // Store the original logo
+    const [initialCompanyCode, setInitialCompanyCode] = useState(""); // Store initial code for comparison
     const fileInputRef = useRef();
 
     useEffect(() => {
@@ -27,9 +27,7 @@ export default function AccountInfo() {
                     },
                 });
                 const companyData = response.data;
-console.log('4',companyData);
-                // Initialize state variables with the fetched data
-                     const { company_name, company_code, company_logo } = companyData;
+                      const { company_name, company_code, company_logo } = companyData;
                     setCompanyName(company_name);
                     setCompanyCode(company_code);
                     setOriginalLogo(company_logo); // Set the original logo URL
@@ -73,11 +71,8 @@ console.log('4',companyData);
         formData.append('company_name', companyName);
         formData.append('company_code', companyCode);
 
-        // Send the existing logo if no new logo is provided
         if (companyLogo) {
             formData.append('company_logo', companyLogo);
-        } else if (originalLogo) {
-            formData.append('company_logo', originalLogo);
         }
 
         try {
@@ -92,7 +87,13 @@ console.log('4',companyData);
                     'Authorization': `Token ${token}`,
                 },
             });
+
             console.log("Update successful", response.data);
+
+            // Save the company logo URL in local storage
+            const updatedLogoUrl = response.data.company_logo; // Ensure this matches your API response structure
+            localStorage.setItem("companyLogo", updatedLogoUrl);
+
             Swal.fire({
                 title: 'تم تحديث المعلومات بنجاح',
                 icon: 'success',
@@ -108,6 +109,8 @@ console.log('4',companyData);
             });
         }
     };
+
+ 
 
     const handleCancel = () => {
         setCompanyName("");
