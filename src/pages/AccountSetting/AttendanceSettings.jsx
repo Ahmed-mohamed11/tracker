@@ -1,24 +1,16 @@
-// import React from "react";
 import ToggleButton from "../../components/form/ToggleButton";
-import FormText from "../../components/form/FormText";
 import FormNumber from "../../components/form/FormNumber";
 import FormSelect from "../../components/form/FormSelect";
 
 export default function AttendanceSettings() {
     const PageData = [
         {
-            title: "احتساب تأخير الحضور",
-            sub_title: [
-                "التاخير بعد الفتره المرنه",
-
-            ],
+            title: "إحتساب تأخير الحضور",
+            sub_title: ["التأخر بعد الفترة المرنة"],
         },
         {
-            title: "العمل عن بعد",
-            sub_title: [
-                "التاخير بعد الفتره المرنه",
-
-            ],
+            title: "اعدادات الموقع الجغرافي",
+            sub_title: ["التحقق من الوقت الحالي"],
         },
         {
             title: "اعدادات العمل الاضافي",
@@ -26,35 +18,13 @@ export default function AttendanceSettings() {
                 "العمل الاضافي",
                 {
                     inputs: [
-                        <FormNumber key={3}
-                            label=" الحد الادني لعدد الساعات "
-                            onChange={(e) => {
-                                console.log(e.target.value);
-                            }}
-                        />,
-                        <FormNumber key={4}
-                            label=" الحد الاقصي لعدد الساعات "
-                            onChange={(e) => {
-                                console.log(e.target.value);
-                            }}
-                        />,
-
-                        <FormSelect key={5}
-                            label=" اختر الجهات "
-                            onChange={(e) => {
-                                console.log(e.target.value);
-                            }}
-                        />,
-                        <FormSelect key={6}
-                            label="   اختر الموظفين   "
-                            onChange={(e) => {
-                                console.log(e.target.value);
-                            }}
-                        />,
-
+                        <FormNumber key={3} label=" الحد الادني لعدد الساعات " onChange={(e) => console.log(e.target.value)} />,
+                        <FormNumber key={4} label=" الحد الاقصي لعدد الساعات " onChange={(e) => console.log(e.target.value)} />,
+                        <FormSelect key={5} label=" اختر الجهات " onChange={(e) => console.log(e.target.value)} />,
+                        <FormSelect key={6} label="   اختر الموظفين   " onChange={(e) => console.log(e.target.value)} />,
                     ],
-
                 },
+                "إحتساب الحضور المبكر ضمن العمل الإضافي",
             ],
         },
         {
@@ -66,53 +36,43 @@ export default function AttendanceSettings() {
                 "تحديد تسجيل الدخول من الهاتف المسجل فقط",
                 {
                     inputs: [
-                        <FormSelect key={6}
-                            label="   اختر الموظفين   "
-                            onChange={(e) => {
-                                console.log(e.target.value);
-                            }}
-                        />,
+                        <FormSelect key={7} label="   نسبة العينة العشوائية   " onChange={(e) => console.log(e.target.value)} />,
                     ],
                 },
             ],
         },
-
         {
-            title: "اعدادات الموقع الجغرافي",
-            sub_title: [
-                "التحقق من الوقت الحالي",
-
-            ],
-        }
-
+            title: "التحكم بالإجراء الخاص بتغيير حالة التحضير",
+            sub_title: ["التحكم بالإجراء الخاص بتغيير حالة التحضير"],
+        },
     ];
 
     return (
-        <div className="max-h-screen">
-            <div className="grid grid-cols-2 gap-3 overflow-y-auto">
+        <div className=" h-screen overflow-y-auto z-50 p-6 bg-gray-100">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">إعدادات الحضور</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {PageData.map((item, index) => (
-                    <div key={index} className="flex flex-col">
-                        <div className="mb-4 border-2 border-gray-300 p-4 rounded-md">
-                            <label className="block text-sm font-medium text-gray-700 mb-3">
-                                {item.title}
-                            </label>
-                            {item.sub_title.map((subItem, subIndex) => (
-                                <div
-                                    key={subIndex}
-                                    className="mb-4 w-full grid grid-cols-2 items-center gap-4 justify-start border-2 border-gray-300 p-2 rounded-md"
-                                >
-                                    {typeof subItem === "string" ? (
-                                        <ToggleButton label={subItem} handleToggle={() => { }} />
-                                    ) : (
-                                        subItem.inputs.map((input, inputIndex) => (
+                    <div key={index} className="bg-white border border-gray-300 rounded-lg shadow-lg p-5">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4">{item.title}</h3>
+                        {item.sub_title.map((subItem, subIndex) => (
+                            <div
+                                key={subIndex}
+                                className="flex items-center gap-4 mb-2 p-3 border border-gray-200 rounded-md bg-gray-50"
+                                style={{ minHeight: '50px' }}
+                            >
+                                {typeof subItem === "string" ? (
+                                    <ToggleButton label={subItem} handleToggle={() => { }} />
+                                ) : (
+                                    <div className="grid grid-cols-1  md:grid-cols-2 gap-4 w-full">
+                                        {subItem.inputs.map((input, inputIndex) => (
                                             <div key={inputIndex} className="w-full">
                                                 {input}
                                             </div>
-                                        ))
-                                    )}
-                                </div>
-                            ))}
-                        </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
                     </div>
                 ))}
             </div>

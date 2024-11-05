@@ -18,13 +18,12 @@ export default function Calendar() {
     const [selectedData, setSelectedData] = useState({});
     const [daysData, setDaysData] = useState([]);
     const [refreshData, setRefreshData] = useState(false);
+    const [selectedEntities, setSelectedEntities] = useState([]); // إضافة حالة جديدة لتخزين الكيانات المحددة
 
-
-    const handleAddShiftEmployee = () => {
-        setRefreshData(prev => !prev);
+    const handleAddShiftEmployee = (entities) => {
+        setSelectedEntities(entities); // حفظ الكيانات المحددة
+        setRefreshData(prev => !prev); // تحديث البيانات
     };
-
-
 
     const fetchData = async () => {
         const token = Cookies.get('token');
@@ -46,6 +45,7 @@ export default function Calendar() {
         setCurrentDate(new Date());
         fetchData();
     }, [refreshData]);
+
     const getDaysInMonth = (date) => {
         const year = date.getFullYear();
         const month = date.getMonth();
@@ -94,8 +94,6 @@ export default function Calendar() {
         });
     };
 
-
-
     const handleDayClick = (day) => {
         const dayData = daysData.find(d => new Date(d.date).toDateString() === day.toDateString());
         setSelectedDay(day);
@@ -108,6 +106,8 @@ export default function Calendar() {
             setShowForm(false);
         }
     };
+
+    console.log(selectedData, 'selectedData');
 
     return (
         <div className="relative">
@@ -136,7 +136,6 @@ export default function Calendar() {
                         </div>
                     ))}
                     {renderDays()}
-
                 </div>
                 <ToastContainer />
             </div>
@@ -154,6 +153,7 @@ export default function Calendar() {
                             selectedDate={selectedDay}
                             selectedData={selectedData}
                             onAddShift={handleAddShiftEmployee}
+                            selectedEntities={selectedEntities} // تمرير الكيانات المحددة إلى ShiftForm
                         />
                     </div>
                 </div>

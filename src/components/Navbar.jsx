@@ -11,11 +11,13 @@ import {
   Gear,
   SignOut,
   User,
+  ListDashes,
 } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
-import Cookies from "js-cookie"; // استيراد مكتبة js-cookie
+import Cookies from "js-cookie";
 import { Flag, ListChecks } from "lucide-react";
+import AccountSettings from "../pages/AccountSetting/accountSetting";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -40,12 +42,8 @@ const NavbarItem = ({
         closeSubMenu();
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [closeSubMenu]);
 
   const isActive =
@@ -53,11 +51,8 @@ const NavbarItem = ({
     (subItems && subItems.some((sub) => location.pathname === sub.link));
 
   const handleClick = () => {
-    if (subItems) {
-      toggleSubMenu();
-    } else {
-      onClick();
-    }
+    if (subItems) toggleSubMenu();
+    else onClick && onClick(); // Ensure onClick is defined before calling it
   };
 
   return (
@@ -88,9 +83,7 @@ const NavbarItem = ({
         <div
           className={classNames(
             "absolute z-50 top-full left-0 mt-5 bg-themeColor-700 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
-            isOpen
-              ? "opacity-100 visible w-full animate-slide-down" // إضافة w-full لجعل القائمة بحجم الزر
-              : "opacity-0 invisible w-full animate-slide-up" // إضافة w-full هنا أيضاً
+            isOpen ? "opacity-100 visible w-full animate-slide-down" : "opacity-0 invisible w-full animate-slide-up"
           )}
         >
           {subItems.map((subItem, index) => (
@@ -98,7 +91,7 @@ const NavbarItem = ({
               key={index}
               to={subItem.link}
               onClick={() => {
-                onClick();
+                subItem.onClick && subItem.onClick(); // Ensure subItem.onClick is defined
                 closeSubMenu();
               }}
               className="block px-4 py-2 text-base hover:bg-gradient-to-r hover:from-themeColor-400"
@@ -118,6 +111,7 @@ export default function Navbar() {
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [showSettingsPopup, setShowSettingsPopup] = useState(false);
   const userMenuRef = useRef();
   const navigate = useNavigate();
 
@@ -126,12 +120,8 @@ export default function Navbar() {
   useEffect(() => {
     const token = Cookies.get("token");
     const storedUser = localStorage.getItem("user");
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    if (!token && !storedUser) {
-      navigate("/login");
-    } else if (!token || !storedUser) {
+    if (token && storedUser) setUser(JSON.parse(storedUser));
+    else {
       Cookies.remove("token");
       localStorage.removeItem("user");
       navigate("/login");
@@ -144,36 +134,21 @@ export default function Navbar() {
         setIsUserMenuOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleSubMenu = (index) => {
-    setOpenMenuIndex(openMenuIndex === index ? null : index);
-  };
+  const toggleSubMenu = (index) => setOpenMenuIndex(openMenuIndex === index ? null : index);
+  const closeSubMenu = () => setOpenMenuIndex(null);
 
-  const closeSubMenu = () => {
-    setOpenMenuIndex(null);
-  };
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const toggleUserMenu = () => {
-    setIsUserMenuOpen(!isUserMenuOpen);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
 
   const handleLogout = () => {
     Cookies.remove("token", { path: "/" });
     localStorage.removeItem("user");
-
     navigate("/login");
   };
-
   const [userData, setUserData] = useState(null);
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -181,7 +156,6 @@ export default function Navbar() {
       setUserData(JSON.parse(user));
     }
   }, []);
-
   const navigationAdmin = [
     userData &&
     userData.isAdmin && {
@@ -192,141 +166,119 @@ export default function Navbar() {
           name: t("sideBar.companies"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
         },
-        {
-          name: t("sideBar.plans"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
+    {
+      name: t("sideBar.plans"),
+      link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
         },
       ],
     },
-    {
-      icon: <House size={25} />,
-      name: t("sideBar.dashboard"),
+{
+  icon: <House size={25} />,
+    name: t("sideBar.dashboard"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/`,
-    },
-    {
-      icon: <ListChecks size={25} />,
-      name: t("sideBar.registration"),
+},
+{
+  icon: <ListDashes size={25} />,
+    name: t("sideBar.AllEmployees"),
+      link: `${import.meta.env.VITE_PUBLIC_URL}/AllEmployees`,
+},
+{
+  icon: <ListChecks size={25} />,
+    name: t("sideBar.registration"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/registration`,
-    },
-    {
-      icon: <UserCircleGear size={25} />,
-      name: t("sideBar.departures"),
+},
+{
+  icon: <UserCircleGear size={25} />,
+    name: t("sideBar.departures"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/departures`,
-    },
-    {
-      icon: <Network size={25} />,
-      name: t("sideBar.Administrative"),
+},
+{
+  icon: <Network size={25} />,
+    name: t("sideBar.Administrative"),
       subItems: [
         {
           name: t("sideBar.Entities"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/entities`,
         },
 
-        {
-          name: t("sideBar.branches"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
-        },
-        {
-          name: t("sideBar.Employee"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/employee`,
-        },
+{
+  name: t("sideBar.branches"),
+    link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
+},
+{
+  name: t("sideBar.Employee"),
+    link: `${import.meta.env.VITE_PUBLIC_URL}/employee`,
+},
       ],
     },
-    {
-      icon: <Clock size={25} />,
-      name: t("sideBar.Shifts"),
+{
+  icon: <Clock size={25} />,
+    name: t("sideBar.Shifts"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/shifts`,
-    },
-    {
-      icon: <Flag size={25} />,
-      name: t("sideBar.reports"),
+},
+{
+  icon: <Flag size={25} />,
+    name: t("sideBar.reports"),
       subItems: [
         {
           name: t("sideBar.Preparation"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/reports`,
         },
 
-        {
-          name: t("sideBar.commitments"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
-        },
+{
+  name: t("sideBar.commitments"),
+    link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
+},
       ],
     },
 
-    {
-      icon: <Gear size={25} />,
-      name: t("sideBar.setting"),
+{
+  icon: <Gear size={25} />,
+    name: t("sideBar.setting"),
       subItems: [
         {
           name: t("sideBar.site"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/sites`,
         },
-        {
-          name: t("sideBar.audio"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/records`,
-        },
-        {
-          name: t("sideBar.reject"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/rejected`,
-        },
-        {
-          name: t("sideBar.changeSetting"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/account`,
+{
+  name: t("sideBar.audio"),
+    link:` ${import.meta.env.VITE_PUBLIC_URL}/records`,
+},
+{
+  name: t("sideBar.reject"),
+    link: `${import.meta.env.VITE_PUBLIC_URL}/rejected`,
+},
+{
+  name: t("sideBar.changeSetting"),
+    onClick: () => setShowSettingsPopup(true),
         },
 
       ],
     },
   ].filter(Boolean);
+const navigationError = [
+  {
+    icon: <Warning size={25} />,
+    name: t("sideBar.error"),
+    link: "/*",
+  },
+];
 
-  const navigationError = [
-    {
-      icon: <Warning size={25} />,
-      name: t("sideBar.error"),
-      link: "/*",
-    },
-  ];
-
-  const selectedNavigation =
-    role === "admin" ? navigationAdmin : navigationError;
-
-  const [activeIndex, setActiveIndex] = useState(
-    selectedNavigation.findIndex(
-      (item) => item.link === `${import.meta.env.VITE_PUBLIC_URL}/`
-    )
-  );
-
-  const handleItemClick = (index, link) => {
-    setActiveIndex(index);
-    localStorage.setItem("currentPath", link);
-    setIsMobileMenuOpen(false);
-    window.scrollTo(0, 0);
-  };
+  const selectedNavigation = role === "admin" ? navigationAdmin : navigationError;
 
   return (
-    <div className="w-full  text-white shadow-lg sticky top-0 z-50 bg-gradient-to-r from-themeColor-700 via-themeColor-600 to-themeColor-500">
-      <nav className="flex items-center justify-around p-4 ">
-        {/* زر القائمة للشاشات الصغيرة */}
+    <div className="w-full text-white shadow-lg sticky top-0 z-50 bg-gradient-to-r from-themeColor-700 via-themeColor-600 to-themeColor-500">
+      <nav className="flex items-center justify-around p-4">
         <div className="lg:hidden">
           <button onClick={toggleMobileMenu} className="text-white">
             {isMobileMenuOpen ? <X size={32} /> : <List size={32} />}
           </button>
         </div>
-
-        {/* شعار التطبيق */}
         <div>
-          <img
-            className="w-14 h-14 border-2 border-orange-500 rounded-full"
-            src="/SiteLogo.png"
-            alt=""
-          />
+          <img className="w-14 h-14 border-2 border-orange-500 rounded-full" src="/SiteLogo.png" alt="" />
         </div>
 
-        {/* روابط القائمة الكبيرة */}
-        <div
-          className={classNames(
-            "mt-3 lg:flex items-center space-x-6 transition-all duration-300 ease-in-out hidden "
-          )}
-        >
+        <div className={classNames("mt-3 lg:flex items-center space-x-2 hidden")}>
           {selectedNavigation.map((item, index) => (
             <NavbarItem
               key={index}
@@ -337,71 +289,44 @@ export default function Navbar() {
               isOpen={openMenuIndex === index}
               toggleSubMenu={() => toggleSubMenu(index)}
               closeSubMenu={closeSubMenu}
-              onClick={() => handleItemClick(index, item.link)}
+              onClick={item.onClick || (() => { })} // Handle onClick or default to empty function
             />
           ))}
         </div>
 
-        {/* معلومات المستخدم */}
         <div className="relative" ref={userMenuRef}>
-          <div
-            className=" p-2 rounded-full flex items-center gap-3 cursor-pointer"
-            onClick={toggleUserMenu}
-          >
-            {userData && userData.companyLogo && (
+          <div className="p-2 rounded-full flex items-center gap-3 cursor-pointer" onClick={toggleUserMenu}>
+            {user && user.companyLogo && (
               <div>
                 <img
-                  src={userData.companyLogo}
-                  alt={userData.companyName}
+                  src={`https://bio.skyrsys.com/${user.companyLogo}`}
+                  alt={user.companyName}
                   className="w-10 h-10 border-2 border-orange-500 rounded-full"
                 />
-                <span className="text-sm font-semibold">
-                  {userData && userData.companyName}
-                </span>
+                <span className="text-sm font-semibold">{user.companyName}</span>
               </div>
             )}
           </div>
 
           {isUserMenuOpen && (
-            <div
-              className={classNames(
-                "absolute z-50 left-0 mt-7  w-48 bg-themeColor-900 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
-                isUserMenuOpen
-                  ? "opacity-100 visible animate-slide-down"
-                  : "opacity-0 invisible animate-slide-up"
-              )}
-            >
-              {userData && userData.email && (
-                <Link
-                  to="/profile"
-                  className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
-                >
+            <div className={classNames("absolute z-50 left-0 mt-7 w-48 bg-themeColor-900 text-white rounded-md shadow-lg", isUserMenuOpen ? "opacity-100 visible animate-slide-down" : "opacity-0 invisible animate-slide-up")}>
+              {user && user.email && (
+                <Link to="/profile" className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500">
                   <User size={25} className="mx-2" />
-                  {userData && userData.email}
+                  {user.email}
                 </Link>
               )}
-              <Link
-                to="/settings"
-                className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500"
-              >
-                <Gear size={20} className=" mx-2" />
-                إعدادات
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="flex items-center w-full px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500 text-left"
-              >
+              <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500 text-left">
                 <SignOut size={20} className="mx-2" />
                 تسجيل خروج
               </button>
             </div>
           )}
         </div>
+        {showSettingsPopup && <AccountSettings onClose={() => setShowSettingsPopup(false)} />}
       </nav>
-
-      {/* القائمة المنسدلة للشاشات الصغيرة */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-themeColor-900 text-white shadow-lg rounded-md p-4 absolute w-[70%] ">
+        <div className="flex flex-col items-center w-full mt-3">
           {selectedNavigation.map((item, index) => (
             <NavbarItem
               key={index}
@@ -412,7 +337,7 @@ export default function Navbar() {
               isOpen={openMenuIndex === index}
               toggleSubMenu={() => toggleSubMenu(index)}
               closeSubMenu={closeSubMenu}
-              onClick={() => handleItemClick(index, item.link)}
+              onClick={item.onClick || (() => { })}
             />
           ))}
         </div>

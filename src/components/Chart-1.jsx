@@ -1,71 +1,74 @@
-import React, { useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
+import ReactApexChart from "react-apexcharts";
 
-const ApexChart = () => {
-    const [chartData] = useState({
-        series: [
-            {
-                name: 'الحضور',
-                data: [31, 40, 28, 51, 42, 109, 100],
-            },
-            {
-                name: ' الغياب',
-                data: [11, 32, 45, 32, 34, 52, 41],
-            },
+const Chart1 = ({ chartData }) => {
+    // استخراج بيانات الحضور، الغياب، والتأخير من البيانات القادمة
+    const attendanceData = chartData?.first_chart.attendance_absent_counts || [];
+    const intimeData = chartData?.first_chart.attendance_intime_counts || [];
+    const lateData = chartData?.first_chart.attendance_late_counts || [];
 
-            {
-                name: ' التأخير',
-                data: [11, 32, 45, 32, 34, 52, 41],
-            },
-        ],
-        options: {
-            chart: {
-                height: 350,
-                type: 'area',
-                toolbar: {
-                    show: false, // إخفاء أدوات التحكم في الرسم
-                },
-            },
+    // استخراج جميع التواريخ الفريدة وترتيبها
+    const categories = Array.from(
+        new Set([
+            ...attendanceData.map(item => item.date),
+            ...intimeData.map(item => item.date),
+            ...lateData.map(item => item.date),
+        ])
+    ).sort();
 
-            dataLabels: {
-                enabled: false,
-            },
-            stroke: {
-                curve: 'smooth',
-            },
-            xaxis: {
-                type: 'datetime',
-                categories: [
-                    '2018-09-19T00:00:00.000Z',
-                    '2018-09-19T01:30:00.000Z',
-                    '2018-09-19T02:30:00.000Z',
-                    '2018-09-19T03:30:00.000Z',
-                    '2018-09-19T04:30:00.000Z',
-                    '2018-09-19T05:30:00.000Z',
-                    '2018-09-19T06:30:00.000Z',
-                ],
-            },
-            tooltip: {
-                x: {
-                    format: 'dd/MM/yy HH:mm',
-                },
-            },
+    // إعداد السلاسل باستخدام البيانات المتوفرة أو القيم الافتراضية
+    const series = [
+        {
+            name: 'الحضور',
+            data: categories.map(date => {
+                const entry = intimeData?.find(d => d.date === date);
+                return entry ? entry.count : 0;
+            }),
         },
-    });
+        {
+            name: 'الغياب',
+            data: categories.map(date => {
+                const entry = attendanceData?.find(d => d.date === date);
+                return entry ? entry.count : 0;
+            }),
+        },
+        {
+            name: 'التأخير',
+            data: categories.map(date => {
+                const entry = lateData?.find(d => d.date === date);
+                return entry ? entry.count : 0;
+            }),
+        },
+    ];
+
+    // إعداد خيارات الرسم البياني
+    const options = {
+        chart: {
+            height: 350,
+            type: 'area',
+            toolbar: { show: false },
+        },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth' },
+        xaxis: {
+            type: 'datetime',
+            categories: categories,
+            labels: { format: 'yyyy-MM-dd' },
+        },
+        tooltip: {
+            x: { format: 'yyyy-MM-dd' },
+        },
+    };
 
     return (
         <div>
-            <div id="chart">
-                <ReactApexChart
-                    options={chartData.options}
-                    series={chartData.series}
-                    type="area"
-                    height={350}
-                />
-            </div>
-            <div id="html-dist"></div>
+            <ReactApexChart
+                options={options}
+                series={series}
+                type="area"
+                height={350}
+            />
         </div>
     );
 };
 
-export default ApexChart;
+export default Chart1;

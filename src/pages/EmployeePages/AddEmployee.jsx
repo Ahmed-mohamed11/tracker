@@ -66,8 +66,6 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
 
             setBranchesList(response.data);
 
-            // إضافة سجل للتحقق من هيكل البيانات
-            console.log("Fetched branches data:", response.data);
 
             const transformedOptions = response.data.map(branch => ({
                 name: branch.branch_name,
@@ -87,14 +85,25 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
     }, []);
 
     const handleSave = () => {
-        const selectedEmployeesIds = selectedItems.filter(Boolean); // تأكد من أن جميع القيم صالحة
-        if (selectedEmployeesIds.length > 0) {
-            handleAddEmployee(selectedEmployeesIds); // أرسل الـ idات فقط
+        const selectedEntities = selectedItems.map(itemId => {
+            for (const group of options) {
+                const entity = group.items.find(e => e.id === itemId);
+                if (entity) {
+                    return entity; // ارجع الكيان بمجرد العثور عليه
+                }
+            }
+            return null; // في حالة عدم العثور على الكيان
+        }).filter(Boolean); // إزالة القيم null
+
+        if (selectedEntities.length > 0) {
+            handleAddEmployee(selectedEntities); // أرسل الكائنات التي تحتوي على id و ar_name
             handleClose();
         } else {
-            console.log("No employee IDs found.");
+            console.log("No employee entities found.");
         }
     };
+
+
 
 
 

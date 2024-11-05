@@ -69,10 +69,7 @@ export default function AccountSettings({ onClose }) {
                     </div>
 
                     {/* أزرار التحكم في أسفل النموذج */}
-                    <div className="flex justify-between p-4 border-t">
-                        <button className="bg-gray-500 text-white px-4 py-2 rounded-lg" onClick={handleClose}>إلغاء</button>
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">حفظ</button>
-                    </div>
+
                 </div>
             </div>
         )

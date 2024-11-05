@@ -69,7 +69,7 @@ export default function Login() {
       const token = data.token;
 
       // حفظ الـ token في الكوكيز
-      Cookies.set("token", token, { expires: 1 / 24, path: "/" });
+      Cookies.set("token", token, { expires: 7, path: "/" });
 
       // حفظ بيانات المستخدم في localStorage
       localStorage.setItem(
@@ -77,7 +77,7 @@ export default function Login() {
         JSON.stringify({
           email: data.company.email,
           isAdmin: data.is_admin,
-          companyName: data.company.company_name, 
+          companyName: data.company.company_name,
           companyLogo: data.company.company_logo,
           companyCode: data.company.company_code,
         })
