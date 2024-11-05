@@ -21,15 +21,15 @@ const Chart2 = ({ chartData }) => {
 
     const series = [
         {
-            name: 'الحضور المبكر', // تغيير الاسم إلى "الحضور"
+            name: 'الحضور المبكر',  
             data: [chartData.second_chart.attendance_before_time_counts || 0],
         },
         {
-            name: 'الإنصراف المبكر', // تغيير الاسم إلى "التأخير"
+            name: 'الإنصراف المبكر',  
             data: [chartData.second_chart.departure_before_time_counts || 0],
         },
         {
-            name: 'العمل الإضافي', // تغيير الاسم إلى "الحضور"
+            name: 'العمل الإضافي',  
             data: [chartData.second_chart.overtime_counts || 0],
         },
     ];
