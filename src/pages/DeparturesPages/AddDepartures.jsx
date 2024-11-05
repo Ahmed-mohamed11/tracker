@@ -42,6 +42,7 @@ const AddDepartures = ({ closeModal, modal, onDepartureAdd }) => {
             closeModal();
         } catch (error) {
             toast.error('Error adding employee departure.');
+            closeModal();
             console.error("Error adding employee departure:", error);
         }
     };
