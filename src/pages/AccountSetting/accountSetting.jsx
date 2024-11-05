@@ -68,7 +68,6 @@ export default function AccountSettings({ onClose }) {
                         {activeTab === 'attendanceSettings' && <AttendanceSettings />}
                     </div>
 
-                    {/* أزرار التحكم في أسفل النموذج */}
 
                 </div>
             </div>
