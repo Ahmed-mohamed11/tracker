@@ -243,7 +243,7 @@ export default function Navbar({ companyLogo, companyName }) {
         },
         {
           name: t("sideBar.audio"),
-          link: ` ${import.meta.env.VITE_PUBLIC_URL}/records`,
+          link: `${import.meta.env.VITE_PUBLIC_URL}/records`,
         },
         {
           name: t("sideBar.reject"),

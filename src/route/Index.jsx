@@ -64,10 +64,7 @@ const AdminPages = ({ loading }) => {
           path={`${import.meta.env.VITE_PUBLIC_URL}/entities`}
           element={<Entities />}
         />
-        <Route
-          path={`${import.meta.env.VITE_PUBLIC_URL}/entities`}
-          element={<Entities />}
-        />
+
         <Route
           path={`${import.meta.env.VITE_PUBLIC_URL}/branches`}
           element={<Branches />}
@@ -84,10 +81,12 @@ const AdminPages = ({ loading }) => {
           path={`${import.meta.env.VITE_PUBLIC_URL}/sites`}
           element={<Sites />}
         />
+
         <Route
-          path={`${import.meta.env.VITE_PUBLIC_URL}/records`}
+          path={`${import.meta.env.VITE_PUBLIC_URL}records`}
           element={<Records />}
         />
+
         <Route
           path={`${import.meta.env.VITE_PUBLIC_URL}/rejected`}
           element={<RejectedMovements />}
