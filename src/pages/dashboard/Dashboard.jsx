@@ -43,14 +43,17 @@ export default function Dashboard() {
             setEntities(entitiesResponse.data);
             setEmployees(employeesResponse.data);
 
-            setSelectedBranch(branchesResponse.data[0]?.id || '');
-            setSelectedEntity(entitiesResponse.data[0]?.id || '');
-            setSelectedEmployee(employeesResponse.data[0]?.id || '');
+            // Set selected values to empty strings
+            setSelectedBranch('');
+            setSelectedEntity('');
+            setSelectedEmployee('');
 
-            // Set default values
-            const today = new Date().toISOString().split('T')[0];
-            setStartDate(today);
-            setEndDate(today);
+            // Set default values for dates
+            const today = new Date();
+            const lastWeek = new Date();
+            lastWeek.setDate(today.getDate() - 7);
+            setStartDate(lastWeek.toISOString().split('T')[0]); // Start date is one week ago
+            setEndDate(today.toISOString().split('T')[0]); // End date is today
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Failed to fetch data');
@@ -77,7 +80,7 @@ export default function Dashboard() {
                 headers: { 'Authorization': `Token ${Cookies.get('token')}` },
             });
             const { first_chart, second_chart, section_employees, account_informations } = response.data;
-console.log('55', response.data);
+            console.log('55', response.data);
             setChartData({
                 first_chart: {
                     attendance_absent_counts: first_chart.attendance_absent_counts,
@@ -164,11 +167,11 @@ console.log('55', response.data);
                 </div>
                 <button
                     onClick={handleDataDisplay}
-                    className={`bg-themeColor-400 border border-gray-300 w-full text-white px-4 py-2 rounded-md ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    disabled={!isFormValid}
+                    className={`bg-themeColor-400 border border-gray-300 w-full text-white px-4 py-2 rounded-md`}
                 >
                     عرض البيانات
                 </button>
+
             </div>
             {/* Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -180,7 +183,7 @@ console.log('55', response.data);
                 </div>
 
             </div>
-                <div className='md:grid md:grid-cols-2 xl:grid-cols-2 lg:grid-cols-1 gap-4 my-5 p-5 '>
+            <div className='md:grid md:grid-cols-2 xl:grid-cols-2 lg:grid-cols-1 gap-4 my-5 p-5 '>
                 <div className='border-2 border-gray-300 rounded-md flex items-center'>
 
                     <Chart3
@@ -188,24 +191,25 @@ console.log('55', response.data);
                         totalAttendancePercentage={totalAttendancePercentage}
                     />
                     <Chart4 totalHoursOfAttendance={totalHoursOfAttendance} />
-                  </div>
+                </div>
 
                 <div className="py-4 px-4 border-2 border-gray-300 rounded-md sm:px-6 lg:px-8" dir="rtl">
-                <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md">
-                    <div className="p-6">
-                        <h2 className="text-lg font-semibold text-blue-900 mb-4">معلومات الحساب</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <AccountInfo label="الخطة الحالية" value={currentPlan} />
-                            <AccountInfo label="تاريخ بدء التشغيل" value={executeDate} />
-                            <AccountInfo label="تاريخ انتهاء الخطة" value={finishDate} />
-                            <AccountInfo label="تاريخ اخر تسجيل دخول" value={lastLogin} />
-                            <AccountInfo label="المعرف" value={id} />
+                    <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md">
+                        <div className="p-6">
+                            <h2 className="text-lg font-semibold text-blue-900 mb-4">معلومات الحساب</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <AccountInfo label="الخطة الحالية" value={currentPlan} />
+                                <AccountInfo label="تاريخ بدء التشغيل" value={executeDate} />
+                                <AccountInfo label="تاريخ انتهاء الخطة" value={finishDate} />
+                                <AccountInfo label="تاريخ اخر تسجيل دخول" value={lastLogin} />
+                                <AccountInfo label="المعرف" value={id} />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-                </div>
-         </div>
+            {/* Account Information */}
+        </div>
     );
 }
 
