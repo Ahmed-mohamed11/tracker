@@ -15,6 +15,7 @@ const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
 
     return (
         <div>
+            {console.log("fillPercentage", fillPercentage)}
             <div id="chart">
                 <ReactApexChart
                     options={{
@@ -49,17 +50,17 @@ const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
                                             offsetY: -10,
                                         },
                                         value: {
-                                            show: true,
+                                            show: false, // Set to true to display the value
                                             fontSize: '22px',
                                             fontWeight: 'bold',
                                             color: 'green',
-                                            formatter: () => `${totalAttendancePercentage}%`, // Show total attendance % directly
+                                            formatter: () => `${fillPercentage}`, // Show total attendance directly
                                         },
                                         total: {
-                                            show: true,
+                                            show: false, // Show total label
                                             label: 'اجمالي نسبه الحضور',
                                             color: fillColor,
-                                            formatter: () => `${totalAttendancePercentage}%`, // Show percentage in center
+                                            formatter: () => `${fillPercentage}`, // Show percentage in center
                                         },
                                     }
                                 }

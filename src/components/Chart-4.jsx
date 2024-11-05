@@ -48,14 +48,14 @@ const Chart4 = ({ totalHoursOfAttendance = 0, totalAttendancePercentage = 0 }) =
                                             offsetY: -10,
                                         },
                                         value: {
-                                            show: true,
+                                            show: false,
                                             fontSize: '18px',
                                             fontWeight: 'bold',
                                             color: 'green',
                                             formatter: () => `${totalHoursOfAttendance || 0}`, // Show total hours directly
                                         },
                                         total: {
-                                            show: true,
+                                            show: false,
                                             label: 'اجمالي ساعات الحضور',
                                             color: fillColor, // Color for the total label
                                             formatter: () => `${totalHoursOfAttendance}%`,
