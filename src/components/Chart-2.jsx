@@ -62,6 +62,7 @@ const Chart2 = ({ chartData, startDate, endDate }) => {
       type: "datetime",
       min: new Date(startDate).getTime(),
       max: new Date(endDate).getTime(),
+      labels: { format: "yyyy-MM-dd" }
     },
     yaxis: {
       max: maxYValue, // تعيين القيمة القصوى لمحور y
