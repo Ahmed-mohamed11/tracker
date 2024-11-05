@@ -9,13 +9,20 @@ import {
 } from "react";
 import gsap from "gsap";
 import DeparturesTable from "./DeparturesTable";
+import { ToastContainer } from "react-toastify";
 
 const PreviewProject = lazy(() => import("./PreviewProjects"));
 const AddDepartures = lazy(() => import("./AddDepartures"));
 
-const Projects = ({ role }) => {
+const Departures = ({ role }) => {
     const [openPreview, setOpenPreview] = useState(false);
     const [openCreate, setOpenCreate] = useState(false);
+    const [refreshData, setRefreshData] = useState(false);
+
+
+    const handleDataRefresh = () => {
+        setRefreshData(prev => !prev); // Toggle refresh state
+    };
 
     const toggleOpenCreateModal = useCallback(
         () => setOpenCreate((prev) => !prev),
@@ -26,19 +33,7 @@ const Projects = ({ role }) => {
         [],
     );
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const ctx = gsap.context(() => {
-                gsap.fromTo(
-                    ".chart-container",
-                    { opacity: 0, y: 50 },
-                    { opacity: 1, y: 0, duration: 1, stagger: 0.2 },
-                );
-            });
 
-            return () => ctx.revert();
-        }
-    }, []);
 
     const chartSection = useMemo(
         () => (
@@ -57,12 +52,14 @@ const Projects = ({ role }) => {
                         <DeparturesTable
                             openPreview={toggleOpenPreviewModal}
                             openCreate={toggleOpenCreateModal}
+                            refreshData={refreshData}
                         />
                         <Suspense fallback={<div>Loading...</div>}>
                             {openCreate && (
                                 <AddDepartures
                                     closeModal={toggleOpenCreateModal}
                                     modal={openCreate}
+                                    onDepartureAdd={handleDataRefresh}
                                     role={role}
                                 />
                             )}
@@ -71,10 +68,12 @@ const Projects = ({ role }) => {
                             )}
                         </Suspense>
                     </section>
+
+                    <ToastContainer />
                 </main>
             </div>
         </>
     );
 };
 
-export default Projects;
+export default Departures;
