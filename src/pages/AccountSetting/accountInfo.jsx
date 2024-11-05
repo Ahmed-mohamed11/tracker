@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import Swal from 'sweetalert2'; // Import SweetAlert2 if you haven't already
+import Swal from 'sweetalert2'; 
 
 export default function AccountInfo() {
     const [companyName, setCompanyName] = useState("");
     const [companyCode, setCompanyCode] = useState("");
     const [companyLogo, setCompanyLogo] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
-    const [initialCompanyCode, setInitialCompanyCode] = useState(""); // Store initial code for comparison
-    const [originalLogo, setOriginalLogo] = useState(""); // Store the original logo
+    const [originalLogo, setOriginalLogo] = useState(""); 
+    const [initialCompanyCode, setInitialCompanyCode] = useState(""); 
     const fileInputRef = useRef();
 
     useEffect(() => {
@@ -27,14 +27,12 @@ export default function AccountInfo() {
                     },
                 });
                 const companyData = response.data;
-console.log('4',companyData);
-                // Initialize state variables with the fetched data
-                     const { company_name, company_code, company_logo } = companyData;
+                      const { company_name, company_code, company_logo } = companyData;
                     setCompanyName(company_name);
                     setCompanyCode(company_code);
-                    setOriginalLogo(company_logo); // Set the original logo URL
-                    setPreviewImage(`https://bio.skyrsys.com${company_logo}`); // Set preview image
-                    setInitialCompanyCode(company_code); // Store the initial company code
+                    setOriginalLogo(company_logo);  
+                    setPreviewImage(`https://bio.skyrsys.com${company_logo}`); 
+                    setInitialCompanyCode(company_code); 
              } catch (error) {
                 console.error("Error fetching company data", error);
             }
@@ -73,11 +71,8 @@ console.log('4',companyData);
         formData.append('company_name', companyName);
         formData.append('company_code', companyCode);
 
-        // Send the existing logo if no new logo is provided
         if (companyLogo) {
             formData.append('company_logo', companyLogo);
-        } else if (originalLogo) {
-            formData.append('company_logo', originalLogo);
         }
 
         try {
@@ -92,7 +87,12 @@ console.log('4',companyData);
                     'Authorization': `Token ${token}`,
                 },
             });
+
             console.log("Update successful", response.data);
+
+             const updatedLogoUrl = response.data.company_logo;  
+            localStorage.setItem("companyLogo", updatedLogoUrl);
+
             Swal.fire({
                 title: 'تم تحديث المعلومات بنجاح',
                 icon: 'success',
@@ -108,6 +108,8 @@ console.log('4',companyData);
             });
         }
     };
+
+ 
 
     const handleCancel = () => {
         setCompanyName("");
