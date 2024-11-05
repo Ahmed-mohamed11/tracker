@@ -51,7 +51,8 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
             ? new Date(selectedDate).toLocaleDateString("en-CA")
             : null;
 
-        const entitiesIds = employees.map((emp) => emp.id).filter(Boolean);
+        const entitiesIds = employees.map((employee) => employee.id);
+        console.log('entitiesIds', entitiesIds)
 
         // Build the payload conditionally based on the repeat value and vacation status
         const payload = {
