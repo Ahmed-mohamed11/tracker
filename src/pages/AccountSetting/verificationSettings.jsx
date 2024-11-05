@@ -1,10 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
 export default function VerificationSettings() {
     const [faceRecognitionLevel, setFaceRecognitionLevel] = useState("easy");
     const [voiceRecognitionLevel, setVoiceRecognitionLevel] = useState("easy");
+
+    // Fetch company data
+    useEffect(() => {
+        const fetchCompanyData = async () => {
+            try {
+                const token = Cookies.get('token');
+                if (!token) {
+                    console.error('No token found in cookies');
+                    return;
+                }
+
+                const response = await axios.get("https://bio.skyrsys.com/api/company/company-data/", {
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+
+                const { face_recognition_level, voice_recognition_level } = response.data;
+                setFaceRecognitionLevel(face_recognition_level);
+                setVoiceRecognitionLevel(voice_recognition_level);
+            } catch (error) {
+                console.error("Error fetching company data", error);
+                if (error.response) {
+                    console.error("Server responded with:", error.response.data);
+                }
+            }
+        };
+
+        fetchCompanyData();
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();

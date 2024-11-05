@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Swal from 'sweetalert2'; // Import SweetAlert2 if you haven't already
@@ -9,8 +9,50 @@ export default function AccountInfo() {
     const [companyLogo, setCompanyLogo] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
     const [initialCompanyCode, setInitialCompanyCode] = useState(""); // Store initial code for comparison
-
+    const [originalLogo, setOriginalLogo] = useState(""); // Store the original logo
     const fileInputRef = useRef();
+
+    useEffect(() => {
+        const fetchCompanyData = async () => {
+            try {
+                const token = Cookies.get('token');
+                if (!token) {
+                    console.error('No token found in cookies');
+                    return;
+                }
+                const response = await axios.get("https://bio.skyrsys.com/api/company/company-data/", {
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                });
+                const companyData = response.data;
+console.log('4',companyData);
+                // Initialize state variables with the fetched data
+                     const { company_name, company_code, company_logo } = companyData;
+                    setCompanyName(company_name);
+                    setCompanyCode(company_code);
+                    setOriginalLogo(company_logo); // Set the original logo URL
+                    setPreviewImage(`https://bio.skyrsys.com${company_logo}`); // Set preview image
+                    setInitialCompanyCode(company_code); // Store the initial company code
+             } catch (error) {
+                console.error("Error fetching company data", error);
+            }
+        };
+
+        fetchCompanyData();
+    }, []);
+
+    useEffect(() => {
+        if (initialCompanyCode && companyCode && companyCode !== initialCompanyCode) {
+            Swal.fire({
+                title: 'رمز الحساب فريد!',
+                text: 'يجب إرسال الرمز الجديد لكل الموظفين.',
+                icon: 'info',
+                confirmButtonText: 'تم'
+            });
+        }
+    }, [companyCode, initialCompanyCode]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -22,30 +64,6 @@ export default function AccountInfo() {
         }
     };
 
-    useEffect(() => {
-        const token = Cookies.get("token");
-        const storedUser = localStorage.getItem("user");
-        if (token && storedUser) {
-            const user = JSON.parse(storedUser);
-            setCompanyName(user.companyName);
-            setCompanyCode(user.companyCode);
-            setInitialCompanyCode(user.companyCode); // Store the initial code
-            setCompanyLogo(user.companyLogo);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (initialCompanyCode && companyCode && companyCode !== initialCompanyCode) {
-            // Show notification when the company code changes
-            Swal.fire({
-                title: 'رمز الحساب فريد!',
-                text: 'يجب إرسال الرمز الجديد لكل الموظفين.',
-                icon: 'info',
-                confirmButtonText: 'تم'
-            });
-        }
-    }, [companyCode, initialCompanyCode]);
-
     const handleUploadClick = () => {
         fileInputRef.current.click();
     };
@@ -55,9 +73,11 @@ export default function AccountInfo() {
         formData.append('company_name', companyName);
         formData.append('company_code', companyCode);
 
+        // Send the existing logo if no new logo is provided
         if (companyLogo) {
             formData.append('company_logo', companyLogo);
-            console.log("company_logo", companyLogo);
+        } else if (originalLogo) {
+            formData.append('company_logo', originalLogo);
         }
 
         try {
@@ -73,9 +93,27 @@ export default function AccountInfo() {
                 },
             });
             console.log("Update successful", response.data);
+            Swal.fire({
+                title: 'تم تحديث المعلومات بنجاح',
+                icon: 'success',
+                confirmButtonText: 'موافق'
+            });
         } catch (error) {
             console.error("Error updating company info", error);
+            Swal.fire({
+                title: 'خطأ',
+                text: 'لم يتم تحديث المعلومات.',
+                icon: 'error',
+                confirmButtonText: 'موافق'
+            });
         }
+    };
+
+    const handleCancel = () => {
+        setCompanyName("");
+        setCompanyCode("");
+        setCompanyLogo(null);
+        setPreviewImage(null);
     };
 
     return (
@@ -113,7 +151,7 @@ export default function AccountInfo() {
                                     alt="Company Logo" className="w-full h-full rounded-full object-cover" />
                             ) : (
                                 <img
-                                    src={`https://bio.skyrsys.com${companyLogo}`}
+                                    src={`https://bio.skyrsys.com${originalLogo}`}
                                     alt="Company Logo" className="w-full h-full rounded-full object-cover" />
                             )}
                         </div>
@@ -133,7 +171,7 @@ export default function AccountInfo() {
             </div>
 
             <div className="flex justify-between p-4 border-t">
-                <button className="bg-gray-500 text-white px-4 py-2 rounded-lg">إلغاء</button>
+                <button onClick={handleCancel} className="bg-gray-500 text-white px-4 py-2 rounded-lg">إلغاء</button>
                 <button onClick={handleUpdate} className="bg-blue-500 text-white px-4 py-2 rounded-lg">
                     حفظ
                 </button>

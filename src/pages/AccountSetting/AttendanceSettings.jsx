@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import ToggleButton from "../../components/form/ToggleButton";
@@ -12,11 +12,44 @@ export default function AttendanceSettings() {
     const [enableOvertime, setEnableOvertime] = useState(true);
     const [minimumHoursWorked, setMinimumHoursWorked] = useState("0.00");
     const [maximumHoursWorked, setMaximumHoursWorked] = useState("0.00");
-    const [overtimeEmployees, setOvertimeEmployees] = useState([]); // Array of employee IDs or names
+    const [overtimeEmployees, setOvertimeEmployees] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = Cookies.get("token");
+                if (!token) {
+                    console.error("No token found in cookies");
+                    return;
+                }
+
+                const response = await axios.get("https://bio.skyrsys.com/api/company/company-data/", {
+                    headers: {
+                        Authorization: `Token ${token}`,
+                    },
+                });
+
+                const data = response.data;
+                setEnableFaceRecognition(data.enable_face_recognition);
+                setEnableVoiceRecognition(data.enable_voice_recognition);
+                setEnableFingerprintRecognition(data.enable_fingerprint_recognition);
+                setEnableOvertime(data.enable_overtime);
+                setMinimumHoursWorked(data.minimum_hours_worked);
+                setMaximumHoursWorked(data.maximum_hours_worked);
+
+            } catch (error) {
+                console.error("Error fetching company data", error);
+                if (error.response) {
+                    console.error("Server responded with:", error.response.data);
+                }
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         const formData = new URLSearchParams();
         formData.append("enable_face_recognition", enableFaceRecognition);
         formData.append("enable_voice_recognition", enableVoiceRecognition);
@@ -25,8 +58,7 @@ export default function AttendanceSettings() {
         formData.append("minimum_hours_worked", minimumHoursWorked);
         formData.append("maximum_hours_worked", maximumHoursWorked);
 
-        // Append overtime employees array as multiple values for "overtime_employees"
-        overtimeEmployees.forEach(employee => formData.append("overtime_empolyess", employee));
+        overtimeEmployees.forEach(employee => formData.append("overtime_employees", employee));
 
         try {
             const token = Cookies.get("token");
@@ -65,10 +97,10 @@ export default function AttendanceSettings() {
                 "العمل الاضافي",
                 {
                     inputs: [
-                        <FormNumber key={3} label=" الحد الادني لعدد الساعات " onChange={(e) => setMinimumHoursWorked(e.target.value)} />,
-                        <FormNumber key={4} label=" الحد الاقصي لعدد الساعات " onChange={(e) => setMaximumHoursWorked(e.target.value)} />,
+                        <FormNumber key={3} label=" الحد الادني لعدد الساعات " value={minimumHoursWorked} onChange={(e) => setMinimumHoursWorked(e.target.value)} />,
+                        <FormNumber key={4} label=" الحد الاقصي لعدد الساعات " value={maximumHoursWorked} onChange={(e) => setMaximumHoursWorked(e.target.value)} />,
                         <FormSelect key={5} label=" اختر الجهات " onChange={(e) => console.log(e.target.value)} />,
-                        <FormSelect key={6} label="   اختر الموظفين   " onChange={(e) => setOvertimeEmployees(e.target.value)} />, // Adjust as needed for multi-select handling
+                        <FormSelect key={6} label="   اختر الموظفين   " onChange={(e) => setOvertimeEmployees(e.target.value)} />,
                     ],
                 },
                 "إحتساب الحضور المبكر ضمن العمل الإضافي",
@@ -109,12 +141,23 @@ export default function AttendanceSettings() {
                                     style={{ minHeight: '50px' }}
                                 >
                                     {typeof subItem === "string" ? (
-                                        <ToggleButton label={subItem} handleToggle={() => {
-                                            if (subItem === "العمل الاضافي") setEnableOvertime(!enableOvertime);
-                                            if (subItem === "التحقق من بصمه الصوت") setEnableVoiceRecognition(!enableVoiceRecognition);
-                                            if (subItem === "التحقق من بصمه الصوره") setEnableFaceRecognition(!enableFaceRecognition);
-                                            if (subItem === "التحقق من بصمه اليد") setEnableFingerprintRecognition(!enableFingerprintRecognition);
-                                        }} />
+                                        <ToggleButton
+                                            titel={subItem}
+                                            label=""
+                                            isChecked={
+                                                subItem === "العمل الاضافي" ? enableOvertime :
+                                                    subItem === "التحقق من بصمه الصوت" ? enableVoiceRecognition :
+                                                        subItem === "التحقق من بصمه الصوره" ? enableFaceRecognition :
+                                                            subItem === "التحقق من بصمه اليد" ? enableFingerprintRecognition :
+                                                                false // Default case, should not happen
+                                            }
+                                            handleToggle={() => {
+                                                if (subItem === "العمل الاضافي") setEnableOvertime(!enableOvertime);
+                                                if (subItem === "التحقق من بصمه الصوت") setEnableVoiceRecognition(!enableVoiceRecognition);
+                                                if (subItem === "التحقق من بصمه الصوره") setEnableFaceRecognition(!enableFaceRecognition);
+                                                if (subItem === "التحقق من بصمه اليد") setEnableFingerprintRecognition(!enableFingerprintRecognition);
+                                            }}
+                                        />
                                     ) : (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                             {subItem.inputs.map((input, inputIndex) => (
@@ -133,7 +176,7 @@ export default function AttendanceSettings() {
                     type="submit"
                     className="mt-4 bg-blue-500 text-white py-2 mb-40 px-4 rounded-md"
                 >
-                    حفظ 
+                    حفظ
                 </button>
             </form>
         </div>
