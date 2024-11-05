@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import Swal from 'sweetalert2'; // Import SweetAlert2 if you haven't already
+import Swal from 'sweetalert2'; 
 
 export default function AccountInfo() {
     const [companyName, setCompanyName] = useState("");
     const [companyCode, setCompanyCode] = useState("");
     const [companyLogo, setCompanyLogo] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
-    const [originalLogo, setOriginalLogo] = useState(""); // Store the original logo
-    const [initialCompanyCode, setInitialCompanyCode] = useState(""); // Store initial code for comparison
+    const [originalLogo, setOriginalLogo] = useState(""); 
+    const [initialCompanyCode, setInitialCompanyCode] = useState(""); 
     const fileInputRef = useRef();
 
     useEffect(() => {
@@ -30,9 +30,9 @@ export default function AccountInfo() {
                       const { company_name, company_code, company_logo } = companyData;
                     setCompanyName(company_name);
                     setCompanyCode(company_code);
-                    setOriginalLogo(company_logo); // Set the original logo URL
-                    setPreviewImage(`https://bio.skyrsys.com${company_logo}`); // Set preview image
-                    setInitialCompanyCode(company_code); // Store the initial company code
+                    setOriginalLogo(company_logo);  
+                    setPreviewImage(`https://bio.skyrsys.com${company_logo}`); 
+                    setInitialCompanyCode(company_code); 
              } catch (error) {
                 console.error("Error fetching company data", error);
             }
@@ -90,8 +90,7 @@ export default function AccountInfo() {
 
             console.log("Update successful", response.data);
 
-            // Save the company logo URL in local storage
-            const updatedLogoUrl = response.data.company_logo; // Ensure this matches your API response structure
+             const updatedLogoUrl = response.data.company_logo;  
             localStorage.setItem("companyLogo", updatedLogoUrl);
 
             Swal.fire({

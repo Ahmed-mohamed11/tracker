@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import ToggleButton from "../../components/form/ToggleButton";
 import FormNumber from "../../components/form/FormNumber";
 import FormSelect from "../../components/form/FormSelect";
+import Swal from "sweetalert2"; 
 
 export default function AttendanceSettings() {
     const [enableFaceRecognition, setEnableFaceRecognition] = useState(true);
@@ -74,11 +75,21 @@ export default function AttendanceSettings() {
                 },
             });
             console.log("Update successful", response.data);
+            Swal.fire({
+                icon: 'success',
+                title: 'نجاح',
+                text: 'تم تحديث إعدادات الحضور بنجاح!',
+            });
         } catch (error) {
             console.error("Error updating attendance settings", error);
             if (error.response) {
                 console.error("Server responded with:", error.response.data);
             }
+            Swal.fire({
+                icon: 'error',
+                title: 'فشل',
+                text: 'فشل في تحديث إعدادات الحضور. يرجى المحاولة مرة أخرى.',
+            });
         }
     };
 

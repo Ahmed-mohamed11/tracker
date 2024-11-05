@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import Swal from 'sweetalert2';
 
 export default function VerificationSettings() {
     const [faceRecognitionLevel, setFaceRecognitionLevel] = useState("easy");
     const [voiceRecognitionLevel, setVoiceRecognitionLevel] = useState("easy");
 
-    // Fetch company data
     useEffect(() => {
         const fetchCompanyData = async () => {
             try {
@@ -39,7 +39,6 @@ export default function VerificationSettings() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Prepare the data in `URLSearchParams` format
         const formData = new URLSearchParams();
         formData.append("face_recognition_level", faceRecognitionLevel);
         formData.append("voice_recognition_level", voiceRecognitionLevel);
@@ -58,10 +57,24 @@ export default function VerificationSettings() {
                 },
             });
             console.log("Update successful", response.data);
+            // Success alert
+            Swal.fire({
+                icon: 'success',
+                title: 'تم التحديث بنجاح',
+                text: 'تم تحديث إعدادات التحقق.',
+                confirmButtonText: 'موافق',
+            });
         } catch (error) {
             console.error("Error updating company info", error);
             if (error.response) {
                 console.error("Server responded with:", error.response.data);
+                // Error alert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'فشل التحديث',
+                    text: 'حدث خطأ أثناء تحديث الإعدادات. حاول مرة أخرى.',
+                    confirmButtonText: 'موافق',
+                });
             }
         }
     };
