@@ -205,8 +205,7 @@ console.log('55', response.data);
                 </div>
             </div>
                 </div>
-            {/* Account Information */}
-        </div>
+         </div>
     );
 }
 
