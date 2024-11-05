@@ -46,64 +46,94 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
         setEmployees(employees.filter((_, i) => i !== index));
     };
     console.log('4', selectedData)
+
+
     const handleSubmit = async () => {
+        const token = Cookies.get("token");
+        if (!token) {
+            console.error("Token not found in cookies");
+            return;
+        }
+
+        const entitiesIds = employees.map((employee) => employee.id);
         const formattedDate = selectedDate
             ? new Date(selectedDate).toLocaleDateString("en-CA")
             : null;
 
-        const entitiesIds = employees.map((employee) => employee.id);
-        console.log('entitiesIds', entitiesIds)
-
-        // Build the payload conditionally based on the repeat value and vacation status
-        const payload = {
+        const payloadBase = {
             title,
-            date: formattedDate,
             is_vacation: isChecked,
             entities_ids: entitiesIds,
-            ...(isChecked ? {} : {  // Only include these fields if not on vacation
+            ...(isChecked ? {} : {  // Include only if not a vacation day
                 start_hour: checkInTime,
                 end_hour: shiftEndTime,
-                flexible_minutes: maxCheckInTime ? Math.max(0, (new Date(`1970-01-01T${maxCheckInTime}:00`) - new Date(`1970-01-01T${checkInTime}:00`)) / (1000 * 60)) : 0,
+                flexible_minutes: maxCheckInTime
+                    ? Math.max(0, (new Date(`1970-01-01T${maxCheckInTime}:00`) - new Date(`1970-01-01T${checkInTime}:00`)) / (1000 * 60))
+                    : 0,
             }),
         };
 
-        // If vacation is checked, add default data
-        if (isChecked) {
-            // Set default data for vacation; for example:
-            payload.start_hour = "09:00"; // Default check-in time for vacation
-            payload.end_hour = "17:00";    // Default end time for vacation
-            payload.flexible_minutes = 60;  // Default flexible minutes for vacation
-        }
-
         try {
-            const token = Cookies.get("token");
-            if (!token) {
-                console.error("Token not found in cookies");
-                return;
-            }
-
             const endpoint =
                 repeat === "يومي"
                     ? "https://bio.skyrsys.com/api/working-hours/"
                     : "https://bio.skyrsys.com/api/working-hours/add-weekly/";
 
-            const response = await axios.post(endpoint, payload, {
-                headers: {
-                    Authorization: `Token ${token}`,
-                },
-            });
+            // إذا كان التكرار أسبوعي، قم بإرسال البيانات لـ 7 أيام متتالية
+            if (repeat === "أسبوعي" && formattedDate) {
+                const startDate = new Date(selectedDate);
+                const promises = [];
 
-            toast.success("تمت إضافة المناوبة بنجاح");
-            onAddShift(response.data);
+                for (let i = 0; i < 7; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i);
+
+                    const payload = {
+                        ...payloadBase,
+                        date: currentDate.toLocaleDateString("en-CA"),
+                    };
+
+                    promises.push(
+                        axios.post(endpoint, payload, {
+                            headers: {
+                                Authorization: `Token ${token}`,
+                            },
+                        })
+                    );
+                }
+
+                // انتظار جميع الطلبات
+                const responses = await Promise.all(promises);
+
+                // تحقق من نجاح جميع الطلبات
+                const allSuccess = responses.every(response => response.status === 200);
+
+                if (allSuccess) {
+                    toast.success("تمت إضافة المناوبات بنجاح لجميع الأيام");
+                    responses.forEach((response) => onAddShift(response.data));
+                } else {
+                    toast.error("حدث خطأ أثناء إضافة المناوبات لبعض الأيام");
+                }
+            } else {
+                // إذا كان يومي، أرسل فقط الطلب الحالي
+                const payload = { ...payloadBase, date: formattedDate };
+                const response = await axios.post(endpoint, payload, {
+                    headers: {
+                        Authorization: `Token ${token}`,
+                    },
+                });
+
+                onAddShift(response.data);
+                toast.success("تمت إضافة المناوبة بنجاح");
+            }
+
             handleCancel();
         } catch (error) {
             toast.error("حدث خطأ أثناء إضافة المناوبة");
             console.error("Error sending data:", error);
         }
-
-        console.log("employees", employees);
-        console.log("selectedDate", selectedDate);
     };
+
 
     return (
         <>
