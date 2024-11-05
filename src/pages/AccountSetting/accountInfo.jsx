@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-// import { set } from 'react-datepicker/dist/date_utils';
+import Swal from 'sweetalert2'; // Import SweetAlert2 if you haven't already
 
 export default function AccountInfo() {
     const [companyName, setCompanyName] = useState("");
     const [companyCode, setCompanyCode] = useState("");
     const [companyLogo, setCompanyLogo] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
+    const [initialCompanyCode, setInitialCompanyCode] = useState(""); // Store initial code for comparison
 
     const fileInputRef = useRef();
 
@@ -17,9 +18,8 @@ export default function AccountInfo() {
         if (file) {
             const imageUrl = URL.createObjectURL(file);
             setPreviewImage(imageUrl);
-            console.log("company_logoooo", imageUrl);
+            console.log("company_logo", imageUrl);
         }
-
     };
 
     useEffect(() => {
@@ -29,11 +29,22 @@ export default function AccountInfo() {
             const user = JSON.parse(storedUser);
             setCompanyName(user.companyName);
             setCompanyCode(user.companyCode);
+            setInitialCompanyCode(user.companyCode); // Store the initial code
             setCompanyLogo(user.companyLogo);
         }
     }, []);
 
-
+    useEffect(() => {
+        if (initialCompanyCode && companyCode && companyCode !== initialCompanyCode) {
+            // Show notification when the company code changes
+            Swal.fire({
+                title: 'رمز الحساب فريد!',
+                text: 'يجب إرسال الرمز الجديد لكل الموظفين.',
+                icon: 'info',
+                confirmButtonText: 'تم'
+            });
+        }
+    }, [companyCode, initialCompanyCode]);
 
     const handleUploadClick = () => {
         fileInputRef.current.click();
@@ -44,7 +55,6 @@ export default function AccountInfo() {
         formData.append('company_name', companyName);
         formData.append('company_code', companyCode);
 
-        // تأكد من إضافة الصورة إذا كانت موجودة
         if (companyLogo) {
             formData.append('company_logo', companyLogo);
             console.log("company_logo", companyLogo);
@@ -57,17 +67,14 @@ export default function AccountInfo() {
                 return;
             }
 
-            // إرسال البيانات إلى الـ API
-            const response = await axios.put("https://bio.skyrsys.com/api/company/update/", formData, {
+            const response = await axios.patch("https://bio.skyrsys.com/api/company/update/", formData, {
                 headers: {
                     'Authorization': `Token ${token}`,
                 },
             });
             console.log("Update successful", response.data);
-            // يمكنك إضافة هنا الكود لمعالجة الاستجابة، مثل عرض رسالة نجاح
         } catch (error) {
             console.error("Error updating company info", error);
-            // يمكنك إضافة هنا الكود لمعالجة الخطأ، مثل عرض رسالة خطأ
         }
     };
 
@@ -79,7 +86,7 @@ export default function AccountInfo() {
                         <label className="block text-sm font-medium text-gray-700 mb-1">اسم الحساب</label>
                         <input
                             type="text"
-                            className="w-full border rounded-md px-3 py-2"
+                            className="w-full text-black border rounded-md px-3 py-2"
                             placeholder="project FL"
                             value={companyName}
                             onChange={(e) => setCompanyName(e.target.value)}
@@ -89,7 +96,7 @@ export default function AccountInfo() {
                         <label className="block text-sm font-medium text-gray-700 mb-1">رمز الحساب</label>
                         <input
                             type="text"
-                            className="w-full border rounded-md px-3 py-2"
+                            className="w-full border text-black rounded-md px-3 py-2"
                             placeholder="PFL"
                             value={companyCode}
                             onChange={(e) => setCompanyCode(e.target.value)}
