@@ -28,8 +28,18 @@ const DeparturesTable = ({ openPreview, openCreate, refreshData }) => {
                 return;
             }
 
+            // Construct filter parameters based on selected values
+            const params = {};
+            if (selectedBranch) params.branch = selectedBranch;
+            if (selectedEntity) params.entity = selectedEntity;
+            if (selectedEmployee) params.employee = selectedEmployee;
+            if (startDate) params.start_date = startDate;
+            if (endDate) params.end_date = endDate;
+
+            // Fetch departures data with or without filters
             const departuresResponse = await axios.get('https://bio.skyrsys.com/api/activity/departures/', {
                 headers: { 'Authorization': `Token ${token}` },
+                params, // Pass filters if they exist
             });
 
             const departures = departuresResponse.data;
@@ -39,6 +49,9 @@ const DeparturesTable = ({ openPreview, openCreate, refreshData }) => {
                 return {
                     firstName: departure.employee.first_name || 'Unknown First Name',
                     lastName: departure.employee.last_name || 'Unknown Last Name',
+                    email: departure.employee.email || 'Unknown Email',
+                    entity: departure.employee.entity.ar_name || 'Unknown Entity',
+                    branch: departure.employee.branch || 'Unknown Branch',
                     departureDate: formattedDate || 'Unknown Date',
                 };
             });
@@ -47,12 +60,21 @@ const DeparturesTable = ({ openPreview, openCreate, refreshData }) => {
             setTableHeaders([
                 { key: 'firstName', label: 'الاسم الاول' },
                 { key: 'lastName', label: 'الاسم الاخير' },
+                { key: 'email', label: 'البريد الالكتروني' },
+                { key: 'entity', label: 'الجهة' },
+                { key: 'branch', label: 'الفرع' },
                 { key: 'departureDate', label: 'تاريخ المغادره' },
             ]);
         } catch (error) {
             console.error('Error fetching data:', error.response?.data || error.message);
         }
-    }, []);
+    }, [selectedBranch, selectedEntity, selectedEmployee, startDate, endDate]);
+
+    // Function to trigger data fetching with filters
+    const handleFilterClick = () => {
+        fetchData();
+    };
+
 
     const fetchFormData = useCallback(async () => {
         try {
@@ -135,11 +157,12 @@ const DeparturesTable = ({ openPreview, openCreate, refreshData }) => {
                     />
                 </div>
                 <button
-                    onClick={fetchData}
+                    onClick={handleFilterClick}
                     className="bg-themeColor-400 border border-gray-300 w-full text-white px-4 py-2 rounded-md"
                 >
                     عرض البيانات
                 </button>
+
             </div>
 
             <Table

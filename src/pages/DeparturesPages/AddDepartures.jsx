@@ -36,13 +36,17 @@ const AddDepartures = ({ closeModal, modal, onDepartureAdd }) => {
                 { headers: { 'Authorization': `Token ${token}` } }
             );
 
-            console.log('Employee departure added successfully.');
             toast.success('Employee departure added successfully.');
             onDepartureAdd(); // Optional callback if needed
             closeModal();
         } catch (error) {
-            toast.error('Error adding employee departure.');
-            closeModal();
+            // Check if there's a response from the backend with error details
+            if (error.response && error.response.data) {
+                const errorMessage = error.response.data.detail || 'Error adding employee departure.';
+                toast.error(errorMessage);
+            } else {
+                toast.error("Network error. Please try again.");
+            }
             console.error("Error adding employee departure:", error);
         }
     };
