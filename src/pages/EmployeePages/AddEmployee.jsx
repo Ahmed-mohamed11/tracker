@@ -86,9 +86,11 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
 
     const handleSave = () => {
         const selectedEntities = selectedItems.map(itemId => {
-            // ابحث عن الكيان باستخدام itemId في options
             for (const group of options) {
                 const entity = group.items.find(e => e.id === itemId);
+                if (entity) {
+                    return entity; // ارجع الكيان بمجرد العثور عليه
+                }
             }
             return null; // في حالة عدم العثور على الكيان
         }).filter(Boolean); // إزالة القيم null
@@ -100,6 +102,7 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
             console.log("No employee entities found.");
         }
     };
+
 
 
 
