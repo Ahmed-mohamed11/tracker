@@ -7,7 +7,7 @@ import { useI18nContext } from "../../context/i18n-context";
 import Select from 'react-select';
 import FormSelect from "../../components/form/FormSelect";
 
-const AddEntities = ({ closeModal, modal, onClientAdded }) => {
+const AddRecords = ({ closeModal, modal, onRecordAdded }) => {
     const [formData, setFormData] = useState({
         text: "",
         lang: "",
@@ -83,9 +83,8 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
             // عرض النتيجة أو تحديث الجداول
             const newEntity = response.data;
             console.log('Entity added successfully:', newEntity);
-            onClientAdded(newEntity);
-            closeModal();  // إغلاق النموذج بعد الإرسال
-
+            onRecordAdded(newEntity);
+            closeModal();
         } catch (error) {
             console.error('Error adding entity:', error.response?.data || error.message);
         }
@@ -158,4 +157,4 @@ const AddEntities = ({ closeModal, modal, onClientAdded }) => {
     );
 };
 
-export default AddEntities;
+export default AddRecords;

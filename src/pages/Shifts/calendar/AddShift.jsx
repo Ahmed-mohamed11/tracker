@@ -65,8 +65,8 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
             is_vacation: isChecked,
             entities_ids: entitiesIds,
             ...(isChecked ? {} : {  // Include only if not a vacation day
-                start_hour: checkInTime,
-                end_hour: shiftEndTime,
+                start_hour: isChecked ? "00:00" : (checkInTime || "00:00"), // قيمة افتراضية إذا كان الحقل فارغًا
+                end_hour: isChecked ? "00:00" : (shiftEndTime || "00:00"),  // قيمة افتراضية إذا كان الحقل فارغًا
                 flexible_minutes: maxCheckInTime
                     ? Math.max(0, (new Date(`1970-01-01T${maxCheckInTime}:00`) - new Date(`1970-01-01T${checkInTime}:00`)) / (1000 * 60))
                     : 0,
@@ -79,7 +79,6 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
                     ? "https://bio.skyrsys.com/api/working-hours/"
                     : "https://bio.skyrsys.com/api/working-hours/add-weekly/";
 
-            // إذا كان التكرار أسبوعي، قم بإرسال البيانات لـ 7 أيام متتالية
             if (repeat === "أسبوعي" && formattedDate) {
                 const startDate = new Date(selectedDate);
                 const promises = [];
@@ -102,10 +101,8 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
                     );
                 }
 
-                // انتظار جميع الطلبات
                 const responses = await Promise.all(promises);
 
-                // تحقق من نجاح جميع الطلبات
                 const allSuccess = responses.every(response => response.status === 200);
 
                 if (allSuccess) {
@@ -115,7 +112,6 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
                     toast.error("حدث خطأ أثناء إضافة المناوبات لبعض الأيام");
                 }
             } else {
-                // إذا كان يومي، أرسل فقط الطلب الحالي
                 const payload = { ...payloadBase, date: formattedDate };
                 const response = await axios.post(endpoint, payload, {
                     headers: {
@@ -126,7 +122,6 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
                 onAddShift(response.data);
                 toast.success("تمت إضافة المناوبة بنجاح");
             }
-
             handleCancel();
         } catch (error) {
             toast.error("حدث خطأ أثناء إضافة المناوبة");
