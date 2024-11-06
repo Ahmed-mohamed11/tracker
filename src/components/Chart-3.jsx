@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import ReactApexChart from "react-apexcharts";
 
 const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
@@ -50,17 +51,17 @@ const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
                                             offsetY: -10,
                                         },
                                         value: {
-                                            show: false, // Set to true to display the value
+                                            show: true, // Set to true to display the value
                                             fontSize: '22px',
                                             fontWeight: 'bold',
                                             color: 'green',
                                             formatter: () => `${fillPercentage}`, // Show total attendance directly
                                         },
                                         total: {
-                                            show: false, // Show total label
+                                            show: true, // Show total label
                                             label: 'اجمالي نسبه الحضور',
                                             color: fillColor,
-                                            formatter: () => `${fillPercentage}`, // Show percentage in center
+                                            formatter: () => `${fillPercentage}%`, // Show percentage in center
                                         },
                                     }
                                 }
