@@ -63,10 +63,10 @@ export default function Calendar() {
 
     const renderDays = () => {
         const days = getDaysInMonth(currentDate);
-        const today = new Date().setHours(0, 0, 0, 0); // تحديد اليوم الحالي
+        const today = new Date().setHours(0, 0, 0, 0); // تعيين اليوم الحالي إلى الساعة 00:00:00
 
         return days.map((day) => {
-            const dayData = daysData.find(d => new Date(d.date).toDateString() === day.toDateString());
+            const dayData = daysData.find(d => new Date(d.date).setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0)); // تعيين اليوم إلى الساعة 00:00:00 عند المقارنة
 
             return (
                 <div
@@ -93,6 +93,7 @@ export default function Calendar() {
             );
         });
     };
+
 
     const handleDayClick = (day) => {
         const dayData = daysData.find(d => new Date(d.date).toDateString() === day.toDateString());

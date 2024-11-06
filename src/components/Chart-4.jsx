@@ -1,17 +1,24 @@
+import { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
-const Chart4 = ({ totalHoursOfAttendance = 0, totalAttendancePercentage = 0 }) => {
-    const fillPercentage = totalHoursOfAttendance > 100 ? 100 : totalHoursOfAttendance;
+const Chart4 = ({ totalHoursOfAttendance = 0 }) => {
+    const maxHours = 100; // Assuming 100 hours as max
+    const remainingHours = maxHours - totalHoursOfAttendance; // Remaining hours (absence hours)
 
-    // Set color based on the fillPercentage
-    const getColorByPercentage = (percentage) => {
-        if (percentage < 50) return '#FF0000'; // Red for less than 50%
-        if (percentage < 75) return '#FFA500'; // Orange for 50% to 75%
-        if (percentage < 100) return '#4CAF50'; // Green for 75% to 99%
-        return '#0000FF'; // Blue for 100%
+    // Set color based on the total hours
+    const getColorByHours = (hours) => {
+        if (hours < 50) return '#FF0000'; // Red for less than 50 hours
+        if (hours < 75) return '#FFA500'; // Orange for 50 to 75 hours
+        if (hours < 100) return '#4CAF50'; // Green for 75 to 99 hours
+        return '#0000FF'; // Blue for 100+ hours
     };
 
-    const fillColor = getColorByPercentage(fillPercentage);
+    const fillColor = getColorByHours(totalHoursOfAttendance);
+
+    const [hoveredData, setHoveredData] = useState({
+        label: "عدد ساعات الحضور",
+        percentage: totalHoursOfAttendance,
+    });
 
     return (
         <div>
@@ -21,15 +28,42 @@ const Chart4 = ({ totalHoursOfAttendance = 0, totalAttendancePercentage = 0 }) =
                         chart: {
                             width: 380,
                             type: 'donut',
+                            events: {
+                                dataPointMouseEnter: (event, chartContext, { seriesIndex }) => {
+                                    // Set hover data based on the section hovered
+                                    if (seriesIndex === 1) {
+                                        setHoveredData({
+                                            label: 'عدد ساعات الغياب',
+                                            percentage: remainingHours,
+                                        });
+                                    } else {
+                                        setHoveredData({
+                                            label: 'عدد ساعات الحضور',
+                                            percentage: totalHoursOfAttendance,
+                                        });
+                                    }
+                                },
+                            },
                         },
                         labels: ['اجمالي ساعات الحضور'],
                         colors: [fillColor, '#E0E0E0'], // Dynamic fill color and gray for empty
                         dataLabels: {
-                            enabled: true,
+                            enabled: true, // Keep this enabled if you still want the data labels, but without percentage
                             style: {
                                 fontSize: '18px',
                                 fontWeight: 'bold',
                                 colors: ['#000'],
+                            },
+                            formatter: (val) => `${val} H`, // Display value without percentage
+                        },
+                        tooltip: {
+                            custom: function ({ seriesIndex, w }) {
+                                // When hovering over the absence part, show absence hours
+                                if (seriesIndex === 1) {
+                                    return `<div style="padding: 10px; font-size: 18px;">عدد ساعات الغياب: ${remainingHours} H</div>`;
+                                }
+                                // Otherwise, show attendance hours
+                                return `<div style="padding: 10px; font-size: 18px;">عدد ساعات الحضور: ${totalHoursOfAttendance} H</div>`;
                             },
                         },
                         legend: {
@@ -44,28 +78,29 @@ const Chart4 = ({ totalHoursOfAttendance = 0, totalAttendancePercentage = 0 }) =
                                             show: true,
                                             fontSize: '22px',
                                             fontWeight: 'bold',
-                                            color: fillColor, // Color for the label
+                                            color: fillColor,
                                             offsetY: -10,
+                                            formatter: () => hoveredData.label // Dynamic label based on hover
                                         },
                                         value: {
                                             show: true,
                                             fontSize: '18px',
                                             fontWeight: 'bold',
                                             color: 'green',
-                                            formatter: () => `${totalHoursOfAttendance || 0}`, // Show total hours directly
+                                            formatter: () => `${totalHoursOfAttendance} H`, // Display total hours without percentage
                                         },
                                         total: {
                                             show: true,
                                             label: 'اجمالي ساعات الحضور',
-                                            color: fillColor, // Color for the total label
-                                            formatter: () => `${totalHoursOfAttendance} H`, // Show total hours
+                                            color: fillColor,
+                                            formatter: () => `${totalHoursOfAttendance} H`, // Display hours with unit
                                         }
                                     }
                                 }
                             }
                         }
                     }}
-                    series={[fillPercentage || 0, 100 - fillPercentage || 0]} // Fallback to 0 if undefined
+                    series={[totalHoursOfAttendance, remainingHours]} // Filled and remaining hours
                     type="donut"
                     width={350}
                 />
