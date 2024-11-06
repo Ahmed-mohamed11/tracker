@@ -1,5 +1,3 @@
-
-
 import { t } from "i18next";
 import ReactApexChart from "react-apexcharts";
 import React, { useState } from "react";
@@ -59,6 +57,17 @@ const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
                                 colors: ['black'], // Ensures the label text is visible
                             },
                         },
+                        tooltip: {
+                            style: {
+                                fontSize: '20px', // Increase font size in tooltip
+                                fontWeight: 'bold',
+                            },
+                            custom: function ({ seriesIndex }) {
+                                return `<div style="padding: 10px; font-size: 18px; font-weight: bold;">` +
+                                    (seriesIndex === 0 ? `اجمالي نسبه الحضور: ${hoveredData.percentage}%` : `نسبة الغياب: ${absencePercentage}%`) +
+                                    `</div>`;
+                            },
+                        },
                         legend: {
                             show: false,
                         },
@@ -69,15 +78,15 @@ const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
                                         show: true,
                                         name: {
                                             show: true,
-                                            fontSize: '18px',
+                                            fontSize: '22px',
                                             fontWeight: 'bold',
                                             color: fillColor,
                                             offsetY: -10,
-                                            formatter: () => hoveredData.label // Dynamic label based on hover
+                                            formatter: () => hoveredData.label, // Dynamic label based on hover
                                         },
                                         value: {
                                             show: true,
-                                            fontSize: '22px',
+                                            fontSize: '22px', // Increase the font size for value
                                             fontWeight: 'bold',
                                             color: 'green',
                                             formatter: () => `${hoveredData.percentage}%`, // Dynamic percentage based on hover
@@ -102,6 +111,5 @@ const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
         </div>
     );
 };
-
 
 export default Chart3;

@@ -3,17 +3,7 @@ import ReactApexChart from "react-apexcharts";
 
 const Chart4 = ({ totalHoursOfAttendance = 0 }) => {
     const maxHours = 100; // Assuming 100 hours as max
-    const remainingHours = maxHours - totalHoursOfAttendance; // Remaining hours (absence hours)
-
-    // Set color based on the total hours
-    const getColorByHours = (hours) => {
-        if (hours < 50) return '#FF0000'; // Red for less than 50 hours
-        if (hours < 75) return '#FFA500'; // Orange for 50 to 75 hours
-        if (hours < 100) return '#4CAF50'; // Green for 75 to 99 hours
-        return '#0000FF'; // Blue for 100+ hours
-    };
-
-    const fillColor = getColorByHours(totalHoursOfAttendance);
+    const fillColor = totalHoursOfAttendance < 50 ? '#FF0000' : totalHoursOfAttendance < 75 ? '#FFA500' : totalHoursOfAttendance < 100 ? '#4CAF50' : '#0000FF'; // Color based on hours
 
     const [hoveredData, setHoveredData] = useState({
         label: "عدد ساعات الحضور",
@@ -30,39 +20,21 @@ const Chart4 = ({ totalHoursOfAttendance = 0 }) => {
                             type: 'donut',
                             events: {
                                 dataPointMouseEnter: (event, chartContext, { seriesIndex }) => {
-                                    // Set hover data based on the section hovered
-                                    if (seriesIndex === 1) {
-                                        setHoveredData({
-                                            label: 'عدد ساعات الغياب',
-                                            percentage: remainingHours,
-                                        });
-                                    } else {
-                                        setHoveredData({
-                                            label: 'عدد ساعات الحضور',
-                                            percentage: totalHoursOfAttendance,
-                                        });
-                                    }
+                                    // Update hover data on mouse enter
+                                    setHoveredData({
+                                        label: 'عدد ساعات الحضور',
+                                        percentage: totalHoursOfAttendance,
+                                    });
                                 },
                             },
                         },
                         labels: ['اجمالي ساعات الحضور'],
-                        colors: [fillColor, '#E0E0E0'], // Dynamic fill color and gray for empty
+                        colors: [fillColor, '#E0E0E0'], // Color for attendance and gray for the empty space
                         dataLabels: {
-                            enabled: true, // Keep this enabled if you still want the data labels, but without percentage
-                            style: {
-                                fontSize: '18px',
-                                fontWeight: 'bold',
-                                colors: ['#000'],
-                            },
-                            formatter: (val) => `${val} H`, // Display value without percentage
+                            enabled: false, // Disable data labels
                         },
                         tooltip: {
-                            custom: function ({ seriesIndex, w }) {
-                                // When hovering over the absence part, show absence hours
-                                if (seriesIndex === 1) {
-                                    return `<div style="padding: 10px; font-size: 18px;">عدد ساعات الغياب: ${remainingHours} H</div>`;
-                                }
-                                // Otherwise, show attendance hours
+                            custom: function () {
                                 return `<div style="padding: 10px; font-size: 18px;">عدد ساعات الحضور: ${totalHoursOfAttendance} H</div>`;
                             },
                         },
@@ -80,27 +52,27 @@ const Chart4 = ({ totalHoursOfAttendance = 0 }) => {
                                             fontWeight: 'bold',
                                             color: fillColor,
                                             offsetY: -10,
-                                            formatter: () => hoveredData.label // Dynamic label based on hover
+                                            formatter: () => hoveredData.label, // Dynamic label
                                         },
                                         value: {
                                             show: true,
-                                            fontSize: '18px',
+                                            fontSize: '22px',
                                             fontWeight: 'bold',
                                             color: 'green',
-                                            formatter: () => `${totalHoursOfAttendance} H`, // Display total hours without percentage
+                                            formatter: () => `${totalHoursOfAttendance} H`, // Display total hours
                                         },
                                         total: {
                                             show: true,
                                             label: 'اجمالي ساعات الحضور',
                                             color: fillColor,
                                             formatter: () => `${totalHoursOfAttendance} H`, // Display hours with unit
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     }}
-                    series={[totalHoursOfAttendance, remainingHours]} // Filled and remaining hours
+                    series={[totalHoursOfAttendance, 0]} // Only attendance, no absence
                     type="donut"
                     width={350}
                 />
