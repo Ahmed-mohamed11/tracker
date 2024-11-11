@@ -17,6 +17,7 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import Reports from "../pages/Reports/Reports";
 import Login from "../pages/auth/login/Login";
 import AllEmployees from "../pages/AllEmployees/Employees";
+import Departure from "../pages/departure/Departure";
 
 const AdminPages = ({ loading }) => {
   return (
@@ -37,6 +38,7 @@ const AdminPages = ({ loading }) => {
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/entities`} element={<Entities />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/reports`} element={<Reports />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/branches`} element={<Branches />} />
+        <Route path={`${import.meta.env.VITE_PUBLIC_URL}/departure`} element={<Departure />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/employee`} element={<EmployeeStructure />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/shifts`} element={<Shifts />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/sites`} element={<Sites />} />

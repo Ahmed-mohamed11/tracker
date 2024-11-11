@@ -80,6 +80,7 @@ const ar = {
     reports: "التقارير",
     Preparation: " التحضير",
     commitments: " الالتزامات ",
+    Departure: " الانصراف ",
     branches: "الفروع",
     Employee: "الموظفين", // Employee
     EmployeesRequests: "طلبات الموظفين", // Employee

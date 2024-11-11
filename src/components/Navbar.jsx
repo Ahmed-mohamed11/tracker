@@ -83,7 +83,7 @@ const NavbarItem = ({
       {subItems && (
         <div
           className={classNames(
-            "absolute sm:right-32 sm:top-5 z-50 xl:top-full xl:left-0 mt-5 bg-themeColor-700 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
+            "absolute sm:right-32 sm:top-5 z-50 xl:top-full xl:right-0 mt-5 bg-themeColor-700 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
             isOpen ? "opacity-100 visible w-full animate-slide-down" : "opacity-0 invisible w-full animate-slide-up"
           )}
         >
@@ -230,6 +230,10 @@ export default function Navbar({ companyLogo, companyName }) {
           name: t("sideBar.commitments"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
         },
+        {
+          name: t("sideBar.Departure"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/departure`,
+        },
       ],
     },
 
@@ -299,28 +303,28 @@ export default function Navbar({ companyLogo, companyName }) {
         <div className="xl:hidden">
           <button onClick={toggleMobileMenu} className="text-white">
             {isMobileMenuOpen ? <X size={32} /> : <List size={32} />}
-           </button>
+          </button>
         </div>
         <div>
           <img className="w-14 h-14 border-2 border-orange-500 rounded-full" src="/SiteLogo.png" alt="" />
         </div>
-       <div className={classNames("mt-3 xl:flex items-center hidden ml-auto")}>
-  {selectedNavigation.map((item, index) => (
-    <NavbarItem
-      key={index}
-      icon={item.icon}
-      name={item.name}
-      link={item.link}
-      subItems={item.subItems}
-      isOpen={openMenuIndex === index}
-      toggleSubMenu={() => toggleSubMenu(index)}
-      closeSubMenu={closeSubMenu}
-      onClick={() => { 
-        item.onClick && item.onClick();
-      }} // Close the mobile menu after clicking
-    />
-  ))}
-</div>
+        <div className={classNames("mt-3 xl:flex items-center hidden ml-auto")}>
+          {selectedNavigation.map((item, index) => (
+            <NavbarItem
+              key={index}
+              icon={item.icon}
+              name={item.name}
+              link={item.link}
+              subItems={item.subItems}
+              isOpen={openMenuIndex === index}
+              toggleSubMenu={() => toggleSubMenu(index)}
+              closeSubMenu={closeSubMenu}
+              onClick={() => {
+                item.onClick && item.onClick();
+              }} // Close the mobile menu after clicking
+            />
+          ))}
+        </div>
 
 
         <div className="relative" ref={userMenuRef}>
@@ -365,19 +369,21 @@ export default function Navbar({ companyLogo, companyName }) {
           <div
             className={`flex flex-col items-start space-y-4 transition-transform duration-300 ease-in-out transform ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
             style={{ transform: isMobileMenuOpen ? "translateX(0)" : "translateX(100%)" }}
-                      >
+          >
             {selectedNavigation.map((item, index) => (
               <NavbarItem
                 key={index}
-                icon={item.icon} 
+                icon={item.icon}
                 name={item.name}
                 link={item.link}
                 subItems={item.subItems}
                 isOpen={openMenuIndex === index}
                 toggleSubMenu={() => toggleSubMenu(index)}
                 closeSubMenu={closeSubMenu}
-                onClick={item.onClick || (() => { })} 
-              />
+                onClick={() => {
+                  item.onClick && item.onClick();
+                  setIsMobileMenuOpen(false); // Close the mobile menu when the main link is clicked
+                }} />
             ))}
           </div>
         </div>

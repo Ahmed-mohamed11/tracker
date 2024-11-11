@@ -238,7 +238,7 @@ const ReportsTable = ({ openCreate }) => {
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
             <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
-                <h2 className="text-2xl font-bold">حركات التحضير</h2>
+                <h2 className="text-2xl font-bold">حركات الانصراف</h2>
              
             </div>
 
