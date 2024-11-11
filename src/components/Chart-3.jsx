@@ -1,9 +1,11 @@
+import { t } from "i18next";
 import ReactApexChart from "react-apexcharts";
+import React, { useState } from "react";
 
 const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
-    const fillPercentage = totalHoursOfAttendance > 100 ? 100 : totalHoursOfAttendance;
+    const fillPercentage = totalAttendancePercentage;
+    const absencePercentage = 100 - fillPercentage; // Calculate absence percentage
 
-    // Determine color based on fillPercentage
     const getColorByPercentage = (percentage) => {
         if (percentage < 50) return '#FF0000'; // Red for < 50%
         if (percentage < 75) return '#FFA500'; // Orange for 50% to 75%
@@ -13,18 +15,39 @@ const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
 
     const fillColor = getColorByPercentage(fillPercentage);
 
+    // State to hold the label and percentage based on hover
+    const [hoveredData, setHoveredData] = useState({
+        label: 'اجمالي نسبه الحضور',
+        percentage: fillPercentage
+    });
+
     return (
         <div>
-            {console.log("fillPercentage", fillPercentage)}
             <div id="chart">
                 <ReactApexChart
                     options={{
                         chart: {
                             width: 380,
                             type: 'donut',
+                            events: {
+                                dataPointMouseEnter: (event, chartContext, { seriesIndex }) => {
+                                    // Set hover data based on the section hovered
+                                    setHoveredData({
+                                        label: seriesIndex === 0 ? 'اجمالي نسبه الحضور' : 'نسبة الغياب',
+                                        percentage: seriesIndex === 0 ? fillPercentage : absencePercentage
+                                    });
+                                },
+                                dataPointMouseLeave: () => {
+                                    // Reset to default when not hovering
+                                    setHoveredData({
+                                        label: 'اجمالي نسبه الحضور',
+                                        percentage: fillPercentage
+                                    });
+                                }
+                            }
                         },
-                        labels: ['اجمالي نسبه الحضور'],
-                        colors: [fillColor, '#E0E0E0'], // Dynamic color and gray for remainder
+                        labels: ['اجمالي نسبه الحضور', 'نسبة الغياب'], // Labels for both parts
+                        colors: [fillColor, 'black'], // Dynamic color and gray for remainder
                         dataLabels: {
                             enabled: true,
                             dropShadow: { enabled: false },
@@ -32,6 +55,17 @@ const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
                                 fontSize: '20px',
                                 fontWeight: 'bold',
                                 colors: ['black'], // Ensures the label text is visible
+                            },
+                        },
+                        tooltip: {
+                            style: {
+                                fontSize: '20px', // Increase font size in tooltip
+                                fontWeight: 'bold',
+                            },
+                            custom: function ({ seriesIndex }) {
+                                return `<div style="padding: 10px; font-size: 18px; font-weight: bold;">` +
+                                    (seriesIndex === 0 ? `اجمالي نسبه الحضور: ${hoveredData.percentage}%` : `نسبة الغياب: ${absencePercentage}%`) +
+                                    `</div>`;
                             },
                         },
                         legend: {
@@ -44,35 +78,36 @@ const Chart3 = ({ totalHoursOfAttendance, totalAttendancePercentage }) => {
                                         show: true,
                                         name: {
                                             show: true,
-                                            fontSize: '18px',
+                                            fontSize: '22px',
                                             fontWeight: 'bold',
                                             color: fillColor,
                                             offsetY: -10,
+                                            formatter: () => hoveredData.label, // Dynamic label based on hover
                                         },
                                         value: {
-                                            show: false, // Set to true to display the value
-                                            fontSize: '22px',
+                                            show: true,
+                                            fontSize: '22px', // Increase the font size for value
                                             fontWeight: 'bold',
                                             color: 'green',
-                                            formatter: () => `${fillPercentage}`, // Show total attendance directly
+                                            formatter: () => `${hoveredData.percentage}%`, // Dynamic percentage based on hover
                                         },
                                         total: {
-                                            show: false, // Show total label
-                                            label: 'اجمالي نسبه الحضور',
+                                            show: true,
+                                            label: hoveredData.label,
                                             color: fillColor,
-                                            formatter: () => `${fillPercentage}`, // Show percentage in center
+                                            formatter: () => `${hoveredData.percentage}%`, // Dynamic center value
                                         },
                                     }
                                 }
                             }
-                        }
+                        },
                     }}
-                    series={[fillPercentage, 100 - fillPercentage]} // Series for filled and remaining
+                    series={[fillPercentage, absencePercentage]} // Filled and remaining parts
                     type="donut"
                     width={350}
                 />
             </div>
-            <div className='text-center'>اجمالي نسبه الحضور</div>
+            <div className="text-center">اجمالي نسبه الحضور</div>
         </div>
     );
 };

@@ -65,74 +65,37 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
             is_vacation: isChecked,
             entities_ids: entitiesIds,
             ...(isChecked ? {} : {  // Include only if not a vacation day
-                start_hour: checkInTime,
-                end_hour: shiftEndTime,
+                start_hour: checkInTime || "00:00", // قيمة افتراضية إذا كان الحقل فارغًا
+                end_hour: shiftEndTime || "00:00",   // قيمة افتراضية إذا كان الحقل فارغًا
                 flexible_minutes: maxCheckInTime
                     ? Math.max(0, (new Date(`1970-01-01T${maxCheckInTime}:00`) - new Date(`1970-01-01T${checkInTime}:00`)) / (1000 * 60))
                     : 0,
             }),
+            date: formattedDate,
         };
 
         try {
             const endpoint =
-                repeat === "يومي"
-                    ? "https://bio.skyrsys.com/api/working-hours/"
-                    : "https://bio.skyrsys.com/api/working-hours/add-weekly/";
+                repeat === "أسبوعي"
+                    ? "https://bio.skyrsys.com/api/working-hours/add-weekly/"
+                    : "https://bio.skyrsys.com/api/working-hours/";
 
-            // إذا كان التكرار أسبوعي، قم بإرسال البيانات لـ 7 أيام متتالية
-            if (repeat === "أسبوعي" && formattedDate) {
-                const startDate = new Date(selectedDate);
-                const promises = [];
+            // إرسال الطلب للرابط الأسبوعي مباشرةً إذا كانت التكرارية "أسبوعي"
+            const response = await axios.post(endpoint, payloadBase, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                },
+            });
 
-                for (let i = 0; i < 7; i++) {
-                    const currentDate = new Date(startDate);
-                    currentDate.setDate(startDate.getDate() + i);
-
-                    const payload = {
-                        ...payloadBase,
-                        date: currentDate.toLocaleDateString("en-CA"),
-                    };
-
-                    promises.push(
-                        axios.post(endpoint, payload, {
-                            headers: {
-                                Authorization: `Token ${token}`,
-                            },
-                        })
-                    );
-                }
-
-                // انتظار جميع الطلبات
-                const responses = await Promise.all(promises);
-
-                // تحقق من نجاح جميع الطلبات
-                const allSuccess = responses.every(response => response.status === 200);
-
-                if (allSuccess) {
-                    toast.success("تمت إضافة المناوبات بنجاح لجميع الأيام");
-                    responses.forEach((response) => onAddShift(response.data));
-                } else {
-                    toast.error("حدث خطأ أثناء إضافة المناوبات لبعض الأيام");
-                }
-            } else {
-                // إذا كان يومي، أرسل فقط الطلب الحالي
-                const payload = { ...payloadBase, date: formattedDate };
-                const response = await axios.post(endpoint, payload, {
-                    headers: {
-                        Authorization: `Token ${token}`,
-                    },
-                });
-
-                onAddShift(response.data);
-                toast.success("تمت إضافة المناوبة بنجاح");
-            }
-
+            onAddShift(response.data);
+            toast.success("تمت إضافة المناوبة بنجاح");
             handleCancel();
         } catch (error) {
             toast.error("حدث خطأ أثناء إضافة المناوبة");
             console.error("Error sending data:", error);
         }
     };
+
 
 
     return (

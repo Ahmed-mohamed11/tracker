@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { X, Play, Check, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react";
 
-export default function ReviewRequest({ requestData, onClose }) {
+export default function ReviewRequest({ requestData, onClose, approveRequest, refuseRequest }) {
     const [requestDetails, setRequestDetails] = useState(requestData);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -12,9 +12,22 @@ export default function ReviewRequest({ requestData, onClose }) {
         } else {
             setIsVisible(false);
         }
+
     }, [requestData]);
 
+    const handleApprove = () => {
+        approveRequest(requestDetails.id);
+        onClose(); // Close the form after approval
+    };
+
+    const handleRefuse = () => {
+        refuseRequest(requestDetails.id);
+        onClose(); // Close the form after refusal
+    };
+
     if (!requestDetails) return <div>Loading...</div>;
+
+    console.log('requestDetails', requestDetails);
 
     return (
         <div className={`w-full fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
@@ -30,7 +43,7 @@ export default function ReviewRequest({ requestData, onClose }) {
                             بصمة الوجه
                         </div>
                         {requestDetails.image ? (
-                            <img src={requestDetails.image} alt="Profile" className="w-48 h-48 mx-auto mb-4 rounded" />
+                            <img src={requestDetails.image} alt={requestDetails.first_name} className="w-48 h-48 mx-auto mb-4 rounded" />
                         ) : (
                             <div className="text-gray-500">لا توجد صورة متاحة</div>
                         )}
@@ -68,7 +81,7 @@ export default function ReviewRequest({ requestData, onClose }) {
                         </div>
                         <div className="p-2">
                             <div className="bg-blue-100 p-2 mb-2 flex justify-between items-center">
-                                <span>{requestDetails.entity.title} </span>
+                                <span>{requestDetails.entity} </span>
                                 <Check className="text-themeColor-500" />
                             </div>
 
@@ -78,8 +91,12 @@ export default function ReviewRequest({ requestData, onClose }) {
                 </div>
 
                 <div className=" mt-4 gap-4 p-4 flex justify-items-start items-center">
-                    <button className="w-1/2 bg-blue-500 text-white px-4 py-2 rounded">الموافقة على الطلب</button>
-                    <button className="w-1/2 bg-red-500 text-white px-4 py-2 rounded"> رفض الطلب </button>
+                    <button
+                        onClick={handleApprove}
+                        className="w-1/2 bg-blue-500 text-white px-4 py-2 rounded">الموافقة على الطلب</button>
+                    <button
+                        onClick={handleRefuse}
+                        className="w-1/2 bg-red-500 text-white px-4 py-2 rounded"> رفض الطلب </button>
 
                 </div>
             </div>

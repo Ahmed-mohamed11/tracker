@@ -167,7 +167,7 @@ const EmployeeStructureTable = ({ openCreate }) => {
                     <div className="relative w-full">
                         <input
                             type="text"
-                            placeholder="بحث"
+                            placeholder="ابحث عن اسم الموظف"
                             value={searchQuery}
                             onChange={handleSearch}
                             className="w-full bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
@@ -176,42 +176,6 @@ const EmployeeStructureTable = ({ openCreate }) => {
                             <IoSearch size={20} />
                         </div>
                     </div>
-                    <div className="relative flex items-center justify-center">
-                        <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                            <option value="">حالة الطلب</option>
-                            <option value="pending">قيد الانتظار</option>
-                            <option value="approved">موافقة</option>
-                            <option value="rejected">مرفوض</option>
-                        </select>
-                    </div>
-
-                    <div className="relative flex items-center justify-center">
-                        <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                            <option value="">حالة الطلب</option>
-                            <option value="pending">قيد الانتظار</option>
-                            <option value="approved">موافقة</option>
-                            <option value="rejected">مرفوض</option>
-                        </select>
-                    </div>
-
-                    <div className="relative flex items-center justify-center">
-                        <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                            <option value="">حالة الطلب</option>
-                            <option value="pending">قيد الانتظار</option>
-                            <option value="approved">موافقة</option>
-                            <option value="rejected">مرفوض</option>
-                        </select>
-                    </div>
-
-                    <div className="relative flex items-center justify-center">
-                        <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-                            <option value="">حالة الطلب</option>
-                            <option value="pending">قيد الانتظار</option>
-                            <option value="approved">موافقة</option>
-                            <option value="rejected">مرفوض</option>
-                        </select>
-                    </div>
-
                     <button
                         onClick={handleSaveToExcel}
                         className="w-1/3 bg-themeColor-500 text-white text-center hover:bg-themeColor-600 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"

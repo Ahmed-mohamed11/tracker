@@ -18,11 +18,11 @@ export default function Calendar() {
     const [selectedData, setSelectedData] = useState({});
     const [daysData, setDaysData] = useState([]);
     const [refreshData, setRefreshData] = useState(false);
-    const [selectedEntities, setSelectedEntities] = useState([]); // إضافة حالة جديدة لتخزين الكيانات المحددة
+    const [selectedEntities, setSelectedEntities] = useState([]);
 
     const handleAddShiftEmployee = (entities) => {
-        setSelectedEntities(entities); // حفظ الكيانات المحددة
-        setRefreshData(prev => !prev); // تحديث البيانات
+        setSelectedEntities(entities);
+        setRefreshData(prev => !prev);
     };
 
     const fetchData = async () => {
@@ -49,8 +49,18 @@ export default function Calendar() {
     const getDaysInMonth = (date) => {
         const year = date.getFullYear();
         const month = date.getMonth();
-        const days = new Date(year, month + 1, 0).getDate();
-        return Array.from({ length: days }, (_, i) => new Date(year, month, i + 1));
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDayOfMonth = new Date(year, month, 1).getDay(); // تحديد اليوم الأول في الشهر
+        const daysArray = Array.from({ length: daysInMonth }, (_, i) => {
+            const day = new Date(year, month, i + 1);
+            // تحويل إلى توقيت UTC لتوحيد الفروقات الزمنية
+            day.setHours(0, 0, 0, 0);
+            return day;
+        });
+
+        // إضافة الأيام الفارغة في البداية لتتوافق مع أول يوم في الشهر
+        const paddingDays = Array(firstDayOfMonth).fill(null);
+        return [...paddingDays, ...daysArray];
     };
 
     const prev = () => {
@@ -63,18 +73,20 @@ export default function Calendar() {
 
     const renderDays = () => {
         const days = getDaysInMonth(currentDate);
-        const today = new Date().setHours(0, 0, 0, 0); // تحديد اليوم الحالي
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        return days.map((day) => {
+        return days.map((day, index) => {
+            if (!day) return <div key={index} className="p-2 h-32" />; // الأيام الفارغة
             const dayData = daysData.find(d => new Date(d.date).toDateString() === day.toDateString());
 
             return (
                 <div
                     key={day.toISOString()}
                     onClick={() => handleDayClick(day)}
-                    className={` p-2 h-32 cursor-pointer 
+                    className={`p-2 h-32 cursor-pointer 
                         ${day.getMonth() !== currentDate.getMonth() ? 'text-gray-400' : ''} 
-                        ${day.setHours(0, 0, 0, 0) === today ? 'bg-green-200 text-red-700' : 'bg-white'}`} // تغيير اللون اليوم الحقيقي
+                        ${day.getTime() === today.getTime() ? 'bg-green-200 text-red-700' : 'bg-white'}`}
                 >
                     <div className="flex justify-between items-center">
                         <span className="font-bold">{day.getDate()}</span>
@@ -106,8 +118,6 @@ export default function Calendar() {
             setShowForm(false);
         }
     };
-
-    console.log(selectedData, 'selectedData');
 
     return (
         <div className="relative">
@@ -153,7 +163,7 @@ export default function Calendar() {
                             selectedDate={selectedDay}
                             selectedData={selectedData}
                             onAddShift={handleAddShiftEmployee}
-                            selectedEntities={selectedEntities} // تمرير الكيانات المحددة إلى ShiftForm
+                            selectedEntities={selectedEntities}
                         />
                     </div>
                 </div>

@@ -46,18 +46,21 @@ export default function Footer() {
 
   return (
     <footer className="mx-auto w-full  shadow-2xl shadow-black bg-themeColor-400   max-w-container px-4 sm:px-6 lg:px-8">
-      <div className="grid justify-center py-10">
-        <img
-          className=' rounded-lg w-full h-16'
-          src="/cowdly.png" alt="" />
-        <p className="mt-5 text-center text-sm leading-6 text-white">© 2022 Site Created by : <a href="" className="hover:underline ">
-          <span className="font-semibold text-white">Cowdly Team Work</span>
-        </a>
-        </p>
-        <div className="mt-4 flex items-center justify-center space-x-4 text-sm font-semibold leading-6 text-white"><a
-          href="/privacy-policy">Privacy policy</a>
-          <div className="h-4 w-px bg-slate-500/20"></div><a href="/changelog">Changelog</a>
+      <div className="flex items-center justify-around pt-10">
+        <div>
+          <p className="text-center text-sm leading-6 text-white">© 2022 Site Created by : <a href="" className="hover:underline ">
+            <span className="font-semibold text-white">Cowdly Team Work</span>
+          </a>
+          </p>
+
         </div>
+        <img
+          className=' rounded-lg w-1/5 h-16'
+          src="/cowdly.png" alt="" />
+      </div>
+      <div className="py-5 flex items-center justify-center space-x-4 text-sm font-semibold leading-6 text-white"><a
+        href="/privacy-policy">Privacy policy</a>
+        <div className="h-4 w-0.5 bg-slate-500/20"></div><a href="/changelog">Change log</a>
       </div>
     </footer>
   );

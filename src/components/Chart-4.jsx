@@ -1,17 +1,14 @@
+import { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
-const Chart4 = ({ totalHoursOfAttendance = 0, totalAttendancePercentage = 0 }) => {
-    const fillPercentage = totalHoursOfAttendance > 100 ? 100 : totalHoursOfAttendance;
+const Chart4 = ({ totalHoursOfAttendance = 0 }) => {
+    const maxHours = 100; // Assuming 100 hours as max
+    const fillColor = totalHoursOfAttendance < 50 ? '#FF0000' : totalHoursOfAttendance < 75 ? '#FFA500' : totalHoursOfAttendance < 100 ? '#4CAF50' : '#0000FF'; // Color based on hours
 
-    // Set color based on the fillPercentage
-    const getColorByPercentage = (percentage) => {
-        if (percentage < 50) return '#FF0000'; // Red for less than 50%
-        if (percentage < 75) return '#FFA500'; // Orange for 50% to 75%
-        if (percentage < 100) return '#4CAF50'; // Green for 75% to 99%
-        return '#0000FF'; // Blue for 100%
-    };
-
-    const fillColor = getColorByPercentage(fillPercentage);
+    const [hoveredData, setHoveredData] = useState({
+        label: "عدد ساعات الحضور",
+        percentage: totalHoursOfAttendance,
+    });
 
     return (
         <div>
@@ -21,15 +18,24 @@ const Chart4 = ({ totalHoursOfAttendance = 0, totalAttendancePercentage = 0 }) =
                         chart: {
                             width: 380,
                             type: 'donut',
+                            events: {
+                                dataPointMouseEnter: (event, chartContext, { seriesIndex }) => {
+                                    // Update hover data on mouse enter
+                                    setHoveredData({
+                                        label: 'عدد ساعات الحضور',
+                                        percentage: totalHoursOfAttendance,
+                                    });
+                                },
+                            },
                         },
                         labels: ['اجمالي ساعات الحضور'],
-                        colors: [fillColor, '#E0E0E0'], // Dynamic fill color and gray for empty
+                        colors: [fillColor, '#E0E0E0'], // Color for attendance and gray for the empty space
                         dataLabels: {
-                            enabled: true,
-                            style: {
-                                fontSize: '18px',
-                                fontWeight: 'bold',
-                                colors: ['#000'],
+                            enabled: false, // Disable data labels
+                        },
+                        tooltip: {
+                            custom: function () {
+                                return `<div style="padding: 10px; font-size: 18px;">عدد ساعات الحضور: ${totalHoursOfAttendance} H</div>`;
                             },
                         },
                         legend: {
@@ -44,28 +50,29 @@ const Chart4 = ({ totalHoursOfAttendance = 0, totalAttendancePercentage = 0 }) =
                                             show: true,
                                             fontSize: '22px',
                                             fontWeight: 'bold',
-                                            color: fillColor, // Color for the label
+                                            color: fillColor,
                                             offsetY: -10,
+                                            formatter: () => hoveredData.label, // Dynamic label
                                         },
                                         value: {
-                                            show: false,
-                                            fontSize: '18px',
+                                            show: true,
+                                            fontSize: '22px',
                                             fontWeight: 'bold',
                                             color: 'green',
-                                            formatter: () => `${totalHoursOfAttendance || 0}`, // Show total hours directly
+                                            formatter: () => `${totalHoursOfAttendance} H`, // Display total hours
                                         },
                                         total: {
-                                            show: false,
+                                            show: true,
                                             label: 'اجمالي ساعات الحضور',
-                                            color: fillColor, // Color for the total label
-                                            formatter: () => `${totalHoursOfAttendance}%`,
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                                            color: fillColor,
+                                            formatter: () => `${totalHoursOfAttendance} H`, // Display hours with unit
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     }}
-                    series={[fillPercentage || 0, 100 - fillPercentage || 0]} // Fallback to 0 if undefined
+                    series={[totalHoursOfAttendance, 0]} // Only attendance, no absence
                     type="donut"
                     width={350}
                 />

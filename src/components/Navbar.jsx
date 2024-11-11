@@ -180,7 +180,7 @@ export default function Navbar({ companyLogo, companyName }) {
     },
     {
       icon: <ListDashes size={25} />,
-      name: t("sideBar.AllEmployees"),
+      name: t("sideBar.EmployeesRequests"),
       link: `${import.meta.env.VITE_PUBLIC_URL}/AllEmployees`,
     },
     {
@@ -243,7 +243,7 @@ export default function Navbar({ companyLogo, companyName }) {
         },
         {
           name: t("sideBar.audio"),
-          link: ` ${import.meta.env.VITE_PUBLIC_URL}/records`,
+          link: `${import.meta.env.VITE_PUBLIC_URL}/records`,
         },
         {
           name: t("sideBar.reject"),

@@ -260,7 +260,7 @@ export default function Dashboard() {
         </div>
       </div>
       <div className="md:grid md:grid-cols-2 xl:grid-cols-2 lg:grid-cols-1 gap-4 my-5 p-5 ">
-        <div className="border-2 border-gray-300 rounded-md flex items-center">
+        <div className="border-2 border-gray-300 rounded-md flex justify-center items-center">
           <Chart3
             totalHoursOfAttendance={totalHoursOfAttendance}
             totalAttendancePercentage={totalAttendancePercentage}

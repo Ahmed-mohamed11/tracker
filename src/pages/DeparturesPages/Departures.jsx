@@ -33,15 +33,6 @@ const Departures = ({ role }) => {
         [],
     );
 
-
-
-    const chartSection = useMemo(
-        () => (
-            <div className="flex flex-col flex-wrap items-center justify-between gap-4 md:flex-row lg:flex-row xl:flex-row"></div>
-        ),
-        [],
-    );
-
     return (
         <>
             <div className="flex  items-center">

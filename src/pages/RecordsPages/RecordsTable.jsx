@@ -7,7 +7,7 @@ import { FaPlus } from "react-icons/fa"; // أيقونة الإضافة
 import Table from '../../components/Table'; // تأكد من صحة المسار
 import { t } from 'i18next'; // تأكد من إعداد i18n بشكل صحيح
 
-const RecordsTable = () => {
+const RecordsTable = ({ openCreate, refreshData }) => {
     const [modalType, setModalType] = useState(null);
     const [tableData, setTableData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -60,7 +60,7 @@ const RecordsTable = () => {
 
     useEffect(() => {
         fetchData();
-    }, [fetchData]);
+    }, [fetchData, refreshData]);
 
     const addNewVoiceToTable = (newVoice) => {
         setTableData((prevData) => [...prevData, newVoice]);
