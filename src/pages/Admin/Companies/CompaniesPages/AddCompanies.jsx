@@ -79,8 +79,8 @@ const AddCompanies = ({ closeModal, modal, onAddCompany }) => {
     return (
         <div
             onClick={(e) => e.target === e.currentTarget && closeModal()}
-            id="createStudent"
-            className={`createStudent overflow-y-auto overflow-x-hidden duration-200 ease-linear
+            id=""
+            className={` overflow-y-auto overflow-x-hidden duration-200 ease-linear
                 shadow-2xl shadow-slate-500 
                 backdrop-blur-sm backdrop-saturate-[180%]
                 dark:shadow-white/[0.10] dark:backdrop-blur-sm dark:backdrop-saturate-[180%] 
@@ -109,7 +109,7 @@ const AddCompanies = ({ closeModal, modal, onAddCompany }) => {
                     </div>
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-right" onSubmit={handleSubmit}>
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid  grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormText
                                     label="اسم الشركه"
                                     type="text"
@@ -128,7 +128,7 @@ const AddCompanies = ({ closeModal, modal, onAddCompany }) => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid  grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormText
                                     label="البريد الإلكتروني"
                                     type="email"
@@ -144,7 +144,7 @@ const AddCompanies = ({ closeModal, modal, onAddCompany }) => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid  grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormSelect
                                     label="نوع الخطة"
                                     name="plan"

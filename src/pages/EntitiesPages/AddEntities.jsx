@@ -124,7 +124,7 @@ const AddEntities = ({ closeModal, modal, onAddEntity }) => {
                     </div>
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-right" onSubmit={handleSubmit}>
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormText
                                     label="اسم الجهة بالعربي"
                                     type="text"
@@ -146,7 +146,7 @@ const AddEntities = ({ closeModal, modal, onAddEntity }) => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2  gap-5 mb-3">
 
                                 <FormSelect
                                     label="branch"
