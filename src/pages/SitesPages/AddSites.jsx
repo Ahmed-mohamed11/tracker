@@ -200,11 +200,10 @@ const AddSites = ({ closeModal, open, fetchData }) => {
         style={{ boxShadow: "black 19px 0px 45px -12px" }}
         className={`rounded-l-[15px] p-4 w-full h-fit max-w-[50rem] pb-10 bg-white
                 dark:bg-gray-800 rounded-r-lg duration-200 ease-linear
-                ${
-                  open
-                    ? "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                    : "absolute top-1/2 -left-full -translate-x-1/2 -translate-y-1/2"
-                }
+                ${open
+            ? "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            : "absolute top-1/2 -left-full -translate-x-1/2 -translate-y-1/2"
+          }
                 overflow-auto`}
         dir="rtl"
       >
@@ -225,7 +224,7 @@ const AddSites = ({ closeModal, open, fetchData }) => {
               className="form-add-product text-right flex flex-col gap-5"
               onSubmit={handleSubmit}
             >
-              <div className="mb-5 grid justify-center grid-cols-2 gap-4 ">
+              <div className="mb-5 grid justify-center grid-cols-1 md:grid-cols-2 gap-4 ">
                 <FormText
                   label="الاسم بالعربي"
                   name="ar_name"

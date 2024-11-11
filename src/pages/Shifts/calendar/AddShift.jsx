@@ -100,7 +100,7 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
 
     return (
         <>
-            <div className="fixed z-50 left-0 top-[90px] h-[calc(100%-90px)] w-[40%] p-6 bg-white shadow-lg transform translate-x-0 transition-transform ease-in-out duration-300 rounded-l-lg overflow-y-auto">
+            <div className="fixed z-50 left-0 top-[90px] h-[calc(100%-90px)] lg:w-[40%] w-full p-6 bg-white shadow-lg transform translate-x-0 transition-transform ease-in-out duration-300 rounded-l-lg overflow-y-auto">
                 <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-300">
                     <h2 className="text-2xl font-semibold text-themeColor-600">
                         إضافة مناوبة
@@ -160,7 +160,7 @@ export default function ShiftForm({ handleCancel, selectedDate, selectedData, on
 
                     {!isChecked && (
                         <>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         وقت تسجيل الدخول

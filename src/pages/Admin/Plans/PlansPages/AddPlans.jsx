@@ -83,7 +83,7 @@ const AddPlans = ({ closeModal, modal, onAddPlan }) => {
                     </div>
                     <div className="main-content-wrap mt-5">
                         <form className="form-add-product text-right" onSubmit={handleSubmit}>
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormText
                                     label="اسم الخطة"
                                     type="text"
@@ -101,7 +101,7 @@ const AddPlans = ({ closeModal, modal, onAddPlan }) => {
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormNumber
                                     label="عدد الفروع القصوى"
                                     type="number"

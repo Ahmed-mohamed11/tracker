@@ -111,7 +111,7 @@ const AddEmployee = ({ closeModal, modal, onAddEmployee }) => {
                     </div>
                     <div className="main-content-wrap mt-5" >
                         <form className="form-add-product text-right" onSubmit={handleSubmit} >
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormText
                                     label="الاسم الأول"
                                     type="text"
@@ -130,7 +130,7 @@ const AddEmployee = ({ closeModal, modal, onAddEmployee }) => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormText
                                     label="البريد الإلكتروني"
                                     type="email"
@@ -149,7 +149,7 @@ const AddEmployee = ({ closeModal, modal, onAddEmployee }) => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormText
                                     label="المسمى الوظيفي"
                                     type="text"
@@ -168,7 +168,7 @@ const AddEmployee = ({ closeModal, modal, onAddEmployee }) => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5 mb-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
                                 <FormSelect
                                     label="الجنس"
                                     selectLabel="nationality"

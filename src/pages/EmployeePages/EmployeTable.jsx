@@ -249,7 +249,7 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
   };
 
   return (
-    <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
+    <div className="min-h-screen mt-10 lg:max-w-7xl w-screen  mx-auto">
       <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
         <h2 className="text-2xl font-bold">طلبات تسجيل الموظفين</h2>
         <button
@@ -260,25 +260,19 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
       </div>
 
       <div className="flex justify-between items-center mb-6 gap-14">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div className="relative flex items-center justify-center">
             <input
               type="text"
               placeholder="بحث"
               value={searchQuery}
               onChange={handleSearch}
-              className="bg-gray-200 text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
+              className="bg-gray-200 w-full text-gray-900 px-4 py-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-themeColor-500"
             />
             <div className="h-full absolute px-2 right-0 top-0 rounded-r-md border-gray-600 text-gray-400 flex items-center justify-center">
               <IoSearch size={20} />
             </div>
           </div>
-          <select className="bg-gray-200 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200">
-            <option value="">حالة الطلب</option>
-            <option value="pending">قيد الانتظار</option>
-            <option value="approved">موافقة</option>
-            <option value="rejected">مرفوض</option>
-          </select>
           <button
             onClick={() => exportTableToExcel()}
             className="w-1/2  bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center">
