@@ -104,8 +104,7 @@ const ar = {
     reject: "المراحل المرفوضه",
     changeSetting: " معلومات الحساب",
     ComeSetting: "اعدادات الحضور",
-    reports: "التقارير",
-    setting: "اعدادات الحساب",
+     setting: "اعدادات الحساب",
     signOut: "تسجيل الخروج",
   },
   updateClient: {
