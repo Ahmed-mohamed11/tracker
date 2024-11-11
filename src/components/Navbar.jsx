@@ -16,7 +16,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useI18nContext } from "../context/i18n-context";
 import Cookies from "js-cookie";
-import { Flag, ListChecks } from "lucide-react";
+import { Flag, ListChecks, Settings } from "lucide-react";
 import AccountSettings from "../pages/AccountSetting/accountSetting";
 import axios from "axios";
 
@@ -299,12 +299,11 @@ export default function Navbar({ companyLogo, companyName }) {
         <div className="lg:hidden">
           <button onClick={toggleMobileMenu} className="text-white">
             {isMobileMenuOpen ? <X size={32} /> : <List size={32} />}
-          </button>
+           </button>
         </div>
         <div>
           <img className="w-14 h-14 border-2 border-orange-500 rounded-full" src="/SiteLogo.png" alt="" />
         </div>
-
         <div className={classNames("mt-3 lg:flex items-center space-x-2 hidden")}>
           {selectedNavigation.map((item, index) => (
             <NavbarItem
@@ -321,6 +320,7 @@ export default function Navbar({ companyLogo, companyName }) {
           ))}
         </div>
 
+
         <div className="relative" ref={userMenuRef}>
           <div className=" rounded-full border-2 border-orange-500 flex items-center gap-3 cursor-pointer" onClick={toggleUserMenu}>
             {previewImage ? (
@@ -335,16 +335,23 @@ export default function Navbar({ companyLogo, companyName }) {
           </div>
 
           {isUserMenuOpen && (
-            <div className={classNames("absolute z-50 left-0 mt-7 w-48 bg-themeColor-900 text-white rounded-md shadow-lg", isUserMenuOpen ? "opacity-100 visible animate-slide-down" : "opacity-0 invisible animate-slide-up")}>
-              {user && user.email && (
-                <Link to="/profile" className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500">
-                  <User size={25} className="mx-2" />
-                  {user.email}
-                </Link>
-              )}
-              <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 hover:bg-gradient-to-r hover:from-themeColor-500 text-left">
-                <SignOut size={20} className="mx-2" />
-                تسجيل خروج
+            <div
+              ref={userMenuRef}
+              className="absolute right-8 top-16 bg-white shadow-lg rounded-md w-48 py-2 z-50"
+            >
+              <button
+                onClick={() => setShowSettingsPopup(true)}
+                className="w-full text-left px-4 py-2 text-blue-800 hover:bg-gray-100"
+              >
+                <Settings className="inline-block mr-2" />
+                Settings
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-blue-800 hover:bg-gray-100"
+              >
+                <SignOut className="inline-block mr-2" />
+                Logout
               </button>
             </div>
           )}
@@ -352,20 +359,25 @@ export default function Navbar({ companyLogo, companyName }) {
         {showSettingsPopup && <AccountSettings onClose={() => setShowSettingsPopup(false)} />}
       </nav>
       {isMobileMenuOpen && (
-        <div className="flex flex-col items-center w-full mt-3">
-          {selectedNavigation.map((item, index) => (
-            <NavbarItem
-              key={index}
-              icon={item.icon}
-              name={item.name}
-              link={item.link}
-              subItems={item.subItems}
-              isOpen={openMenuIndex === index}
-              toggleSubMenu={() => toggleSubMenu(index)}
-              closeSubMenu={closeSubMenu}
-              onClick={item.onClick || (() => { })}
-            />
-          ))}
+        <div className="lg:hidden p-3 bg-black bg-opacity-50 z-40">
+          <div
+            className={`flex flex-col items-center space-y-4 transition-transform duration-300 ease-in-out transform ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
+            style={{ transform: isMobileMenuOpen ? "translateX(0)" : "translateX(100%)" }}
+                      >
+            {selectedNavigation.map((item, index) => (
+              <NavbarItem
+                key={index}
+                icon={item.icon} 
+                name={item.name}
+                link={item.link}
+                subItems={item.subItems}
+                isOpen={openMenuIndex === index}
+                toggleSubMenu={() => toggleSubMenu(index)}
+                closeSubMenu={closeSubMenu}
+                onClick={item.onClick || (() => { })} 
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
