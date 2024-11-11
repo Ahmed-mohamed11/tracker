@@ -108,7 +108,7 @@ export default function AddEmployeeForm({ handleClose, handleAddEmployee }) {
 
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed h-screenء inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-2xl relative">
                 <button
                     onClick={handleClose}
