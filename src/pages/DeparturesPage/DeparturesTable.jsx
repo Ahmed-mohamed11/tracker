@@ -36,7 +36,7 @@ const ReportsTable = ({ openCreate }) => {
     const fetchData = useCallback(async () => {
         try {
             const token = Cookies.get('token');
-            const response = await axios.get('https://bio.skyrsys.com/api/activity/activities/', {
+            const response = await axios.get('https://bio.skyrsys.com/api/activity/departures/', {
                 headers: { 'Authorization': `Token ${token}` },
             });
             const registrationRequests = response.data;
