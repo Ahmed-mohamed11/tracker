@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useMemo, useCallback } from 'react';
+import  { useState, useMemo, useCallback } from 'react';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
