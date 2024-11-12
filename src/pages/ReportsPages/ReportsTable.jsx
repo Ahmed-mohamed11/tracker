@@ -38,7 +38,7 @@ const ReportsTable = ({ openCreate }) => {
             });
 
             const registrationRequests = response.data;
-
+console.log('43',registrationRequests);
             setTableHeaders([
                 { key: 'employee', label: 'اسم الموظف' },
                 { key: 'branch', label: 'اسم الفرع' },
