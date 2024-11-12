@@ -78,6 +78,8 @@ const ar = {
     Administrative: "  الهيكل الاداري",
     Entities: " الجهات",
     reports: "التقارير",
+    DailyMovement: "حركات الموظف اليومية",
+    DailyAttendance: "تقرير الحضور اليومي",
     Preparation: " التحضير",
     commitments: " الالتزامات ",
     Departure: " الانصراف ",
@@ -104,7 +106,7 @@ const ar = {
     reject: "المراحل المرفوضه",
     changeSetting: " معلومات الحساب",
     ComeSetting: "اعدادات الحضور",
-     setting: "اعدادات الحساب",
+    setting: "اعدادات الحساب",
     signOut: "تسجيل الخروج",
   },
   updateClient: {

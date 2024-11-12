@@ -84,7 +84,8 @@ const NavbarItem = ({
         <div
           className={classNames(
             "absolute sm:right-32 sm:top-5 z-50 xl:top-full xl:right-0 mt-5 bg-themeColor-700 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
-            isOpen ? "opacity-100 visible w-full animate-slide-down" : "opacity-0 invisible w-full animate-slide-up"
+            isOpen ? "opacity-100 visible animate-slide-down" : "opacity-0 invisible animate-slide-up",
+            "min-w-max" // Add this class to make the dropdown adapt to its content width
           )}
         >
           {subItems.map((subItem, index) => (
@@ -229,6 +230,14 @@ export default function Navbar({ companyLogo, companyName }) {
         {
           name: t("sideBar.commitments"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
+        },
+        {
+          name: t("sideBar.DailyMovement"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/dailyMovement`,
+        },
+        {
+          name: t("sideBar.DailyAttendance"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/dailyAttendance`,
         },
         {
           name: t("sideBar.Departure"),

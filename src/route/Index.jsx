@@ -18,6 +18,10 @@ import Reports from "../pages/Reports/Reports";
 import Login from "../pages/auth/login/Login";
 import AllEmployees from "../pages/AllEmployees/Employees";
 import Departure from "../pages/departure/Departure";
+import DailyAttendance from "../pages/dailyAttendance/DailyAttendance ";
+import DailyMovement from "../pages/dailyMovements/DailyMovements";
+
+
 
 const AdminPages = ({ loading }) => {
   return (
@@ -44,6 +48,8 @@ const AdminPages = ({ loading }) => {
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/sites`} element={<Sites />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/records`} element={<Records />} />
         <Route path={`${import.meta.env.VITE_PUBLIC_URL}/rejected`} element={<RejectedMovements />} />
+        <Route path={`${import.meta.env.VITE_PUBLIC_URL}/dailyAttendance`} element={<DailyAttendance />} />
+        <Route path={`${import.meta.env.VITE_PUBLIC_URL}/dailyMovement`} element={<DailyMovement />} />
 
 
         <Route
@@ -83,6 +89,8 @@ const AdminPages = ({ loading }) => {
           path={`${import.meta.env.VITE_PUBLIC_URL}/sites`}
           element={<Sites />}
         />
+
+
 
         <Route
           path={`${import.meta.env.VITE_PUBLIC_URL}records`}

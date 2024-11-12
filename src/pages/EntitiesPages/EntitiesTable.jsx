@@ -1,4 +1,4 @@
-import {  FaPlus } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -11,7 +11,7 @@ const EntitiesTable = ({ openCreate, refreshData }) => {
     const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-   
+
     const fetchData = useCallback(async () => {
         try {
             const token = Cookies.get('token');
@@ -26,12 +26,11 @@ const EntitiesTable = ({ openCreate, refreshData }) => {
 
             const entities = response.data;
 
-             setTableHeaders([
-                { key: 'ar_name', label: 'اسم الجهة (Ar)' },
-                { key: 'en_name', label: 'اسم الجهة (En)' },
+            setTableHeaders([
+                { key: 'ar_name', label: 'الاسم باللغه العربيه' },
+                { key: 'en_name', label: 'الاسم باللغه الانجليزيه' },
                 { key: 'active', label: 'Active' },
                 { key: 'branch', label: 'Branch' },
-                { key: 'created', label: 'تاريخ الإنشاء' },
             ]);
 
             // Format the data to include the new fields

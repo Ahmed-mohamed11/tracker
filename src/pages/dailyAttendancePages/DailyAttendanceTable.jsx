@@ -6,7 +6,7 @@ import Table from '../../components/Table';
 import * as XLSX from 'xlsx';
 import FormSelect from '../../components/form/FormSelect';
 
-const ReportsTable = ({ openCreate }) => {
+const DailyAttendanceTable = ({ openCreate }) => {
     const [tableData, setTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
@@ -86,13 +86,13 @@ const ReportsTable = ({ openCreate }) => {
     const handleFilter = async () => {
         try {
             const token = Cookies.get('token');
-            const response = await axios.get('https://bio.skyrsys.com/api/activity/departures/', {
+            const response = await axios.get('https://bio.skyrsys.com/api/activity/activities/', {
                 headers: { 'Authorization': `Token ${token}` },
                 params: {
                     employee: selectedEmployee,
                     branch: selectedBranch,
                     entity: selectedEntity,
-                    activity_type: "Departure",
+                    activity_type: "Attendance",
                     start_date: startDate,
                     end_date: endDate,
                 }
@@ -113,7 +113,7 @@ const ReportsTable = ({ openCreate }) => {
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
             <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
-                <h2 className="text-2xl font-bold">حركات الانصراف</h2>
+                <h2 className="text-2xl font-bold">تقرير الحضور اليومي </h2>
             </div>
 
             <div className='items-end grid grid-cols-1 mb-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
@@ -145,4 +145,4 @@ const ReportsTable = ({ openCreate }) => {
     );
 };
 
-export default ReportsTable;
+export default DailyAttendanceTable;
