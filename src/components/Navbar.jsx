@@ -343,21 +343,21 @@ export default function Navbar({ companyLogo, companyName }) {
           {isUserMenuOpen && (
             <div
               ref={userMenuRef}
-              className="absolute right-8 top-16 bg-white shadow-lg rounded-md w-48 py-2 z-50"
+              className="absolute left-0 top-16 bg-themeColor-600 shadow-lg rounded-md w-48 py-2 z-50"
             >
               <button
                 onClick={() => setShowSettingsPopup(true)}
-                className="w-full text-left px-4 py-2 text-blue-800 hover:bg-gray-100"
+                className=" w-full text-right px-4 py-2 text-white hover:bg-themeColor-500"
               >
                 <Settings className="inline-block mr-2" />
-                Settings
+                اعدادات حساب
               </button>
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2 text-blue-800 hover:bg-gray-100"
+                className="w-full text-right px-4 py-2 text-white hover:bg-gray-100"
               >
                 <SignOut className="inline-block mr-2" />
-                Logout
+                تسجيل خروج
               </button>
             </div>
           )}
