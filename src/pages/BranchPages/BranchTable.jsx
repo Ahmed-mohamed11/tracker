@@ -1,9 +1,8 @@
-import { FaArrowCircleDown, FaPlus } from 'react-icons/fa';
+import {  FaPlus } from 'react-icons/fa';
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { IoSearch } from 'react-icons/io5';
-import Table from '../../components/Table';
+ import Table from '../../components/Table';
 import * as XLSX from 'xlsx';
 import FormSelect from '../../components/form/FormSelect';
 
@@ -12,8 +11,7 @@ const BranchTable = ({ openCreate, refreshData }) => {
     const [filteredData, setFilteredData] = useState([]);
     const [tableHeaders, setTableHeaders] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
+ 
 
     const fetchData = useCallback(async () => {
         try {

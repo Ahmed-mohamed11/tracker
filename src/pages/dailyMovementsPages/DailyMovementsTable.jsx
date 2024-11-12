@@ -23,6 +23,7 @@ const DailyMovementsTable = ({ openCreate }) => {
     const [selectedEmployee, setSelectedEmployee] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [selectedActivity, setSelectedActivity] = useState('Attendance'); // Default to 'Attendance'
 
     // Function to save data to Excel
     const handleSaveToExcel = () => {
@@ -92,10 +93,10 @@ const DailyMovementsTable = ({ openCreate }) => {
                     employee: selectedEmployee,
                     branch: selectedBranch,
                     entity: selectedEntity,
-                    activity_type: "Attendance",
+                    activity_type: selectedActivity, // Use selectedActivity for filter
                     start_date: startDate,
                     end_date: endDate,
-                }
+                },
             });
 
             const filteredRequests = response.data.map(request => ({
@@ -112,7 +113,7 @@ const DailyMovementsTable = ({ openCreate }) => {
 
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
-            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
+            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500 border-b">
                 <h2 className="text-2xl font-bold">حركات الموظف اليوميه</h2>
             </div>
 
@@ -120,24 +121,16 @@ const DailyMovementsTable = ({ openCreate }) => {
                 <FormSelect label="الفرع" options={branches} onChange={(e) => setSelectedBranch(e.target.value)} />
                 <FormSelect label="الجهه" options={entities} onChange={(e) => setSelectedEntity(e.target.value)} />
                 <FormSelect label="الموظف" options={employees} onChange={(e) => setSelectedEmployee(e.target.value)} />
-
-                <div className='flex flex-col'>
-                    <label htmlFor="start_date">تاريخ البداية</label>
-                    <input
-                        className='border border-gray-300 rounded-md p-2'
-                        type="date" id="start_date" onChange={(e) => setStartDate(e.target.value)} />
-                </div>
-
-                <div className='flex flex-col'>
-                    <label htmlFor="end_date">تاريخ الانتهاء</label>
-                    <input
-                        className='border border-gray-300 rounded-md p-2'
-                        type="date" id="end_date" onChange={(e) => setEndDate(e.target.value)} />
-                </div>
+                <FormSelect
+                    label="النوع"
+                    options={[
+                        { value: 'Attendance', label: 'حضور' },
+                        { value: 'Departure', label: 'انصراف' },
+                    ]}
+                    onChange={(e) => setSelectedActivity(e.target.value)}
+                />
 
                 <button onClick={handleFilter} className="bg-themeColor-400 text-white px-4 py-2 rounded-md">عرض البيانات</button>
-
-
             </div>
 
             <Table data={filteredData} headers={tableHeaders} currentPage={currentPage} totalPages={Math.ceil(filteredData.length / itemsPerPage)} setCurrentPage={setCurrentPage} />

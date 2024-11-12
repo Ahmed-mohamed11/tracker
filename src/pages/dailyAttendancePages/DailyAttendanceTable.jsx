@@ -21,8 +21,11 @@ const DailyAttendanceTable = ({ openCreate }) => {
     const [selectedBranch, setSelectedBranch] = useState('');
     const [selectedEntity, setSelectedEntity] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+
+    // Initialize start and end dates to today’s date
+    const todayDate = new Date().toISOString().split('T')[0];
+    const [startDate, setStartDate] = useState(todayDate);
+    const [endDate, setEndDate] = useState(todayDate);
 
     // Function to save data to Excel
     const handleSaveToExcel = () => {
@@ -112,7 +115,7 @@ const DailyAttendanceTable = ({ openCreate }) => {
 
     return (
         <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
-            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
+            <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500 border-b">
                 <h2 className="text-2xl font-bold">تقرير الحضور اليومي </h2>
             </div>
 
@@ -125,19 +128,25 @@ const DailyAttendanceTable = ({ openCreate }) => {
                     <label htmlFor="start_date">تاريخ البداية</label>
                     <input
                         className='border border-gray-300 rounded-md p-2'
-                        type="date" id="start_date" onChange={(e) => setStartDate(e.target.value)} />
+                        type="date"
+                        id="start_date"
+                        value={startDate}
+                        readOnly
+                    />
                 </div>
 
                 <div className='flex flex-col'>
                     <label htmlFor="end_date">تاريخ الانتهاء</label>
                     <input
                         className='border border-gray-300 rounded-md p-2'
-                        type="date" id="end_date" onChange={(e) => setEndDate(e.target.value)} />
+                        type="date"
+                        id="end_date"
+                        value={endDate}
+                        readOnly
+                    />
                 </div>
 
                 <button onClick={handleFilter} className="bg-themeColor-400 text-white px-4 py-2 rounded-md">عرض البيانات</button>
-
-
             </div>
 
             <Table data={filteredData} headers={tableHeaders} currentPage={currentPage} totalPages={Math.ceil(filteredData.length / itemsPerPage)} setCurrentPage={setCurrentPage} />
