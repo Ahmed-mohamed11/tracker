@@ -308,7 +308,7 @@ export default function Navbar({ companyLogo, companyName }) {
         <div>
           <img className="w-14 h-14 border-2 border-orange-500 rounded-full" src="/SiteLogo.png" alt="" />
         </div>
-        <div className={classNames("mt-3 xl:flex items-center hidden ml-auto")}>
+        <div className={classNames("mt-3 xl:flex items-center hidden")}>
           {selectedNavigation.map((item, index) => (
             <NavbarItem
               key={index}
@@ -365,7 +365,7 @@ export default function Navbar({ companyLogo, companyName }) {
         {showSettingsPopup && <AccountSettings onClose={() => setShowSettingsPopup(false)} />}
       </nav>
       {isMobileMenuOpen && (
-        <div className="lg:hidden p-3 bg-black bg-opacity-50 z-40">
+        <div className="xl:hidden p-3 bg-black bg-opacity-50 z-40">
           <div
             className={`flex flex-col items-start space-y-4 transition-transform duration-300 ease-in-out transform ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
             style={{ transform: isMobileMenuOpen ? "translateX(0)" : "translateX(100%)" }}
