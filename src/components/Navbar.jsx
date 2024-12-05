@@ -107,7 +107,7 @@ const NavbarItem = ({
   );
 };
 
-export default function Navbar({ companyLogo, companyName }) {
+export default function Navbar({ companyLogo, companyName }) { 
   const { t } = useI18nContext();
   const [role, setRole] = useState("admin");
   const [openMenuIndex, setOpenMenuIndex] = useState(null);

@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Table from '../../components/Table';
 import ReviewRequest from './ReviewRequest';
+import img from '../../../public/non.jpg'
 
 const MySwal = withReactContent(Swal);
 
@@ -40,7 +41,7 @@ const TableUser = ({ row, openReviewRequest }) => {
       >
         <img
           className="w-10 h-10 rounded-full text-center"
-          src={row.image || './default-image.jpg'}
+          src={row.image || img}
           alt={`${row.first_name} image`}
         />
       </td>
@@ -99,7 +100,7 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
         // entity_name: request.entity_name || 'مجهول',
         phone_number: request.phone_number || 'مجهول',
         nationality: request.nationality || 'مجهول',
-        image: request.image || './default-image.jpg',
+        image: request.image || img,
         id: request.id,
         voices: request.voices || []
       }));

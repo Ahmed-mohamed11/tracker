@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { Play } from 'lucide-react';
+import img from '../../public/non.jpg'
 
 const TableUser = ({ row, onUserClick }) => {
     return (
@@ -16,7 +17,7 @@ const TableUser = ({ row, onUserClick }) => {
             >
                 <img
                     className="w-10 h-10 rounded-full text-center"
-                    src={row.image || './default-image.jpg'}  // صورة المستخدم أو صورة افتراضية
+                    src={row.image || img}  // صورة المستخدم أو صورة افتراضية
                     alt={`${row.first_name} image`} // الاسم كبديل للوصف
                 />
             </td>
