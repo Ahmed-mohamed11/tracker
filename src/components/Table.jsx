@@ -40,7 +40,7 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
   </div>
 );
 
-const Table = ({ data, headers, actions, userImage }) => {
+const Table = ({ data, headers, actions, userImage, openReviewRequest }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -104,7 +104,11 @@ const Table = ({ data, headers, actions, userImage }) => {
         <tbody>
           {paginatedData.length > 0 ? (
             paginatedData.map((row, rowIndex) => (
-              <tr key={rowIndex} className="border-b">
+              <tr
+                key={rowIndex}
+                className="border-b cursor-pointer"
+                onClick={() => openReviewRequest(row)}
+              >
                 {headers.map((header) => (
                   <td
                     key={header.key}
