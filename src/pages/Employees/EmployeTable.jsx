@@ -98,7 +98,7 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
         { key: "request_type", label: "نوع الطلب" },
         { key: "start_date", label: "تاريخ البدء" },
         { key: "end_date", label: "تاريخ الانتهاء" },
-        { key: "status", label: "الحالة" },
+        // { key: "status", label: "الحالة" },
         { key: "company", label: "الشركة" },
         { key: "is_approved", label: "موافقة" },
       ]);

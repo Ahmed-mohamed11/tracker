@@ -230,10 +230,10 @@ export default function Navbar({ companyLogo, companyName }) {
           name: t("sideBar.DailyMovement"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/dailyMovement`,
         },
-        {
-          name: t("sideBar.DailyAttendance"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/dailyAttendance`,
-        },
+        // {
+        //   name: t("sideBar.DailyAttendance"),
+        //   link: `${import.meta.env.VITE_PUBLIC_URL}/dailyAttendance`,
+        // },
       ],
     },
 
