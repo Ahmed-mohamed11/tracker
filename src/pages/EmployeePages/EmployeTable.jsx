@@ -17,9 +17,14 @@ const TableActions = ({
   approveRequest,
   refuseRequest,
   openReviewRequest,
+  disabled,
 }) => {
   return (
-    <div className="flex gap-2">
+    <div
+      className={`flex gap-2 ${
+        disabled ? "opacity-45 cursor-not-allowed pointer-events-none" : ""
+      }`}
+    >
       <button
         onClick={() => refuseRequest(row.id)}
         className="text-primary-500 bg-primary-200 p-1 rounded-full "
@@ -308,7 +313,16 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
               refuseRequest={refuseRequest}
               openReviewRequest={openReviewRequest}
             />
-          ) : null
+          ) : (
+            <TableActions
+              openPreview={() => console.log("Preview function")}
+              row={row}
+              approveRequest={approveRequest}
+              refuseRequest={refuseRequest}
+              openReviewRequest={openReviewRequest}
+              disabled={true}
+            />
+          )
         }
         currentPage={currentPage}
         totalPages={Math.ceil(filteredData.length / itemsPerPage)}

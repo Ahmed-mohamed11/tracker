@@ -13,39 +13,6 @@ const EntitiesTable = ({ openCreate, refreshData }) => {
   const [tableHeaders, setTableHeaders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchBranchesData = useCallback(async () => {
-    try {
-      const token = Cookies.get("token");
-      if (!token) {
-        console.error("No token found in cookies");
-        return;
-      }
-
-      const response = await axios.get(
-        "https://bio.skyrsys.com/api/branch/branches/",
-        {
-          headers: { Authorization: `Token ${token}` },
-        }
-      );
-
-      const branches = response.data;
-
-      const formattedData = branches.map((branch) => ({
-        value: branch.id,
-        label: branch.branch_name || "",
-      }));
-
-      //
-
-      setBranchesData(formattedData);
-    } catch (error) {
-      console.error(
-        "Error fetching branches:",
-        error.response?.data || error.message
-      );
-    }
-  }, []);
-
   const fetchData = useCallback(async () => {
     try {
       const token = Cookies.get("token");
@@ -54,36 +21,46 @@ const EntitiesTable = ({ openCreate, refreshData }) => {
         return;
       }
 
-      const response = await axios.get("https://bio.skyrsys.com/api/entity/", {
-        headers: { Authorization: `Token ${token}` },
-      });
+      // استدعاء بيانات الفروع والجهات معًا
+      const [branchesResponse, entitiesResponse] = await Promise.all([
+        axios.get("https://bio.skyrsys.com/api/branch/branches/", {
+          headers: { Authorization: `Token ${token}` },
+        }),
+        axios.get("https://bio.skyrsys.com/api/entity/", {
+          headers: { Authorization: `Token ${token}` },
+        }),
+      ]);
 
-      const entities = response.data;
+      // تنسيق بيانات الفروع
+      const branches = branchesResponse.data;
+      const formattedBranches = branches.map((branch) => ({
+        value: branch.id,
+        label: branch.branch_name || "",
+      }));
+      setBranchesData(formattedBranches);
 
+      // تنسيق بيانات الجهات وربطها مع الفروع
+      const entities = entitiesResponse.data;
+      const formattedEntities = entities.map((entity) => ({
+        ar_name: entity.ar_name || "مجهول",
+        en_name: entity.en_name || "Unknown",
+        branch:
+          formattedBranches.find(
+            (branchI) => String(branchI.value) === String(entity.branch)
+          )?.label || "غير معرف",
+      }));
+
+      // تحديث البيانات
       setTableHeaders([
         { key: "ar_name", label: "الاسم باللغه العربيه" },
         { key: "en_name", label: "الاسم باللغه الانجليزيه" },
         { key: "branch", label: "الفرع" },
       ]);
-
-      // Format the data to include the new fields
-      const formattedData = entities.map((entity) => ({
-        ar_name: entity.ar_name || "مجهول",
-        en_name: entity.en_name || "Unknown",
-        branch:
-          branchesData.find(
-            (branchI) => String(branchI.value) === String(entity.branch)
-          )?.label || "N/A",
-        created: new Date(entity.created).toLocaleDateString("en-US"),
-      }));
-
-      console.log(formattedData);
-
-      setTableData(formattedData);
-      setFilteredData(formattedData);
+      setTableData(formattedEntities);
+      setFilteredData(formattedEntities);
     } catch (error) {
       console.error(
-        "Error fetching entity:",
+        "Error fetching data:",
         error.response?.data || error.message
       );
     }
@@ -91,8 +68,7 @@ const EntitiesTable = ({ openCreate, refreshData }) => {
 
   useEffect(() => {
     fetchData();
-    fetchBranchesData();
-  }, [fetchData, fetchBranchesData, refreshData]);
+  }, [fetchData, refreshData]);
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();

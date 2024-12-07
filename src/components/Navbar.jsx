@@ -226,11 +226,6 @@ export default function Navbar({ companyLogo, companyName }) {
           name: t("sideBar.Preparation"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/reports`,
         },
-
-        {
-          name: t("sideBar.commitments"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
-        },
         {
           name: t("sideBar.DailyMovement"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/dailyMovement`,
@@ -238,10 +233,6 @@ export default function Navbar({ companyLogo, companyName }) {
         {
           name: t("sideBar.DailyAttendance"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/dailyAttendance`,
-        },
-        {
-          name: t("sideBar.Departure"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/departure`,
         },
       ],
     },

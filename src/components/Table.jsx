@@ -92,8 +92,12 @@ const Table = ({ data, headers, actions, userImage }) => {
                 {/* <th className="p-4 border-b text-center px-6">الصوت</th> */}
               </>
             )}
-            {actions && userImage.status && (
+            {actions && userImage?.status ? (
               <th className="p-4 border-b text-center px-6">العمليات</th>
+            ) : (
+              actions && (
+                <th className="p-4 border-b text-center px-6">العمليات</th>
+              )
             )}
           </tr>
         </thead>
