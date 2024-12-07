@@ -86,60 +86,6 @@ const BranchTable = ({ openCreate, refreshData }) => {
                 </button>
             </div>
 
-            <div className='items-end grid grid-cols-1 mb-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
-                <div>
-                    <FormSelect
-                        label="الفرع"
-                        options={[
-                            { label: 'الفرع 1', value: '1' },
-                            { label: 'الفرع 2', value: '2' },
-                            { label: 'الفرع 3', value: '3' },
-                        ]}
-                    />
-                </div>
-                <div>
-                    <FormSelect
-                        label="الجهه"
-                        options={[
-                            { label: 'الجهه 1', value: '1' },
-                            { label: 'الجهه 2', value: '2' },
-                            { label: 'الجهه 3', value: '3' },
-                        ]}
-                    />
-                </div>
-                <div>
-                    <FormSelect
-                        label="الموظف"
-                        options={[
-                            { label: 'الجهه 1', value: '1' },
-                            { label: 'الجهه 2', value: '2' },
-                            { label: 'الجهه 3', value: '3' },
-                        ]}
-                    />
-                </div>
-
-
-                <div className='flex flex-col'>
-                    <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear' htmlFor="date">تاريخ البداية</label>
-                    <input
-                        className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200 "
-                        type="date" id="date" name="date" />
-                </div>
-
-
-                <div className='flex flex-col'>
-                    <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-gray-600 dark:focus:border-gray-100 duration-100 ease-linear' htmlFor="date">تاريخ الانتهاء</label>
-                    <input
-                        className="bg-gray-50 border border-gray-300 w-full text-gray-900 px-4 py-2 rounded-md transition duration-200 "
-                        type="date" id="date" name="date" />
-                </div>
-
-                <div>
-                    <button
-                        className="bg-themeColor-400 border border-gray-300 w-full text-white px-4 py-2 rounded-md transition duration-200 "
-                    >عرض البيانات </button>
-                </div>
-            </div>
 
             {/* Table */}
             <Table

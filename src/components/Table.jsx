@@ -1,8 +1,8 @@
-'use client';
-import  { useState, useMemo, useCallback } from 'react';
-import { CaretLeft, CaretRight } from '@phosphor-icons/react';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+"use client";
+import { useState, useMemo, useCallback } from "react";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
 
@@ -17,11 +17,14 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
     </button>
     <div className="space-x-2 hidden md:block">
       {Array.from({ length: totalPages }, (_, i) => (
-
         <button
           key={i + 1}
           onClick={() => paginate(i + 1)}
-          className={`px-4 py-2 gap-3 text-sm rounded-md ${i + 1 === currentPage ? 'bg-themeColor-500 text-white' : 'bg-gray-100 text-gray-500'}`}
+          className={`px-4 py-2 gap-3 text-sm rounded-md ${
+            i + 1 === currentPage
+              ? "bg-themeColor-500 text-white"
+              : "bg-gray-100 text-gray-500"
+          }`}
         >
           {i + 1}
         </button>
@@ -33,15 +36,13 @@ const PaginationControls = ({ currentPage, totalPages, paginate }) => (
       className="flex items-center gap-2 text-gray-500"
     >
       <CaretLeft size={18} weight="bold" />
-
     </button>
   </div>
 );
 
-const Table = ({ data, headers, actions, userImage }) => {
+const Table = ({ data, headers, actions, userImage, openReviewRequest }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
 
   // حساب إجمالي عدد الصفحات
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -54,18 +55,18 @@ const Table = ({ data, headers, actions, userImage }) => {
 
   const confirmDelete = useCallback((rowId) => {
     MySwal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log('Deleted:', rowId); // حذف الصف
-        MySwal.fire('Deleted!', 'Your item has been deleted.', 'success');
+        console.log("Deleted:", rowId); // حذف الصف
+        MySwal.fire("Deleted!", "Your item has been deleted.", "success");
       }
     });
   }, []);
@@ -79,49 +80,58 @@ const Table = ({ data, headers, actions, userImage }) => {
               <th
                 key={header.key}
                 className="p-4 border-b text-center px-6"
-                style={{ whiteSpace: 'nowrap' }}
+                style={{ whiteSpace: "nowrap" }}
               >
                 {header.label}
               </th>
             ))}
-            {userImage &&
+            {userImage && (
               <>
-                <th className="p-4 border-b text-center px-6">الحاله</th>
-                <th className="p-4 border-b text-center px-6">الصوره</th>
-                <th className="p-4 border-b text-center px-6">الصوت</th>
+                <th className="p-4 border-b text-center">الحاله</th>
+                {/* <th className="p-4 border-b text-center px-6">الصوره</th> */}
+                {/* <th className="p-4 border-b text-center px-6">الصوت</th> */}
               </>
-            }
-            {actions && <th className="p-4 border-b text-center px-6">Actions</th>}
+            )}
+            {actions && userImage?.status ? (
+              <th className="p-4 border-b text-center px-6">العمليات</th>
+            ) : (
+              actions && (
+                <th className="p-4 border-b text-center px-6">العمليات</th>
+              )
+            )}
           </tr>
         </thead>
         <tbody>
           {paginatedData.length > 0 ? (
             paginatedData.map((row, rowIndex) => (
-              <tr key={rowIndex} className="border-b">
-                {headers.map(header => (
+              <tr
+                key={rowIndex}
+                className="border-b cursor-pointer"
+                onClick={() => openReviewRequest(row)}
+              >
+                {headers.map((header) => (
                   <td
                     key={header.key}
                     className="p-4 text-center px-6"
-                    style={{ whiteSpace: 'nowrap' }}
+                    style={{ whiteSpace: "nowrap" }}
                   >
                     {row[header.key]}
                   </td>
                 ))}
-                {userImage && (
-                  <>
-                    {userImage(row)}
-                  </>
-                )}
+                {userImage && <>{userImage(row)}</>}
                 {actions && (
-                  <td className="p-4 text-center px-6">
-                    {actions(row)}
-                  </td>
+                  <td className="p-4 text-center px-6">{actions(row)}</td>
                 )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={headers.length + (actions ? 1 : 0)} className="p-4 text-center">No data available</td>
+              <td
+                colSpan={headers.length + (actions ? 1 : 0)}
+                className="p-4 text-center"
+              >
+                No data available
+              </td>
             </tr>
           )}
         </tbody>

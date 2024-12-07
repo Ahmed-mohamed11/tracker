@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Table from "../../components/Table";
 import ReviewRequest from "./ReviewRequest";
+import img from "../../../public/non.jpg";
 
 const MySwal = withReactContent(Swal);
 
@@ -16,17 +17,24 @@ const TableActions = ({
   approveRequest,
   refuseRequest,
   openReviewRequest,
+  disabled,
 }) => {
   return (
-    <div className="flex gap-2">
+    <div
+      className={`flex gap-2 ${
+        disabled ? "opacity-45 cursor-not-allowed pointer-events-none" : ""
+      }`}
+    >
       <button
         onClick={() => refuseRequest(row.id)}
-        className="text-primary-500 bg-primary-200 p-1 rounded-full ">
+        className="text-primary-500 bg-primary-200 p-1 rounded-full "
+      >
         <X size={22} />
       </button>
       <button
         onClick={() => approveRequest(row.id)}
-        className="text-themeColor-500 bg-themeColor-200 p-1 rounded-full">
+        className="text-themeColor-500 bg-themeColor-200 p-1 rounded-full"
+      >
         <Check size={22} />
       </button>
     </div>
@@ -34,29 +42,35 @@ const TableActions = ({
 };
 
 const TableUser = ({ row, openReviewRequest }) => {
-
-  console.log('row', row);
+  console.log("row", row);
   return (
     <Fragment>
       <td className="py-4">
-        <div className={`font-semibold flex items-center ${row.status ? 'bg-green-200' : 'bg-red-200'}  px-2.5 py-0.5 rounded`}>
-          <div className={`h-2.5 w-2.5 rounded-full ${row.status ? 'bg-green-500' : 'bg-red-200'} me-2`}></div>
-          {row.status ? 'مستكمل' : 'غير مستكمل'}
+        <div
+          className={`font-semibold flex items-center ${
+            row.status ? "bg-green-200" : "bg-red-200"
+          }  px-2.5 py-0.5 rounded w-fit text-nowrap`}
+        >
+          <div
+            className={`h-2.5 w-2.5 rounded-full ${
+              row.status ? "bg-green-500" : "bg-red-500"
+            } me-2`}
+          ></div>
+          {row.status ? "مستكمل" : "غير مستكمل"}
         </div>
       </td>
-      <td
-        onClick={() => openReviewRequest(row)}
+      {/* <td
         className="py-4 flex w-full items-center justify-center cursor-pointer">
         <img
           className="w-10 h-10 rounded-full text-center"
           src={row.image}
           alt={`${row.first_name} image`}
         />
-      </td>
+      </td> */}
 
-      <td className="py-4">
+      {/* <td className="py-4">
         <Play className="mr-[30px] bg-blue-200 w-8 h-8 rounded-full p-2 text-blue-600 text-center" />
-      </td>
+      </td> */}
     </Fragment>
   );
 };
@@ -86,8 +100,7 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
         }
       );
 
-      console.log('response', response);
-
+      console.log("response", response);
 
       const registrationRequests = response.data;
 
@@ -112,10 +125,12 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
         // entity_name: request.entity_name || 'مجهول',
         phone_number: request.phone_number || "مجهول",
         nationality: request.nationality || "مجهول",
-        image: request.image || "./default-image.jpg",
-        status: request.status || "مجهول",
+        image: request.image || img,
+        status: request.status || false,
         id: request.id,
         voices: request.voices || [],
+        is_image_approved: request.is_image_approved,
+        is_image_refused: request.is_image_refused,
       }));
 
       setTableData(formattedData);
@@ -126,13 +141,11 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
         error.response?.data || error.message
       );
     }
-
   }, []);
 
   useEffect(() => {
     fetchData();
   }, [fetchData, refreshData]);
-
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
@@ -254,7 +267,8 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
         <h2 className="text-2xl font-bold">طلبات تسجيل الموظفين</h2>
         <button
           className="flex border-2 items-center justify-center p-2 rounded-full bg-themeColor-600 text-white hover:bg-themeColor-700 transition duration-200"
-          onClick={() => openCreate()}>
+          onClick={() => openCreate()}
+        >
           <FaPlus className="h-6 w-6" />
         </button>
       </div>
@@ -275,7 +289,8 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
           </div>
           <button
             onClick={() => exportTableToExcel()}
-            className="w-1/2  bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center">
+            className="w-1/2  bg-themeColor-500 text-white text-center hover:bg-themeColor-700 px-4 py-2 rounded-md transition duration-200 flex justify-center items-center"
+          >
             تصدير
             <FaArrowCircleDown size={20} className="mr-2" />
           </button>
@@ -289,7 +304,6 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
         userImage={(row) => (
           <TableUser row={row} openReviewRequest={openReviewRequest} />
         )}
-
         actions={(row) =>
           row.status ? (
             <TableActions
@@ -299,11 +313,21 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
               refuseRequest={refuseRequest}
               openReviewRequest={openReviewRequest}
             />
-          ) : null
+          ) : (
+            <TableActions
+              openPreview={() => console.log("Preview function")}
+              row={row}
+              approveRequest={approveRequest}
+              refuseRequest={refuseRequest}
+              openReviewRequest={openReviewRequest}
+              disabled={true}
+            />
+          )
         }
         currentPage={currentPage}
         totalPages={Math.ceil(filteredData.length / itemsPerPage)}
         setCurrentPage={setCurrentPage}
+        openReviewRequest={openReviewRequest}
       />
 
       {showReviewRequest && (
@@ -313,6 +337,7 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
           approveRequest={approveRequest}
           refuseRequest={refuseRequest}
           onClose={() => setShowReviewRequest(false)}
+          fetchData={fetchData}
         />
       )}
     </div>

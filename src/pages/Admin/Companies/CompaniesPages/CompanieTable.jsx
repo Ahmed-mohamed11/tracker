@@ -10,6 +10,7 @@ import Table from '../../../../components/Table';
 import ReviewRequest from './ReviewRequest';
 import ChangePlan from './ChangePlan';
 import * as XLSX from 'xlsx';
+import img from '../../../../../public/non.jpg'
 
 const MySwal = withReactContent(Swal);
 
@@ -79,7 +80,7 @@ const CompaniesTable = ({ openCreate, refreshData }) => {
                             {remainingDays <= 0 ? 'منتهي' : `${remainingDays} يوم`}
                         </span>
                     ),
-                    company_logo: company.company_logo || './default-image.jpg',
+                    company_logo: company.company_logo || img,
                     id: company.id,
                 };
             });

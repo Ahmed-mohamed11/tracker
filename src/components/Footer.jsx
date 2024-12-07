@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export default function Footer() {
   // const socialIcons = [
@@ -45,22 +45,18 @@ export default function Footer() {
   // ];
 
   return (
-    <footer className="mx-auto w-full  shadow-2xl shadow-black bg-themeColor-400   max-w-container px-4 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-around pt-10">
-        <div>
-          <p className="text-center text-sm leading-6 text-white">© 2022 Site Created by : <a href="" className="hover:underline ">
-            <span className="font-semibold text-white">Cowdly Team Work</span>
+    <footer className="mx-auto w-full  shadow-2xl shadow-black bg-themeColor-400  max-w-container px-4 sm:px-6 lg:px-8 mt-10">
+      <div className="py-8 flex items-center justify-center text-sm font-semibold leading-6 text-white">
+        <a href="cowdly.com">
+          <img className=" rounded-lg w-fit h-8" src="/cowdly.png" alt="" />
+        </a>
+        <p className="text-center text-sm text-white">
+          Copyright © 2024
+          <a href="cowdly.com" className="hover:underline ">
+            <span className="font-semibold text-white"> Cowdly Team</span>
           </a>
-          </p>
-
-        </div>
-        <img
-          className=' rounded-lg w-1/5 h-16'
-          src="/cowdly.png" alt="" />
-      </div>
-      <div className="py-5 flex items-center justify-center space-x-4 text-sm font-semibold leading-6 text-white"><a
-        href="/privacy-policy">Privacy policy</a>
-        <div className="h-4 w-0.5 bg-slate-500/20"></div><a href="/changelog">Change log</a>
+        </p>
+        {/* <a href="/privacy-policy">Privacy policy</a> */}
       </div>
     </footer>
   );

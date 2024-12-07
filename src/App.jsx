@@ -45,11 +45,11 @@ function App() {
     <div
       className={`light`}
       dir={"rtl"}
-    >
+    > 
       {!hideNavbar && <Navbar />}
 
       <div className="dark:bg-gray-900 bg-white overflow-x-hidden">
-        <div className="h-screen w-full items-center justify-center bg-cover bg-no-repeat">
+        <div className="w-full items-center justify-center bg-cover bg-no-repeat">
           <Routes>
             {/* Authentication Routes */}
             <Route path="/login" element={<Layout />} />
@@ -62,7 +62,7 @@ function App() {
                 <AdminPages loading={setLoading} />
               }
             />
-
+ 
             {/* Fallback Route */}
             <Route path="*" element={<Error404Modern />} />
           </Routes>

@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Table from '../../components/Table';
 import * as XLSX from 'xlsx';
+import img from '../../../public/non.jpg'
 
 
 const MySwal = withReactContent(Swal);
@@ -80,7 +81,7 @@ const EmployeeStructureTable = ({ openCreate }) => {
                 job_title: employee.job_title || 'مجهول',
                 phone_number: employee.phone_number || 'مجهول',
                 nationality: employee.nationality || 'مجهول',
-                image: employee.image || './default-image.jpg',
+                image: employee.image || img,
                 id: employee.id,
                 voices: employee.voices || [],
                 status: employee.status || 'غير محدد', // Adjust according to the response

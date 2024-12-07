@@ -95,14 +95,6 @@ export default function AttendanceSettings() {
 
     const PageData = [
         {
-            title: "إحتساب تأخير الحضور",
-            sub_title: ["التأخر بعد الفترة المرنة"],
-        },
-        {
-            title: "اعدادات الموقع الجغرافي",
-            sub_title: ["التحقق من الوقت الحالي"],
-        },
-        {
             title: "اعدادات العمل الاضافي",
             sub_title: [
                 "العمل الاضافي",
@@ -110,11 +102,10 @@ export default function AttendanceSettings() {
                     inputs: [
                         <FormNumber key={3} label=" الحد الادني لعدد الساعات " value={minimumHoursWorked} onChange={(e) => setMinimumHoursWorked(e.target.value)} />,
                         <FormNumber key={4} label=" الحد الاقصي لعدد الساعات " value={maximumHoursWorked} onChange={(e) => setMaximumHoursWorked(e.target.value)} />,
-                        <FormSelect key={5} label=" اختر الجهات " onChange={(e) => console.log(e.target.value)} />,
-                        <FormSelect key={6} label="   اختر الموظفين   " onChange={(e) => setOvertimeEmployees(e.target.value)} />,
+                        // <FormSelect key={5} label=" اختر الجهات " options={branches} onChange={(e) => console.log(e.target.value)} />,
+                        // <FormSelect key={6} label="   اختر الموظفين   " onChange={(e) => setOvertimeEmployees(e.target.value)} />,
                     ],
                 },
-                "إحتساب الحضور المبكر ضمن العمل الإضافي",
             ],
         },
         {
@@ -123,17 +114,7 @@ export default function AttendanceSettings() {
                 "التحقق من بصمه الصوت",
                 "التحقق من بصمه الصوره",
                 "التحقق من بصمه اليد",
-                "تحديد تسجيل الدخول من الهاتف المسجل فقط",
-                {
-                    inputs: [
-                        <FormSelect key={7} label="   نسبة العينة العشوائية   " onChange={(e) => console.log(e.target.value)} />,
-                    ],
-                },
             ],
-        },
-        {
-            title: "التحكم بالإجراء الخاص بتغيير حالة التحضير",
-            sub_title: ["التحكم بالإجراء الخاص بتغيير حالة التحضير"],
         },
     ];
 

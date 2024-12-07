@@ -107,7 +107,7 @@ const NavbarItem = ({
   );
 };
 
-export default function Navbar({ companyLogo, companyName }) {
+export default function Navbar({ companyLogo, companyName }) { 
   const { t } = useI18nContext();
   const [role, setRole] = useState("admin");
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -226,23 +226,14 @@ export default function Navbar({ companyLogo, companyName }) {
           name: t("sideBar.Preparation"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/reports`,
         },
-
-        {
-          name: t("sideBar.commitments"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/branches`,
-        },
         {
           name: t("sideBar.DailyMovement"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/dailyMovement`,
         },
-        {
-          name: t("sideBar.DailyAttendance"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/dailyAttendance`,
-        },
-        {
-          name: t("sideBar.Departure"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/departure`,
-        },
+        // {
+        //   name: t("sideBar.DailyAttendance"),
+        //   link: `${import.meta.env.VITE_PUBLIC_URL}/dailyAttendance`,
+        // },
       ],
     },
 
