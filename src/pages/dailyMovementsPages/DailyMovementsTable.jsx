@@ -122,7 +122,7 @@ const DailyMovementsTable = ({ openCreate }) => {
                 <FormSelect label="الجهه" options={entities} onChange={(e) => setSelectedEntity(e.target.value)} />
                 <FormSelect label="الموظف" options={employees} onChange={(e) => setSelectedEmployee(e.target.value)} />
                 <FormSelect
-                    label="النوع"
+                    label="نوع الحركه"
                     options={[
                         { value: 'Attendance', label: 'حضور' },
                         { value: 'Departure', label: 'انصراف' },

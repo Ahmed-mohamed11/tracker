@@ -67,7 +67,6 @@ const AddEmployee = ({ closeModal, modal, }) => {
 
             const newRegistration = response.data;
             console.log('تمت إضافة طلب التسجيل بنجاح:', newRegistration);
-            // onClientAdded(newRegistration);  // Call the callback to add the new client
             closeModal();
 
         } catch (error) {

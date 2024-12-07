@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { FaArrowCircleDown } from 'react-icons/fa';
+// import { FaArrowCircleDown } from 'react-icons/fa';
 import Table from '../../components/Table';
 import * as XLSX from 'xlsx';
 import FormSelect from '../../components/form/FormSelect';
@@ -36,6 +36,7 @@ const ReportsTable = ({ openCreate }) => {
     const fetchData = useCallback(async () => {
         try {
             const token = Cookies.get('token');
+            console.log('Cookies', Cookies);
             const response = await axios.get('https://bio.skyrsys.com/api/activity/departures/', {
                 headers: { 'Authorization': `Token ${token}` },
             });
@@ -136,7 +137,6 @@ const ReportsTable = ({ openCreate }) => {
                 </div>
 
                 <button onClick={handleFilter} className="bg-themeColor-400 text-white px-4 py-2 rounded-md">عرض البيانات</button>
-
 
             </div>
 
