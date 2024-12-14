@@ -72,8 +72,9 @@ const NavbarItem = ({
         {name}
         {subItems && (
           <div
-            className={`transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
-              }`}
+            className={`transform duration-300 ${
+              isOpen ? "rotate-180" : "rotate-0"
+            }`}
           >
             <CaretDown size={20} />
           </div>
@@ -84,7 +85,9 @@ const NavbarItem = ({
         <div
           className={classNames(
             "absolute sm:right-32 sm:top-5 z-50 xl:top-full xl:right-0 mt-5 bg-themeColor-700 text-white rounded-md shadow-lg overflow-hidden transition-all duration-500 ease-in-out",
-            isOpen ? "opacity-100 visible animate-slide-down" : "opacity-0 invisible animate-slide-up",
+            isOpen
+              ? "opacity-100 visible animate-slide-down"
+              : "opacity-0 invisible animate-slide-up",
             "min-w-max" // Add this class to make the dropdown adapt to its content width
           )}
         >
@@ -107,7 +110,11 @@ const NavbarItem = ({
   );
 };
 
-export default function Navbar({ companyLogo, companyName }) { 
+export default function Navbar({
+  companyLogo,
+  companyName,
+  subscriptionWarning,
+}) {
   const { t } = useI18nContext();
   const [role, setRole] = useState("admin");
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -140,7 +147,8 @@ export default function Navbar({ companyLogo, companyName }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleSubMenu = (index) => setOpenMenuIndex(openMenuIndex === index ? null : index);
+  const toggleSubMenu = (index) =>
+    setOpenMenuIndex(openMenuIndex === index ? null : index);
   const closeSubMenu = () => setOpenMenuIndex(null);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -160,20 +168,20 @@ export default function Navbar({ companyLogo, companyName }) {
   }, []);
   const navigationAdmin = [
     userData &&
-    userData.isAdmin && {
-      icon: <UserCircleGear size={25} />,
-      name: t("sideBar.admin"),
-      subItems: [
-        {
-          name: t("sideBar.companies"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
-        },
-        {
-          name: t("sideBar.plans"),
-          link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
-        },
-      ],
-    },
+      userData.isAdmin && {
+        icon: <UserCircleGear size={25} />,
+        name: t("sideBar.admin"),
+        subItems: [
+          {
+            name: t("sideBar.companies"),
+            link: `${import.meta.env.VITE_PUBLIC_URL}/companies`,
+          },
+          {
+            name: t("sideBar.plans"),
+            link: `${import.meta.env.VITE_PUBLIC_URL}/plans`,
+          },
+        ],
+      },
     {
       icon: <House size={25} />,
       name: t("sideBar.dashboard"),
@@ -230,10 +238,10 @@ export default function Navbar({ companyLogo, companyName }) {
           name: t("sideBar.DailyMovement"),
           link: `${import.meta.env.VITE_PUBLIC_URL}/dailyMovement`,
         },
-        // {
-        //   name: t("sideBar.DailyAttendance"),
-        //   link: `${import.meta.env.VITE_PUBLIC_URL}/dailyAttendance`,
-        // },
+        {
+          name: t("sideBar.EmployeeRequestsReports"),
+          link: `${import.meta.env.VITE_PUBLIC_URL}/employeeRequestsReports`,
+        },
       ],
     },
 
@@ -257,7 +265,6 @@ export default function Navbar({ companyLogo, companyName }) {
           name: t("sideBar.changeSetting"),
           onClick: () => setShowSettingsPopup(true),
         },
-
       ],
     },
   ].filter(Boolean);
@@ -271,21 +278,25 @@ export default function Navbar({ companyLogo, companyName }) {
   const [previewImage, setPreviewImage] = useState(null);
   const [originalLogo, setOriginalLogo] = useState(""); // Store the original logo
 
-  const selectedNavigation = role === "admin" ? navigationAdmin : navigationError;
+  const selectedNavigation =
+    role === "admin" ? navigationAdmin : navigationError;
   useEffect(() => {
     const fetchCompanyData = async () => {
       try {
-        const token = Cookies.get('token');
+        const token = Cookies.get("token");
         if (!token) {
-          console.error('No token found in cookies');
+          console.error("No token found in cookies");
           return;
         }
-        const response = await axios.get("https://bio.skyrsys.com/api/company/company-data/", {
-          headers: {
-            'Authorization': `Token ${token}`,
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        });
+        const response = await axios.get(
+          "https://bio.skyrsys.com/api/company/company-data/",
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
         const companyData = response.data;
         const { company_logo } = companyData;
 
@@ -299,6 +310,12 @@ export default function Navbar({ companyLogo, companyName }) {
   }, []);
   return (
     <div className="w-full text-white shadow-lg sticky top-0 z-50 bg-gradient-to-r from-themeColor-700 via-themeColor-600 to-themeColor-500">
+      {subscriptionWarning && (
+        <div className="bg-yellow-200 text-yellow-800 p-4 text-center">
+          ⚠️ تنبيه: ينتهي الاشتراك خلال أسبوع. يرجى التواصل مع الدعم لتجديد
+          الاشتراك لضمان استمرار الخدمة.
+        </div>
+      )}
       <nav className="flex items-center justify-around p-4">
         <div className="xl:hidden">
           <button onClick={toggleMobileMenu} className="text-white">
@@ -306,7 +323,11 @@ export default function Navbar({ companyLogo, companyName }) {
           </button>
         </div>
         <div>
-          <img className="w-14 h-14 border-2 border-orange-500 rounded-full" src="/SiteLogo.png" alt="" />
+          <img
+            className="w-14 h-14 border-2 border-orange-500 rounded-full"
+            src="/SiteLogo.png"
+            alt=""
+          />
         </div>
         <div className={classNames("mt-3 xl:flex items-center hidden")}>
           {selectedNavigation.map((item, index) => (
@@ -326,17 +347,23 @@ export default function Navbar({ companyLogo, companyName }) {
           ))}
         </div>
 
-
         <div className="relative" ref={userMenuRef}>
-          <div className=" rounded-full border-2 border-orange-500 flex items-center gap-3 cursor-pointer" onClick={toggleUserMenu}>
+          <div
+            className=" rounded-full border-2 border-orange-500 flex items-center gap-3 cursor-pointer"
+            onClick={toggleUserMenu}
+          >
             {previewImage ? (
               <img
                 src={previewImage}
-                alt="Company Logo" className="w-12 h-12  rounded-full" />
+                alt="Company Logo"
+                className="w-12 h-12  rounded-full"
+              />
             ) : (
               <img
                 src={`https://bio.skyrsys.com${originalLogo}`}
-                alt="Company Logo" className="w-12 h-12  rounded-full" />
+                alt="Company Logo"
+                className="w-12 h-12  rounded-full"
+              />
             )}
           </div>
 
@@ -362,13 +389,21 @@ export default function Navbar({ companyLogo, companyName }) {
             </div>
           )}
         </div>
-        {showSettingsPopup && <AccountSettings onClose={() => setShowSettingsPopup(false)} />}
+        {showSettingsPopup && (
+          <AccountSettings onClose={() => setShowSettingsPopup(false)} />
+        )}
       </nav>
       {isMobileMenuOpen && (
         <div className="xl:hidden p-3 bg-black bg-opacity-50 z-40">
           <div
-            className={`flex flex-col items-start space-y-4 transition-transform duration-300 ease-in-out transform ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
-            style={{ transform: isMobileMenuOpen ? "translateX(0)" : "translateX(100%)" }}
+            className={`flex flex-col items-start space-y-4 transition-transform duration-300 ease-in-out transform ${
+              isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+            }`}
+            style={{
+              transform: isMobileMenuOpen
+                ? "translateX(0)"
+                : "translateX(100%)",
+            }}
           >
             {selectedNavigation.map((item, index) => (
               <NavbarItem
@@ -383,7 +418,8 @@ export default function Navbar({ companyLogo, companyName }) {
                 onClick={() => {
                   item.onClick && item.onClick();
                   setIsMobileMenuOpen(false); // Close the mobile menu when the main link is clicked
-                }} />
+                }}
+              />
             ))}
           </div>
         </div>

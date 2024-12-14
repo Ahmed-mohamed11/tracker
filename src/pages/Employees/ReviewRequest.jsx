@@ -14,6 +14,9 @@ export default function ReviewRequest({ requestData, onClose }) {
         }
     }, [requestData]);
 
+
+    console.log(requestData);
+
     if (!requestDetails) return <div>Loading...</div>;
 
     return (
@@ -68,7 +71,7 @@ export default function ReviewRequest({ requestData, onClose }) {
                         </div>
                         <div className="p-2">
                             <div className="bg-blue-100 p-2 mb-2 flex justify-between items-center">
-                                <span>{requestDetails.entity.title} </span>
+                                <span>{requestDetails.entity?.title} </span>
                                 <Check className="text-themeColor-500" />
                             </div>
 

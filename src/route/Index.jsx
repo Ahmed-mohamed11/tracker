@@ -18,17 +18,17 @@ import Reports from "../pages/Reports/Reports";
 import Login from "../pages/auth/login/Login";
 import AllEmployees from "../pages/AllEmployees/Employees";
 import Departure from "../pages/departure/Departure";
-import DailyAttendance from "../pages/dailyAttendance/DailyAttendance ";
 import DailyMovement from "../pages/dailyMovements/DailyMovements";
+import EmployeeRequestsReports from "../pages/employeeRequestsReports/EmployeeRequestsReports";
 
-const AdminPages = ({ loading }) => {
+const AdminPages = ({ loading, setFinishDate }) => {
   return (
     <Suspense fallback={<div />}>
       <Routes>
         <Route
           exact
           path={`${import.meta.env.VITE_PUBLIC_URL}/`}
-          element={<Dashboard />}
+          element={<Dashboard setFinish={setFinishDate} />}
         />
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
@@ -86,8 +86,8 @@ const AdminPages = ({ loading }) => {
           element={<RejectedMovements />}
         />
         <Route
-          path={`${import.meta.env.VITE_PUBLIC_URL}/dailyAttendance`}
-          element={<DailyAttendance />}
+          path={`${import.meta.env.VITE_PUBLIC_URL}/employeeRequestsReports`}
+          element={<EmployeeRequestsReports />}
         />
         <Route
           path={`${import.meta.env.VITE_PUBLIC_URL}/dailyMovement`}

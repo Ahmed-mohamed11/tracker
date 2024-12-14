@@ -1,4 +1,4 @@
-import DailyAttendances from "../dailyAttendancePages/DailyAttendance "
+import DailyAttendances from "../employeeRequestsReports/EmployeeRequestsReports"
 
 const DailyAttendance = () => {
   return (

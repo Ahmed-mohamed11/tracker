@@ -86,6 +86,7 @@ const ar = {
     branches: "الفروع",
     Employee: "الموظفين", // Employee
     EmployeesRequests: "طلبات الموظفين", // Employee
+    EmployeeRequestsReports: "تقارير الأذونات", // Employee
     clients: "العملاء",
     Shifts: "مواعيد العمل",
     registration: "تسجيل الطلبات",

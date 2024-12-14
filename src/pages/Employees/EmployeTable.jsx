@@ -64,7 +64,7 @@ const TableUser = ({ row, openReviewRequest }) => {
   );
 };
 
-const EmployeeTable = ({ openCreate, refreshData }) => {
+const EmployeeTable = ({ openCreate, refreshData, openPreview }) => {
   const [showReviewRequest, setShowReviewRequest] = useState(false);
   const [requestData, setRequestData] = useState(null); // بيانات الطلب
   const [tableData, setTableData] = useState([]);
@@ -225,6 +225,28 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
 
   const refuseRequest = async (id) => {
     try {
+      const { value: refuseData } = await MySwal.fire({
+        title: "أدخل سبب الرفض",
+        html: `
+          <input id="refuseReason" class="swal2-input" placeholder="سبب الرفض" />
+        `,
+        focusConfirm: false,
+        preConfirm: () => {
+          const refuseReason = document.getElementById("refuseReason").value;
+
+          if (!refuseReason) {
+            MySwal.showValidationMessage("يجب إدخال سبب الرفض!");
+            return null;
+          }
+
+          return { refuse_reason: refuseReason };
+        },
+      });
+
+      if (!refuseData) {
+        return; // المستخدم أغلق النافذة أو لم يُدخل البيانات.
+      }
+
       const token = Cookies.get("token");
       if (!token) {
         console.error("No token found in cookies");
@@ -233,7 +255,10 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
 
       const response = await axios.patch(
         `https://bio.skyrsys.com/api/employee-requests/approval/${id}/`,
-        { is_approved: false },
+        {
+          is_approved: false,
+          refuse_reason: refuseData.refuse_reason,
+        },
         {
           headers: { Authorization: `Token ${token}` },
         }
@@ -342,6 +367,7 @@ const EmployeeTable = ({ openCreate, refreshData }) => {
         currentPage={currentPage}
         totalPages={Math.ceil(filteredData.length / itemsPerPage)}
         setCurrentPage={setCurrentPage}
+        openReviewRequest={openReviewRequest}
       />
 
       {showReviewRequest && (

@@ -3,8 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 
 import "./App.css";
 import "./App.scss";
-import 'react-toastify/dist/ReactToastify.css';
-
+import "react-toastify/dist/ReactToastify.css";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -38,15 +37,32 @@ function App() {
   //   localStorage.setItem("isDarkMode", !isDarkMode);
   // };
 
+  const [finishDate, setFinishDate] = useState("");
+  const [subscriptionWarning, setSubscriptionWarning] = useState(false);
+
+  useEffect(() => {
+    if (finishDate) {
+      const today = new Date();
+      const endSubscriptionDate = new Date(finishDate);
+      const differenceInDays =
+        (endSubscriptionDate - today) / (1000 * 60 * 60 * 24);
+
+      if (differenceInDays > 0 && differenceInDays <= 7) {
+        setSubscriptionWarning(true);
+      } else {
+        setSubscriptionWarning(false);
+      }
+    }
+  }, [finishDate]);
+
   // Determine if the current path is for authentication
-  const hideNavbar = location.pathname.startsWith("/login") || location.pathname.startsWith("/register");
+  const hideNavbar =
+    location.pathname.startsWith("/login") ||
+    location.pathname.startsWith("/register");
 
   return (
-    <div
-      className={`light`}
-      dir={"rtl"}
-    > 
-      {!hideNavbar && <Navbar />}
+    <div className={`light`} dir={"rtl"}>
+      {!hideNavbar && <Navbar subscriptionWarning={subscriptionWarning} />}
 
       <div className="dark:bg-gray-900 bg-white overflow-x-hidden">
         <div className="w-full items-center justify-center bg-cover bg-no-repeat">
@@ -59,10 +75,13 @@ function App() {
             <Route
               path="/*"
               element={
-                <AdminPages loading={setLoading} />
+                <AdminPages
+                  setFinishDate={setFinishDate}
+                  loading={setLoading}
+                />
               }
             />
- 
+
             {/* Fallback Route */}
             <Route path="*" element={<Error404Modern />} />
           </Routes>

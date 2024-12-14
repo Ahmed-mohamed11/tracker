@@ -7,7 +7,7 @@ import Chart3 from "../../components/Chart-3";
 import Chart4 from "../../components/Chart-4";
 import FormSelect from "../../components/form/FormSelect";
 
-export default function Dashboard() {
+export default function Dashboard({ setFinish }) {
   const [branches, setBranches] = useState([]);
   const [entities, setEntities] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -137,6 +137,7 @@ export default function Dashboard() {
       setId(account_informations.account_id);
       setExecuteDate(account_informations.start_date);
       setFinishDate(account_informations.end_date);
+      setFinish(account_informations.end_date);
       setCurrentPlan(account_informations.current_plan);
       setLastLogin(account_informations.last_login.split("T")[0]);
     } catch (error) {
@@ -262,7 +263,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 ">
         <div className="border-2 border-gray-300 rounded-md w-full md:flex justify-center items-center">
           <Chart3
-            totalHoursOfAttendance={totalHoursOfAttendance} 
+            totalHoursOfAttendance={totalHoursOfAttendance}
             totalAttendancePercentage={totalAttendancePercentage}
           />
           <Chart4 totalHoursOfAttendance={totalHoursOfAttendance} />
