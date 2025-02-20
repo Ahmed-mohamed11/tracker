@@ -152,11 +152,11 @@ const DailyMovementsTable = ({ openCreate }) => {
 
   return (
     <div className="min-h-screen mt-10 lg:max-w-7xl w-full mx-auto">
-      <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500  border-b">
+      <div className="mb-10 w-full flex items-center justify-between p-4 bg-themeColor-500 border-b">
         <h2 className="text-2xl font-bold">حركات التحضير</h2>
       </div>
 
-      <div className='items-end grid grid-cols-1 mb-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
+      <div className="items-end grid grid-cols-1 mb-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <FormSelect label="الفرع" options={branches} onChange={(e) => setSelectedBranch(e.target.value)} />
         <FormSelect label="الجهه" options={entities} onChange={(e) => setSelectedEntity(e.target.value)} />
         <FormSelect label="الموظف" options={employees} onChange={(e) => setSelectedEmployee(e.target.value)} />
@@ -168,51 +168,32 @@ const DailyMovementsTable = ({ openCreate }) => {
           ]}
           onChange={(e) => setSelectedActivity(e.target.value)}
         />
-
-        <button onClick={handleFilter} className="bg-themeColor-400 text-white px-4 py-2 rounded-md">عرض البيانات</button>
+        <button onClick={handleFilter} className="bg-themeColor-400 text-white px-4 py-2 rounded-md">
+          عرض البيانات
+        </button>
       </div>
 
-      <div className="hidden">
-        <label htmlFor="end_date">تاريخ الانتهاء</label>
-        <input
-          className="border border-gray-300 rounded-md p-2"
-          type="date"
-          id="end_date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
+      {/* عرض البيانات أو رسالة تحميل */}
+      {loading ? (
+        <div className="text-center py-10">جاري تحميل البيانات...</div>
+      ) : filteredData.length > 0 ? (
+        <Table
+          data={filteredData}
+          headers={[
+            { key: "employee", label: "اسم الموظف" },
+            { key: "email", label: "البريد الإلكتروني" },
+            { key: "branch", label: "اسم الفرع" },
+            { key: "entity", label: "اسم الجهة" },
+            { key: "timestamp", label: "وقت الحضور" },
+          ]}
+          currentPage={currentPage}
+          totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+          setCurrentPage={setCurrentPage}
         />
-      </div>
-
-      <button
-        onClick={handleFilter}
-        className="bg-themeColor-400 text-white px-4 py-2 rounded-md"
-      >
-        عرض البيانات
-      </button>
+      ) : (
+        <div className="text-center py-10">لا توجد بيانات لعرضها.</div>
+      )}
     </div>
-
-      {
-    loading ? (
-      <div className="text-center py-10">جاري تحميل البيانات...</div>
-    ) : filteredData.length > 0 ? (
-      <Table
-        data={filteredData}
-        headers={[
-          { key: "employee", label: "اسم الموظف" },
-          { key: "email", label: "البريد الإلكتروني" },
-          { key: "branch", label: "اسم الفرع" },
-          { key: "entity", label: "اسم الجهة" },
-          { key: "timestamp", label: "وقت الحضور" },
-        ]}
-        currentPage={currentPage}
-        totalPages={Math.ceil(filteredData.length / itemsPerPage)}
-        setCurrentPage={setCurrentPage}
-      />
-    ) : (
-      <div className="text-center py-10">لا توجد بيانات لعرضها.</div>
-    )
-  }
-    </div >
   );
 };
 
