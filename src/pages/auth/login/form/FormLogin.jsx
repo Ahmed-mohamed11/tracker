@@ -24,7 +24,8 @@ export default function FormLogin({
           placeholder="Email"
           required
           label="البريد الالكتروني"
-          value={formData.email}
+          // value={formData.email}
+          value="admin@admin.com"
           onChange={handleEmailInput}
           error={errors.email}
         />
@@ -36,7 +37,8 @@ export default function FormLogin({
           placeholder="كلمة المرور"
           required
           label="كلمة المرور"
-          value={formData.password}
+          // value={formData.password}
+          value="admin"
           onChange={handlePasswordChange}
           error={errors.password}
           handleShowPass={handleShowPass}
