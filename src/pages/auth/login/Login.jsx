@@ -31,34 +31,73 @@ export default function Login() {
   // التعامل مع عملية تسجيل الدخول
   const handleLogin = async (event) => {
     event.preventDefault();
-  
+    const newErrors = {};
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     setLoading(true);
-  
+
     try {
-      // إنشاء بيانات تسجيل دخول وهمية
-      const fakeToken = "dummy_token_123";
-      const fakeUser = {
-        email: formData.email,
-        isAdmin: true,
-        companyName: "Demo Company",
-        companyLogo: "https://via.placeholder.com/150",
-        companyCode: "DEMO123",
-      };
-  
-      // حفظ الـ Token والبيانات في الكوكيز والـ localStorage
-      Cookies.set("token", fakeToken, { expires: 7, path: "/" });
-      localStorage.setItem("user", JSON.stringify(fakeUser));
-  
+      // طلب تسجيل الدخول إلى API
+      const response = await axios.post(
+        "https://bio.skyrsys.com/api/company/login/",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+
+      console.log("Response Data:", response.data);
+
+      const data = response.data;
+
+      if (!data || !data.token) {
+        throw new Error("Invalid response structure");
+      }
+
+      const token = data.token;
+
+      // حفظ الـ token في الكوكيز
+      Cookies.set("token", token, { expires: 7, path: "/" });
+
+      // حفظ بيانات المستخدم في localStorage
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          email: data.company.email,
+          isAdmin: data.is_admin,
+          companyName: data.company.company_name,
+          companyLogo: data.company.company_logo,
+          companyCode: data.company.company_code,
+        })
+      );
+
       setLoading(false);
+
       navigate(`${import.meta.env.VITE_PUBLIC_URL}/`);
     } catch (error) {
       console.error("Login Error:", error);
-      setErrorMsg("حدث خطأ أثناء تسجيل الدخول");
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Error in login details, check email and password";
+      setErrorMsg(message);
       setLoading(false);
     }
   };
 
-  
+
   useEffect(() => {
     const token = Cookies.get("token");
     if (token) {
